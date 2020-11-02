@@ -45,7 +45,7 @@ export default class FormField {
     return this.waiting[index] === 0;
   }
 
-  hasError(): boolean {
+  hasError() {
     return this.errorCount > 0;
   }
 
