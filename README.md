@@ -75,7 +75,7 @@ type KeyedRule = { key: string; rule: SimpleRule };
 type Rule = SimpleRule | KeyedRule;
 ```
 
-For now rules are meant to be passed as `props` to your base form components, where you then use them as a parameter for `useBaseForm`. KeyedRules that share the same key will be executed together, this can be useful in a situation where rules are dependent on another. For examples the `Password` and `Repeat password` fields in a Login Form.
+For now rules are meant to be passed as `props` to your base form components, where you then use them as a parameter for `useBaseForm`. KeyedRules that share the same key will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat password` fields in a Login Form.
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule return value is of type `string`.
 
 `vue3-form-validation/Form.ts`
