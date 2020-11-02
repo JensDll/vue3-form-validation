@@ -1,6 +1,8 @@
 # (WIP) Form validation for Vue 3
+Easy to use Form Validation for Vue 3
 
-> Easy to use Form Validation for Vue 3
+* :milky_way: **Written in TypeScript**
+* :fallen_leaf: **Light weight**
 
 Note this is still WIP, but a working prototype is currently available and can be used.
 
@@ -74,3 +76,24 @@ type Rule = SimpleRule | KeyedRule;
 ```
 
 For now rules are meant to be passed as `props` to your base form components, where you then use them as a parameter for `useBaseForm`. KeyedRules that share the same key will be executed together, this can be useful in a situation where rules are dependent on another. For examples the `Password` and `Repeat password` fields in a Login Form.
+Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule return value is of type `string`.
+
+`vue3-form-validation/Form.ts`
+```ts
+let error: unknown;
+// ...
+error = await rule(formField.modelValue);
+// ...
+if (typeof error === 'string') {
+  // report validation error
+}
+// ...
+```
+
+This allows you to write many rules in one line:
+```ts
+const required = async value => !value && "This field is required";
+const min = async value => value.length > 3 || "This field has to be longer than 3 characters";
+const max = async value => value.length < 7 || "This field is too long (maximum is 6 characters)";
+```
+Of course you can also return a `Promise` directly or perform network requests, for example checking if a username already exists in the database.
