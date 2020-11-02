@@ -1,16 +1,30 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3.0 + Vite" />
+  <LoginForm />
+  <ButtonDemo />
 </template>
 
 <script lang="ts">
+import LoginForm from './views/LoginForm.vue';
+import ButtonDemo from './views/ButtonDemo.vue';
+
 import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
 
 export default defineComponent({
-  name: 'App',
   components: {
-    HelloWorld
+    LoginForm,
+    ButtonDemo
   }
 });
 </script>
+
+<style>
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+#app {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+}
+</style>
