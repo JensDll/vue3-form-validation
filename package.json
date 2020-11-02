@@ -1,6 +1,6 @@
 {
   "name": "vue3-form-validation",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Form validation for Vue 3",
   "author": {
     "name": "jens",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JensD98/vue-form-validation.git"
+    "url": "https://github.com/JensD98/vue3-form-validation.git"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
