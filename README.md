@@ -4,7 +4,7 @@ Easy to use Form Validation for Vue 3
 * :milky_way: **Written in TypeScript**
 * :fallen_leaf: **Light weight**
 
-Note this is still WIP, but a working prototype is currently available and can be used.
+Note this is still WIP. But a working prototype is currently available and can be used.
 
 ```bash
 npm i vue3-form-validation
