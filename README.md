@@ -10,7 +10,7 @@ Note this is still WIP! But a working prototype is currently available and can b
 npm i vue3-form-validation
 ```
 
-Validation is async and is utilising `Promise.allSettled()`, which has not yet reached cross-browser stability ([see](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled)).
+Validation is async and is utilising `Promise.allSettled`, [which](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) has not yet reached cross-browser stability.
 Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-busd9).
 
 ## API
