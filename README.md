@@ -47,7 +47,7 @@ const { uid, onBlur, errors, validating } = useBaseForm(modelValue, rules);
 Parameters | Type | Required | Description
 ---|:-:|:-:|---
 modelValue | `Ref<unknown>` | `true` | A `ref` that holds the current form field value.
-rules | `Ref<(function \| object)[]>` | `true` | A `ref` with an array of rules. More on writing rules further down.
+rules | `Ref<(function \| object)[]>` | `true` | A `ref` with an array of rules.
 
 * `useBaseForm` exposes the following state:
 
