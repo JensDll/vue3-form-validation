@@ -66,7 +66,7 @@ Signature | Returns | Description
 `onBlur()` | `void` | Call this when the form field `blur` event fires.
 
 ## Writing Rules
-Rules are `async` functions that should return a `string` when the validation fails. They can be written purely as a function or togehther with a `key` property in an object.
+Rules are `async` functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
 
 **Typing:**
 ```ts
