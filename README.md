@@ -4,13 +4,13 @@ Easy to use Form Validation for Vue 3
 * :milky_way: **Written in TypeScript**
 * :fallen_leaf: **Light weight**
 
-Note this is still WIP, but a working prototype is currently available and can be used.
+Note this is still WIP! But a working prototype is currently available and can be used.
 
 ```bash
 npm i vue3-form-validation
 ```
 
-Validation is async and is utilising `Promise.allSettled()`, which has not yet reached cross-browser stability ([see](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled)).
+Validation is async and is utilising `Promise.allSettled`, [which](https://developer.mozilla.org/de/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) has not yet reached cross-browser stability.
 Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-busd9).
 
 ## API
@@ -66,7 +66,7 @@ Signature | Returns | Description
 `onBlur()` | `void` | Call this when the form field `blur` event fires.
 
 ## Writing Rules
-Rules are `async` functions that should return a `string` when the validation fails. They can be written purely as a function or togehther with a `key` property in an object.
+Rules are `async` functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
 
 **Typing:**
 ```ts
@@ -75,8 +75,8 @@ type KeyedRule = { key: string; rule: SimpleRule };
 type Rule = SimpleRule | KeyedRule;
 ```
 
-For now rules are meant to be passed as `props` to your base form components, where you then use them as a parameter for `useBaseForm`. KeyedRules that share the same key will be executed together, this can be useful in a situation where rules are dependent on another. For examples the `Password` and `Repeat password` fields in a Login Form.
-Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule return value is of type `string`.
+For now rules are meant to be passed as `props` to your base form components, where you then use them as a parameter for `useBaseForm`. KeyedRules that share the same key will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat password` fields in a Login Form.
+Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 
 `vue3-form-validation/Form.ts`
 ```ts
