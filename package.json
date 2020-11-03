@@ -18,10 +18,10 @@
   ],
   "license": "ISC",
   "scripts": {
+    "build": "npx tsc",
     "lint": "npx prettier --write .",
     "test": "jest",
-    "dev": "vite",
-    "build": "vite build"
+    "dev": "vite"
   },
   "devDependencies": {
     "@types/jest": "^26.0.15",
