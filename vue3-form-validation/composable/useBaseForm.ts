@@ -8,16 +8,7 @@ import {
 } from 'vue';
 import useUid from './useUid';
 import Form from '../Form';
-
-export type SimpleRule = (value: unknown) => Promise<unknown>;
-export type KeyedRule = { key: string; rule: SimpleRule };
-export type Rule = SimpleRule | KeyedRule;
-
-export const isSimpleRule = (rule: Rule): rule is SimpleRule =>
-  typeof rule === 'function';
-
-export const isKeyedRule = (rule: Rule): rule is KeyedRule =>
-  'key' in rule && 'rule' in rule;
+import { Rule } from '../index';
 
 type RegisterField = (
   uid: number,

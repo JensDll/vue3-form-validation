@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "ES2019",
     "module": "ES2020",
-    "lib": ["ES2020.Promise"],
     "declaration": true,
     "outDir": "dist"
   },

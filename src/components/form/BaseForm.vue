@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { provideBaseForm } from '../../../vue3-form-validation/index';
+import { provideBaseForm } from '../../../vue3-form-validation';
 import { defineComponent, ref } from 'vue';
 
 export default defineComponent({

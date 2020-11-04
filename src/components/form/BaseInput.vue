@@ -22,11 +22,7 @@
 </template>
 
 <script lang="ts">
-import {
-  useBaseForm,
-  Rule,
-  isSimpleRule
-} from '../../../vue3-form-validation/index';
+import { useBaseForm, Rule, isSimpleRule } from '../../../vue3-form-validation';
 import { defineComponent, PropType, toRef } from 'vue';
 
 export default defineComponent({

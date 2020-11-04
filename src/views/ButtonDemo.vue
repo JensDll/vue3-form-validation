@@ -15,7 +15,6 @@
 
 <script lang="ts">
 import { defineComponent, ref, watch } from 'vue';
-import { photoService } from '../services/photoService';
 import BaseButton from '../components/BaseButton.vue';
 
 export default defineComponent({
