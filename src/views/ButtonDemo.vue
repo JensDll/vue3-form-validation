@@ -13,12 +13,24 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue';
+<script lang="ts">
+import { defineComponent, ref, watch } from 'vue';
+import { photoService } from '../services/photoService';
 import BaseButton from '../components/BaseButton.vue';
 
 export default defineComponent({
-  components: { BaseButton }
+  components: { BaseButton },
+  setup() {
+    const x = ref(0);
+
+    watch(x, x => {
+      console.log(x);
+    });
+
+    return {
+      x
+    };
+  }
 });
 </script>
 
