@@ -1,5 +1,5 @@
 import { computed, ref, Ref } from 'vue';
-import { Rule } from './index';
+import { Rule } from './composable/useValidation';
 
 const notNull = <T>(value: T | null): value is T => value !== null;
 

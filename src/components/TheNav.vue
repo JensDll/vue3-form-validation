@@ -5,14 +5,7 @@
       exact-active-class="nav-link-active"
       to="/"
     >
-      <span @click="demoMenu.active = false">Login Form 1</span>
-    </router-link>
-    <router-link
-      class="block relative py-3 pl-16"
-      exact-active-class="nav-link-active"
-      to="/login-form"
-    >
-      <span @click="demoMenu.active = false">Login Form 2</span>
+      <span @click="demoMenu.active = false">Login Form</span>
     </router-link>
     <router-link
       class="block relative py-3 pl-16"

@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import LoginForm1 from '../views/LoginForm1.vue';
+import LoginForm from '../views/LoginForm.vue';
 import DynamicForm from '../views/DynamicForm.vue';
 import ButtonDemo from '../views/ButtonDemo.vue';
 import SearchSelect from '../views/SearchSelect.vue';
@@ -7,7 +7,7 @@ import SearchSelect from '../views/SearchSelect.vue';
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: LoginForm1
+    component: LoginForm
   },
   {
     path: '/dynamic-form',

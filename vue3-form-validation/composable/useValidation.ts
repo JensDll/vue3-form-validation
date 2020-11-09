@@ -1,4 +1,4 @@
-import { isReactive, isRef, reactive, ref, watch } from 'vue';
+import { reactive, Ref, watch } from 'vue';
 import useUid from './useUid';
 import Form from '../Form';
 import { path } from '../utils';
@@ -10,7 +10,7 @@ export type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 export type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 
 export type Field<T> = {
-  value: T;
+  value: Ref<T> | T;
   rules?: Rule<T>[];
 };
 
@@ -23,7 +23,7 @@ export type TransformedField<T> = {
 
 type ValidateFormData<T> = T extends unknown
   ? {
-      [K in keyof T]: T[K] extends { value: infer TValue }
+      [K in keyof T]: T[K] extends { value: Ref<infer TValue> | infer TValue }
         ? Field<TValue>
         : T[K] extends Array<infer TArray>
         ? ValidateFormData<TArray>[]
@@ -33,7 +33,7 @@ type ValidateFormData<T> = T extends unknown
 
 type UseValidation<T> = T extends unknown
   ? {
-      [K in keyof T]: T[K] extends { value: infer TValue }
+      [K in keyof T]: T[K] extends { value: Ref<infer TValue> }
         ? TransformedField<TValue>
         : T[K] extends Array<infer TArray>
         ? UseValidation<TArray>[]
@@ -43,7 +43,7 @@ type UseValidation<T> = T extends unknown
 
 type FormData<T> = T extends unknown
   ? {
-      [K in keyof T]: T[K] extends { value: infer TValue }
+      [K in keyof T]: T[K] extends { value: Ref<infer TValue> }
         ? TValue
         : T[K] extends Array<infer TArray>
         ? FormData<TArray>[]
@@ -83,11 +83,9 @@ export function transformFormData(form: Form, formData: any) {
       const uid = useUid();
       const formField = form.registerField(uid, value.rules ?? []);
 
-      formField.modelValue = value.value;
-
-      formData[key] = {
+      formData[key] = reactive({
         uid,
-        value: isReactive(formData[key]) ? value.value : ref(value.value),
+        value: value.value,
         errors: formField.getErrors(),
         validating: formField.validating(),
         async onBlur() {
@@ -96,20 +94,19 @@ export function transformFormData(form: Form, formData: any) {
             await form.validate(uid);
           }
         }
-      };
+      });
 
-      const watchHandler = async (modelValue: unknown) => {
-        formField.modelValue = modelValue;
-        if (formField.touched) {
-          await form.validate(uid);
+      formField.modelValue = formData[key].value;
+
+      watch(
+        () => formData[key].value,
+        async (modelValue: unknown) => {
+          formField.modelValue = modelValue;
+          if (formField.touched) {
+            await form.validate(uid);
+          }
         }
-      };
-
-      if (isRef(formData[key].value)) {
-        watch(formData[key].value, watchHandler);
-      } else {
-        watch(() => formData[key].value, watchHandler);
-      }
+      );
 
       return;
     }
@@ -150,32 +147,35 @@ export function getResultFormData(formData: any, resultFormData: any) {
 
 export function useValidation<T>(formData: T & ValidateFormData<T>) {
   const form = new Form();
-  const formDataRef = reactive(formData) as any;
 
-  transformFormData(form, formDataRef);
+  transformFormData(form, formData);
+
+  const reactiveFormData = reactive(formData) as any;
 
   return {
-    form: formDataRef as UseValidation<T>,
+    form: reactiveFormData as UseValidation<T>,
+
     onSubmit: (success: (formData: FormData<T>) => void) => {
       form.validateAll().then(hasError => {
         if (!hasError) {
           const resultFormData = {} as any;
-          getResultFormData(formDataRef, resultFormData);
+          getResultFormData(reactiveFormData, resultFormData);
           success(resultFormData);
         }
       });
     },
-    add(pathToArray: (string | number)[], value: Record<string, unknown>) {
-      const xs = path(pathToArray, formDataRef);
 
-      transformFormData(form, value);
+    add(pathToArray: (string | number)[], value: Record<string, unknown>) {
+      const xs = path(pathToArray, reactiveFormData);
 
       if (Array.isArray(xs)) {
+        transformFormData(form, value);
         xs.push(value);
       }
     },
+
     remove(pathToArray: (string | number)[], index: number) {
-      const xs = path(pathToArray, formDataRef);
+      const xs = path(pathToArray, reactiveFormData);
 
       if (Array.isArray(xs)) {
         const deleted = xs.splice(index, 1);
