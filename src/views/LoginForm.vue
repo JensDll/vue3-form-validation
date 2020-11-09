@@ -1,115 +1,132 @@
 <template>
-  <BaseForm @submit="onSubmit" class="form" v-slot="{ submitting }">
+  <h1 class="font-semibold text-2xl">Login</h1>
+  <form class="form my-8" @submit.prevent="handleSubmit()">
     <BaseInput
-      class="name"
+      class="name input-error"
       label="Name"
-      autocomplete="off"
-      v-model="formData.name"
-      :rules="[
-        async value => !value && 'Name is required',
-        async value =>
-          value.length > 2 || 'Name has to be longer than 2 characters',
-        nameRule
-      ]"
+      :errors="form.name.errors"
+      v-model="form.name.value"
+      @blur="form.name.onBlur()"
     />
     <BaseInput
-      class="e-mail"
+      class="mail"
       label="E-Mail"
-      autocomplete="off"
-      v-model="formData.mail"
-      :rules="[async value => !value && 'E-Mail is required']"
+      :errors="form.email.errors"
+      v-model="form.email.value"
+      @blur="form.email.onBlur()"
     />
     <BaseInput
       class="password"
       label="Password"
-      autocomplete="off"
       type="password"
-      v-model="formData.password"
-      :rules="[
-        async value =>
-          value.length > 7 || 'Password has to be longer than 7 characters',
-        {
-          key: 'pw',
-          rule: async () =>
-            formData.password === formData.repeatPassword ||
-            'Passwords don\'t match'
-        }
-      ]"
+      :errors="form.password.errors"
+      v-model="form.password.value"
+      @blur="form.password.onBlur()"
     />
     <BaseInput
       class="repeat-password"
       label="Repeat password"
-      autocomplete="off"
       type="password"
-      v-model="formData.repeatPassword"
-      :rules="[
-        async value =>
-          value.length > 7 || 'Password has to be longer than 7 characters',
-        {
-          key: 'pw',
-          rule: async () =>
-            formData.password === formData.repeatPassword ||
-            'Passwords don\'t match'
-        }
-      ]"
+      :errors="form.repeatPassword.errors"
+      v-model="form.repeatPassword.value"
+      @blur="form.repeatPassword.onBlur()"
     />
-    <BaseButton
-      class="mt-5"
-      type="primary"
-      htmlType="submit"
-      :disabled="submitting"
-    >
-      Login
-    </BaseButton>
-    <BaseButton class="mt-5">Cancel</BaseButton>
-  </BaseForm>
+    <BaseButton class="mt-8" type="primary" htmlType="submit">Login</BaseButton>
+    <BaseButton class="mt-8">Cancel</BaseButton>
+  </form>
+  <pre>{{ form }}</pre>
 </template>
 
 <script lang="ts">
 import BaseInput from '../components/form/BaseInput.vue';
-import BaseForm from '../components/form/BaseForm.vue';
 import BaseButton from '../components/BaseButton.vue';
-import { defineComponent, reactive, ref } from 'vue';
+import { defineComponent, markRaw, reactive, ref, watch } from 'vue';
+import {
+  useValidation,
+  Field
+} from '../../vue3-form-validation/composable/useValidation';
+
+interface FormData {
+  name: Field<string>;
+  email: Field<string>;
+  password: Field<string>;
+  repeatPassword: Field<string>;
+}
 
 export default defineComponent({
-  components: { BaseInput, BaseForm, BaseButton },
+  components: { BaseButton, BaseInput },
   setup() {
-    const formData = reactive({
-      name: '',
-      mail: '',
-      password: '',
-      repeatPassword: ''
+    const password = ref('');
+    const repeatPassword = ref('');
+
+    const { form, onSubmit } = useValidation<FormData>({
+      name: {
+        value: ref(''),
+        rules: [
+          name => !name && 'Name is required',
+          name => name.length > 2 || 'Name has to be longer than 2 characters',
+          name =>
+            new Promise(resolve => {
+              setTimeout(() => {
+                if (['Jens', 'foo', 'bar'].includes(name)) {
+                  resolve();
+                } else {
+                  resolve('This name is already taken');
+                }
+              }, 2000);
+            })
+        ]
+      },
+      email: {
+        value: ref(''),
+        rules: [email => !email && 'E-Mail is required']
+      },
+      password: {
+        value: password,
+        rules: [
+          pw => pw.length > 7 || 'Password has to be longer than 7 characters',
+          {
+            key: 'pw',
+            rule: () =>
+              password.value === repeatPassword.value ||
+              "Passwords dont't match"
+          }
+        ]
+      },
+      repeatPassword: {
+        value: repeatPassword,
+        rules: [
+          pw => pw.length > 7 || 'Password has to be longer than 7 characters',
+          {
+            key: 'pw',
+            rule: () =>
+              password.value === repeatPassword.value ||
+              "Passwords dont't match"
+          }
+        ]
+      }
     });
 
-    return {
-      formData
-    };
-  },
-  methods: {
-    onSubmit() {
-      alert(JSON.stringify(this.formData, null, 2));
-    },
-    async nameRule(name: string) {
-      return new Promise(resolve => {
-        setTimeout(() => {
-          if (['foo'].includes(name)) {
-            resolve();
-          } else {
-            resolve('This name is already taken');
-          }
-        }, 1000);
+    const handleSubmit = () => {
+      onSubmit(formData => {
+        console.log(formData);
       });
-    }
+    };
+
+    return {
+      form,
+      handleSubmit
+    };
   }
 });
 </script>
 
 <style scoped>
 .form {
-  width: 50%;
+  width: 75%;
   display: grid;
   column-gap: 25px;
-  row-gap: 8px;
+  row-gap: 10px;
   grid-template-columns: 1fr 1fr;
   grid-template-areas:
     'name email'

@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "ES2020",
+    "declaration": true,
+    "outDir": "dist"
+  },
+  "extends": "./tsconfig.json",
+  "include": ["vue3-form-validation"],
+  "exclude": ["**/__tests__"]
+}

@@ -1,33 +1,24 @@
 <template>
   <div :class="attrsClassName">
-    <label class="flex items-center" :for="uid">
+    <label class="flex items-center">
       <span>{{ label }}</span>
     </label>
     <input
       class="w-full border border-gray-300 outline-none px-2 py-1 mt-2 input"
-      :class="{ 'input-error': errors.length }"
-      :id="uid"
-      :type="type"
+      :class="{ error: errors.length > 0 }"
       v-bind="attrsRest"
       @input="e => $emit('update:modelValue', e.target.value)"
-      @blur="onBlur"
     />
-    <div class="mt-1">
-      <div v-for="(error, i) in errors" :key="i" class="text-sm text-red-500">
+    <div class="mt-2" v-if="errors.length">
+      <div class="text-sm text-red-500" v-for="(error, index) in errors">
         {{ error }}
       </div>
     </div>
-    <div v-if="validating">VALIDATING</div>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  useBaseForm,
-  Rule,
-  isSimpleRule
-} from '../../../vue3-form-validation/index';
-import { defineComponent, PropType, toRef } from 'vue';
+import { defineComponent, PropType } from 'vue';
 
 export default defineComponent({
   inheritAttrs: false,
@@ -35,40 +26,21 @@ export default defineComponent({
     label: {
       type: String
     },
-    type: {
-      type: String,
-      default: 'text'
-    },
     modelValue: {
       type: [String, Number],
       default: ''
     },
-    rules: {
-      type: Array as PropType<Rule[]>,
-      default: () => [],
-      validator: (rules: Rule[]) =>
-        rules.every(
-          rule =>
-            isSimpleRule(rule) ||
-            (typeof rule.key === 'string' && isSimpleRule(rule.rule))
-        )
+    errors: {
+      type: Array as PropType<string[]>,
+      default: () => []
     }
   },
   setup(props, { attrs }) {
-    const { uid, onBlur, errors, validating } = useBaseForm(
-      toRef(props, 'modelValue'),
-      toRef(props, 'rules')
-    );
-
     const { class: attrsClassName, ...attrsRest } = attrs;
 
     return {
-      uid,
-      errors,
-      onBlur,
       attrsClassName,
-      attrsRest,
-      validating
+      attrsRest
     };
   }
 });
@@ -80,11 +52,11 @@ export default defineComponent({
   box-shadow: 0 0 3px theme('colors.green.500');
 }
 
-.input-error {
+.error {
   @apply border-red-500;
 }
 
-.input-error:focus {
+.error:focus {
   @apply border-red-500;
   box-shadow: 0 0 3px theme('colors.red.500');
 }

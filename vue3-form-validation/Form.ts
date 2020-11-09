@@ -1,4 +1,4 @@
-import { SimpleRule, Rule, isSimpleRule } from './composable/useForm';
+import { SimpleRule, Rule, isSimpleRule } from './composable/useValidation';
 import FormField from './FormField';
 import { tryGet, trySet } from './utils';
 
