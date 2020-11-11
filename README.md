@@ -1,10 +1,9 @@
 # (WIP) Form validation for Vue 3
-Easy to use Form Validation for Vue 3
+Easy to use opinionated Form validation for Vue 3
 
 * :milky_way: **Written in TypeScript**
 * :fallen_leaf: **Light weight**
-
-Note this is still WIP! But a working prototype is currently available and can be used.
+* :ocean: **Dynamic Form support**
 
 ```bash
 npm i vue3-form-validation
@@ -14,56 +13,97 @@ Validation is async and is utilising `Promise.allSettled`, [which](https://devel
 Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-busd9).
 
 ## API
-Currently this package exports two functions `provideBaseForm` and `useBaseForm`, plus some type definitions when using TypeScript (see `vue3-form-validation/composable/useForm.ts` for all exports).
+This package exports one function `useValidation`, plus some type definitions for when using TypeScript.
 
-Both functions are meant to be used inside of base form components. They make use of `provide` and `inject` to communicate data, which means that `provideBaseForm` has to be called in a component that is higher up in the tree than `useBaseForm`.
-
-`SomeForm.vue`
-``` html
-<template>
-  <BaseForm>        <-- provideBaseForm()
-    <BaseInput />   <-- useBaseForm()
-    <BaseSelect />  <-- useBaseForm()
-  </BaseForm>
-</template>
+### useValidation
+```ts
+const { form, add, remove, onSubmit } = useValidation<T>(formData)
 ```
 
-### provideBaseForm
-``` ts
-const { onSubmit } = provideBaseForm();
-```
-
-* `provideBaseForm` exposes the following methods:
-
-Signature | Returns | Description
-:-:|:-:|---
-`onSubmit()` | `Promise<boolean>` | Call this when submitting the form. It validates all fields and returns a boolean value that indicates whether or not there are errors.
-
-### useBaseForm
-``` ts
-const { uid, onBlur, errors, validating } = useBaseForm(modelValue, rules);
-```
-
-* `useBaseForm` takes the following parameters:
+* `useValidation` takes the following parameters:
 
 Parameters | Type | Required | Description
 ---|:-:|:-:|---
-modelValue | `Ref<unknown>` | `true` | A `ref` that holds the current form field value.
-rules | `Ref<(function \| object)[]>` | `true` | A `ref` with an array of rules.
+formData | `object` | `true` | The structure of your form data
 
-* `useBaseForm` exposes the following state:
+The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that for every value you can provide rules to display validation errors.
+
+Let's look at an example how the structure of some `formData` object, can be converted to an object with the addition of rules:
+```ts
+const formData = {
+  name: '',
+  email: '',
+  password: ''
+}
+
+const formDataWithRules = {
+  name: {
+    value: '',
+    rules: [name => !name && 'Name is required']
+  },
+  email: {
+    value: '',
+    rules: [email => !email && 'E-Mail is required']
+  },
+  password: {
+    value: '',
+    rules: [pw => pw.length > 7 || 'Password has to be longer than 7 characters']
+  }
+}
+```
+
+The `formData` object can either be flat or nested by using arrays. The type definition for some form field looks like the following:
+
+```ts
+type Field<T> = {
+  value: Ref<T> | T;
+  rules?: Rule<T>[];
+};
+```
+
+To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic paramter. If at some point the provided type does not fit the required structure, it will let you know by converting the problematic part to be of type `never`. The type for the example above is pretty straightforward:
+
+```ts
+interface FormData {
+  name: Field<string>;
+  email: Field<string>;
+  password: Field<string>;
+}
+```
+
+* `useValidation` exposes the following state:
 
 State | Type | Description
 ---|:-:|---
-uid | `number` | Unique id of the form field.
-errors | `Ref<string[]>` | Validation errors.
-validating | `Ref<boolean>` | `True` while atleast one rule is validating.
+form | `object` | Transformed `formData` object, with added metadata for every form field.
 
-* `useBaseForm` exposes the following methods:
+`Form` is a reactive object with identical structure of the `formData` input, but with added metadata to every form field. Typing:
 
-Signature | Returns | Description
-:-:|:-:|---
-`onBlur()` | `void` | Call this when the form field `blur` event fires.
+```ts
+type TransformedField<T> = {
+  uid: number;
+  value: T;
+  errors: string[];
+  validating: boolean;
+  onBlur(): void;
+};
+
+// The type of form in the example above would be
+const form: {
+  name: TransformedField<string>;
+  email: TransformedField<string>;
+  password: TransformedField<string>;
+}
+```
+Key | Value | Description
+---|:-:|---
+uid | `number` | Unique identifier of the form field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
+value | `T` | The value of the form field which is meant to be used together with `v-model`.
+errors | `string[]` | Array of validation error messages.
+validating | `boolean` | `True` while atleast one rule is validating.
+onBlur | `function` | Function that will mark this form field as touched. After a form field has been touched it will validate all rules after every input. Before it will not do any validation.
+
+To be continued ...
 
 ## Writing Rules
 Rules are `async` functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
@@ -75,7 +115,7 @@ type KeyedRule = { key: string; rule: SimpleRule };
 type Rule = SimpleRule | KeyedRule;
 ```
 
-For now rules are meant to be passed as `props` to your base form components, where you then use them as a parameter for `useBaseForm`. KeyedRules that share the same key will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat password` fields in a Login Form.
+Keyed rules that share the same key will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat password` fields in a Login Form.
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 
 `vue3-form-validation/Form.ts`
