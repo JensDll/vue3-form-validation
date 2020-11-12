@@ -104,21 +104,21 @@ uid | `number` | Unique identifier of the Form Field. For dynamic Forms this can
 value | `T` | The `modelValue` of the Form Field which is meant to be used together with `v-model`.
 errors | `string[]` | Array of validation error messages.
 validating | `boolean` | `True` while atleast one rule is validating.
-onBlur | `function` | Function that will mark this Form Field as touched. After a Form Field has been touched it will validate all rules after every input. Before it will not do any validation.
+onBlur | `function` | Function that will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
 * `useValidation` exposes the following methods:
 
 Signature | Parameters |  Description
 --- | :-: | ---
-`onSubmit(success, error?)` | | When this function is called it will validate all registered fields. It takes two parameters, a `success` and an optional `error` callback.
-|| `success` | Success callback which will be executed if there are no validation errors. Receives the `formData` as it's first argument.
-|| `error?` | Error callback which will be executed if there are validation errors. Receives no arguments.
+`onSubmit(success, error?)` | | Call this when submitting the Form. It takes two parameters, a `success` callback and an optional `error` callback.
+|| `success` | Callback which will be executed if there are no validation errors. Receives the `formData` as it's first argument.
+|| `error?` | Callback which will be executed if there are validation errors. Receives no arguments.
 `add(pathToArray, value)` || Utility function for writing dynamic Forms. It takes two parameters, a `pathToArray` of type `(string \| number)[]` and a `value`.
 || `pathToArray` | An array of `string` and `numbers` representing the path to an array in the `formData`. 
 || `value` | The `value` that will be pushed to the array at the given path.
 `remove(pathToArray, index)` || Identical to `add` but instead of providing a `value` you provide an `index` that will be removed.
 
-At the time there is no good IntelliSense support for the `add` and `remove` functions. When TypeScript 4.1 will be released and Vue supports it, this can be changed however. Also there are currently no online usage examples, you can however clone this repository to your local machine and run `npm run dev`, which will start a development server with an example site.
+At the time there is no good IntelliSense support for the `add` and `remove` methods. When TypeScript 4.1 will be released and Vue supports it, this can be changed however. Also if you want to take a look at some more examples, you can clone this repository to your local machine and run `npm run dev`, which will start a development server with an example site.
 ## Writing Rules
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
 They can also alternatively return a `Promise` when you have a rule that requires asynchronous code.
