@@ -17,6 +17,12 @@
     "dist/**/*.d.ts"
   ],
   "license": "MIT",
+  "keywords": [
+    "vue",
+    "vuejs",
+    "form",
+    "validation"
+  ],
   "scripts": {
     "build": "npx tsc -p tsconfig.main.json",
     "lint": "npx prettier --write .",
