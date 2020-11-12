@@ -54,20 +54,25 @@ export const isSimpleRule = (rule: Rule): rule is SimpleRule =>
   typeof rule === 'function';
 
 export const isKeyedRule = (rule: Rule): rule is KeyedRule =>
-  'key' in rule &&
-  'rule' in rule &&
-  typeof rule.key === 'string' &&
-  isSimpleRule(rule.rule);
+  typeof rule === 'object'
+    ? 'key' in rule &&
+      'rule' in rule &&
+      typeof rule.key === 'string' &&
+      isSimpleRule(rule.rule)
+    : false;
 
-export const isField = <T>(field: any): field is Field<T> => 'value' in field;
+export const isField = <T>(field: any): field is Field<T> =>
+  typeof field === 'object' ? 'value' in field : false;
 
 export const isTransformedField = <T>(
   field: any
 ): field is TransformedField<T> =>
-  'uid' in field &&
-  'value' in field &&
-  'errors' in field &&
-  'validating' in field;
+  typeof field === 'object'
+    ? 'uid' in field &&
+      'value' in field &&
+      'errors' in field &&
+      'validating' in field
+    : false;
 
 /**
  *
@@ -126,10 +131,10 @@ export function cleanupForm(form: Form, formData: any) {
 }
 
 export function getResultFormData(formData: any, resultFormData: any) {
-  for (const [key, value] of Object.entries(formData)) {
+  Object.entries(formData).forEach(([key, value]) => {
     if (isTransformedField<any>(value)) {
       resultFormData[key] = value.value;
-      continue;
+      return;
     }
 
     if (Array.isArray(value) && value.length) {
@@ -141,7 +146,7 @@ export function getResultFormData(formData: any, resultFormData: any) {
     }
 
     getResultFormData(value, resultFormData[key]);
-  }
+  });
 }
 
 export function useValidation<T>(formData: T & ValidateFormData<T>) {

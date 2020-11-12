@@ -120,10 +120,6 @@ export default class Form {
     })(uid);
 
     this.simpleValidators.delete(uid);
-
-    console.log(this.simpleValidators);
-
-    console.log(this.keyedValidators);
   }
 
   private getValidatorsFor(keys: string[]) {

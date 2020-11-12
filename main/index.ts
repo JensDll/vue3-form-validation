@@ -1,9 +1,7 @@
 export {
-  // Field,
-  // SimpleRule,
-  // KeyedRule,
-  // Rule,
-  isSimpleRule,
-  isKeyedRule,
+  Field,
+  SimpleRule,
+  KeyedRule,
+  Rule,
   useValidation
 } from './composable/useValidation';
