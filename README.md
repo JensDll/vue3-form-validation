@@ -129,7 +129,7 @@ type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
 
-Keyed rules that share the same key will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat password` fields in a Login Form.
+Keyed rules that share the same `key` will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat password` fields in a Login Form.
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 
 `main/Form.ts`
