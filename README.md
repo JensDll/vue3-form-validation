@@ -52,7 +52,7 @@ const formDataWithRules = {
 }
 ```
 
-The `formData` object can either be flat or nested by using arrays. The type definition for some Form Field looks like the following:
+The `formData` object can be deeply nested and it can contain arrays. At the leaf level the object should contain Form Fields whose type definition looks like the following:
 
 ```ts
 type Field<T> = {
@@ -61,11 +61,11 @@ type Field<T> = {
 };
 ```
 
-To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic paramter `T`. If at some point the provided type does not fit the required structure, it will let you know by converting the problematic part to be of type `never`. Please note that when writing in a normal `.js` file, the type will always be `never` even though the structure of the input might be correct. This is definitely not ideal and can probably be changed, but nice type inference can be a bit tricky sometimes.
+To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic paramter `T`. If at some point the provided type does not fit the required structure, it will let you know by converting the problematic part to be of type `never`. Please note that when writing in a normal `.js` file, the type will often result in `never` even though the structure of the input might be correct. This is definitely not ideal and can probably be changed, but type inference can be a bit tricky sometimes.
 The type for the example above is pretty straightforward:
 
 ```ts
-interface FormData {
+type FormData = {
   name: Field<string>;
   email: Field<string>;
   password: Field<string>;
