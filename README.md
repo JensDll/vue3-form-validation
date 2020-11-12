@@ -52,7 +52,7 @@ const formDataWithRules = {
 }
 ```
 
-The `formData` object can either be flat or nested by using arrays. The type definition for some Form field looks like the following:
+The `formData` object can either be flat or nested by using arrays. The type definition for some Form Field looks like the following:
 
 ```ts
 type Field<T> = {
@@ -61,7 +61,7 @@ type Field<T> = {
 };
 ```
 
-To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic paramter. If at some point the provided type does not fit the required structure, it will let you know by converting the problematic part to be of type `never`. The type for the example above is pretty straightforward:
+To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic paramter `T`. If at some point the provided type does not fit the required structure, it will let you know by converting the problematic part to be of type `never`. The type for the example above is pretty straightforward:
 
 ```ts
 interface FormData {
@@ -75,9 +75,9 @@ interface FormData {
 
 State | Type | Description
 ---|:-:|---
-form | `object` | Transformed `formData` object, with added metadata for every Form field.
+form | `object` | Transformed `formData` object, with added metadata for every Form Field.
 
-`Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form field.
+`Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
 
 **Typing:**
 
@@ -99,19 +99,19 @@ const form: {
 ```
 Key | Value | Description
 ---|:-:|---
-uid | `number` | Unique identifier of the Form field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
-value | `T` | The value of the Form field which is meant to be used together with `v-model`.
+uid | `number` | Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
+value | `T` | The `modelValue` of the Form Field which is meant to be used together with `v-model`.
 errors | `string[]` | Array of validation error messages.
 validating | `boolean` | `True` while atleast one rule is validating.
-onBlur | `function` | Function that will mark this Form field as touched. After a Form field has been touched it will validate all rules after every input. Before it will not do any validation.
+onBlur | `function` | Function that will mark this Form Field as touched. After a Form Field has been touched it will validate all rules after every input. Before it will not do any validation.
 
 * `useValidation` exposes the following methods:
 
 Signature | Parameters |  Description
 --- | :-: | ---
-`onSubmit(success, failure?)` | | When this function is called it will validate all registered fields. It takes two parameters, a `success` and an optional `failure` callback.
+`onSubmit(success, error?)` | | When this function is called it will validate all registered fields. It takes two parameters, a `success` and an optional `error` callback.
 || `success` | Success callback which will be executed if there are no validation errors. Receives the `formData` as it's first argument.
-|| `failure?` | Failure callback which will be executed if there are validation errors. Receives no arguments.
+|| `error?` | Error callback which will be executed if there are validation errors. Receives no arguments.
 `add(pathToArray, value)` || Utility function for writing dynamic Forms. It takes two parameters, a `pathToArray` of type `(string \| number)[]` and a `value`.
 || `pathToArray` | An array of `string` and `numbers` representing the path to an array in the `formData`. 
 || `value` | The `value` that will be pushed to the array at the given path.
@@ -120,7 +120,7 @@ Signature | Parameters |  Description
 At the time there is no good IntelliSense support for the `add` and `remove` functions. When TypeScript 4.1 will be released and Vue supports it, this can be changed however. Also there are currently no online usage examples, you can however clone this repository to your local machine and run `npm run dev`, which will start a development server with an example site.
 ## Writing Rules
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
-They can also alternatively return a promise when you have a rule that requires asynchronous code.
+They can also alternatively return a `Promise` when you have a rule that requires asynchronous code.
 
 **Typing:**
 ```ts
