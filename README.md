@@ -110,7 +110,7 @@ onBlur | `function` | Function that will mark this Form Field as touched. When a
 
 Signature | Parameters |  Description
 --- | :-: | ---
-`onSubmit(success, error?)` | | Call this when submitting the Form. It takes two parameters, a `success` callback and an optional `error` callback.
+`onSubmit(success, error?)` | | Function that will validate all Form Fields. It takes two parameters, a `success` callback and an optional `error` callback.
 || `success` | Callback which will be executed if there are no validation errors. Receives the `formData` as it's first argument.
 || `error?` | Callback which will be executed if there are validation errors. Receives no arguments.
 `add(pathToArray, value)` || Utility function for writing dynamic Forms. It takes two parameters, a `pathToArray` of type `(string \| number)[]` and a `value`.
