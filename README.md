@@ -1,5 +1,5 @@
 # Form validation for Vue 3
-Easy to use opinionated Form validation for Vue 3
+Easy to use opinionated Form validation for Vue 3.
 
 * :milky_way: **Written in TypeScript**
 * :ocean: **Dynamic Form support**
@@ -23,7 +23,7 @@ const { form, add, remove, onSubmit } = useValidation<T>(formData)
 
 Parameters | Type | Required | Description
 ---|:-:|:-:|---
-formData | `object` | `true` | The structure of your Form data
+formData | `object` | `true` | The structure of your Form data.
 
 The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that for every value you can provide rules to display validation errors.
 
