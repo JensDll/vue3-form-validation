@@ -18,9 +18,9 @@
       <router-link
         class="block relative py-3 pl-16"
         exact-active-class="nav-link-active"
-        to="/search-select"
+        to="/nested-form"
       >
-        <span @click="demoMenu.active = false">Search select</span>
+        <span @click="demoMenu.active = false">Nested form</span>
       </router-link>
       <div
         class="py-3 pl-16 font-semibold cursor-pointer"

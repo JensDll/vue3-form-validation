@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import LoginForm from '../views/LoginForm.vue';
 import DynamicForm from '../views/DynamicForm.vue';
 import ButtonDemo from '../views/ButtonDemo.vue';
-import SearchSelect from '../views/SearchSelect.vue';
+import NestedForm from '../views/NestedForm.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -18,8 +18,8 @@ const routes: RouteRecordRaw[] = [
     component: ButtonDemo
   },
   {
-    path: '/search-select',
-    component: SearchSelect
+    path: '/nested-form',
+    component: NestedForm
   }
 ];
 

@@ -26,6 +26,8 @@ type ValidateFormData<T> = T extends unknown
         ? Field<TValue>
         : T[K] extends Array<infer TArray>
         ? ValidateFormData<TArray>[]
+        : T[K] extends Record<string, unknown>
+        ? ValidateFormData<T[K]>
         : never;
     }
   : never;
@@ -36,6 +38,8 @@ type TransformedFormData<T> = T extends unknown
         ? TransformedField<TValue>
         : T[K] extends Array<infer TArray>
         ? TransformedFormData<TArray>[]
+        : T[K] extends Record<string, unknown>
+        ? TransformedFormData<T[K]>
         : never;
     }
   : never;
@@ -46,6 +50,8 @@ type FormData<T> = T extends unknown
         ? TValue
         : T[K] extends Array<infer TArray>
         ? FormData<TArray>[]
+        : T[K] extends Record<string, unknown>
+        ? FormData<T[K]>
         : never;
     }
   : never;
@@ -132,17 +138,15 @@ export function cleanupForm(form: Form, formData: any) {
 
 export function getResultFormData(formData: any, resultFormData: any) {
   Object.entries(formData).forEach(([key, value]) => {
-    if (isTransformedField<any>(value)) {
+    if (isTransformedField(value)) {
       resultFormData[key] = value.value;
       return;
     }
 
-    if (Array.isArray(value) && value.length) {
-      resultFormData[key] = [];
-    }
+    resultFormData[key] = {};
 
-    if (!isNaN(key as any)) {
-      resultFormData[key] = {};
+    if (Array.isArray(value)) {
+      resultFormData[key] = [];
     }
 
     getResultFormData(value, resultFormData[key]);

@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { useValidation } from '../useValidation';
 import Form from '../../Form';
 import {
   cleanupForm,
@@ -237,4 +238,302 @@ describe('getResultFormData', () => {
       });
     }
   );
+});
+
+describe('useValidation', () => {
+  describe('form', () => {
+    it('should add metadata to every form field', () => {
+      const { form: form1 } = useValidation({
+        a: {
+          b: {
+            c: {
+              d: {
+                e: {
+                  value: {
+                    foo: '',
+                    bar: 10
+                  }
+                }
+              }
+            }
+          },
+          f: {
+            value: ''
+          }
+        }
+      });
+
+      expect(form1).toEqual({
+        a: {
+          b: {
+            c: {
+              d: {
+                e: {
+                  uid: expect.any(Number),
+                  value: {
+                    foo: '',
+                    bar: 10
+                  },
+                  errors: [],
+                  validating: false,
+                  onBlur: expect.any(Function)
+                }
+              }
+            }
+          },
+          f: {
+            uid: expect.any(Number),
+            value: '',
+            errors: [],
+            validating: false,
+            onBlur: expect.any(Function)
+          }
+        }
+      });
+
+      const { form: form2 } = useValidation({
+        a: {
+          b: {
+            value: 1
+          },
+          c: {
+            value: 2
+          }
+        },
+        ds: [
+          {
+            e: {
+              f: {
+                g: {
+                  value: 'foo'
+                },
+                e: {
+                  value: 'bar'
+                }
+              }
+            }
+          },
+          {
+            e: {
+              f: {
+                g: {
+                  value: 'abc'
+                },
+                e: {
+                  value: 'def'
+                }
+              }
+            }
+          }
+        ]
+      });
+
+      expect(form2).toEqual({
+        a: {
+          b: {
+            uid: expect.any(Number),
+            value: 1,
+            errors: [],
+            validating: false,
+            onBlur: expect.any(Function)
+          },
+          c: {
+            uid: expect.any(Number),
+            value: 2,
+            errors: [],
+            validating: false,
+            onBlur: expect.any(Function)
+          }
+        },
+        ds: [
+          {
+            e: {
+              f: {
+                g: {
+                  uid: expect.any(Number),
+                  value: 'foo',
+                  errors: [],
+                  validating: false,
+                  onBlur: expect.any(Function)
+                },
+                e: {
+                  uid: expect.any(Number),
+                  value: 'bar',
+                  errors: [],
+                  validating: false,
+                  onBlur: expect.any(Function)
+                }
+              }
+            }
+          },
+          {
+            e: {
+              f: {
+                g: {
+                  uid: expect.any(Number),
+                  value: 'abc',
+                  errors: [],
+                  validating: false,
+                  onBlur: expect.any(Function)
+                },
+                e: {
+                  uid: expect.any(Number),
+                  value: 'def',
+                  errors: [],
+                  validating: false,
+                  onBlur: expect.any(Function)
+                }
+              }
+            }
+          }
+        ]
+      });
+    });
+  });
+
+  describe('onSubmit', () => {
+    it('should discard everything except the value properties', () => {
+      const { onSubmit: onSubmit1 } = useValidation({
+        a: {
+          b: {
+            c: {
+              d: {
+                e: {
+                  value: {
+                    foo: '',
+                    bar: 10
+                  }
+                }
+              }
+            }
+          },
+          f: {
+            value: ''
+          }
+        }
+      });
+
+      onSubmit1(formData => {
+        expect(formData).toEqual({
+          a: {
+            b: {
+              c: {
+                d: {
+                  e: {
+                    foo: '',
+                    bar: 10
+                  }
+                }
+              }
+            },
+            f: ''
+          }
+        });
+      });
+
+      const { onSubmit: onSubmit2 } = useValidation({
+        a: {
+          b: {
+            value: 1
+          },
+          c: {
+            value: 2
+          }
+        },
+        ds: [
+          {
+            e: {
+              f: {
+                g: {
+                  value: 'foo'
+                },
+                e: {
+                  value: 'bar'
+                }
+              }
+            }
+          },
+          {
+            e: {
+              f: {
+                g: {
+                  value: 'abc'
+                },
+                e: {
+                  value: 'def'
+                }
+              }
+            }
+          }
+        ]
+      });
+
+      onSubmit2(formData => {
+        expect(formData).toEqual({
+          a: {
+            b: 1,
+            c: 2
+          },
+          ds: [
+            {
+              e: {
+                f: {
+                  g: 'foo',
+                  e: 'bar'
+                }
+              }
+            },
+            {
+              e: {
+                f: {
+                  g: 'abc',
+                  e: 'def'
+                }
+              }
+            }
+          ]
+        });
+      });
+
+      const { onSubmit: onSubmit3 } = useValidation({
+        as: [],
+        bs: [
+          {
+            c: {
+              value: ''
+            },
+            ds: []
+          },
+          {
+            c: {
+              value: ''
+            },
+            ds: [
+              {
+                e: {
+                  value: 1
+                }
+              }
+            ]
+          }
+        ]
+      });
+
+      onSubmit3(formData => {
+        expect(formData).toEqual({
+          as: [],
+          bs: [
+            {
+              c: '',
+              ds: []
+            },
+            {
+              c: '',
+              ds: [{ e: 1 }]
+            }
+          ]
+        });
+      });
+    });
+  });
 });

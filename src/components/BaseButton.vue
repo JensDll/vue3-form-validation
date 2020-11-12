@@ -1,8 +1,7 @@
 <template>
   <button
-    :class="['button', type, { disabled }]"
+    :class="['button', type, { disabled: $attrs.disabled }]"
     :type="htmlType"
-    :disabled="disabled"
   >
     <slot></slot>
   </button>
@@ -24,9 +23,6 @@ export default defineComponent({
       default: 'default',
       validator: (type: string) =>
         ['default', 'primary', 'danger'].includes(type)
-    },
-    disabled: {
-      type: Boolean
     }
   }
 });
