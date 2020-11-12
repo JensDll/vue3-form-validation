@@ -75,7 +75,7 @@ interface FormData {
 
 State | Type | Description
 ---|:-:|---
-form | `object` | Transformed `formData` object, with added metadata for every Form Field.
+form | `object` | Transformed `formData` object with added metadata for every Form Field.
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
 
