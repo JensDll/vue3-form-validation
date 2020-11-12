@@ -135,6 +135,8 @@ Rules will always be called with the latest `modelValue`, to determine if a call
 
 `main/Form.ts`
 ```ts
+// Somewhere at the bottom of the file
+
 let error: unknown;
 // ...
 error = await rule(formField.modelValue);
