@@ -1,4 +1,4 @@
-# (WIP) Form validation for Vue 3
+# Form validation for Vue 3
 Easy to use opinionated Form validation for Vue 3
 
 * :milky_way: **Written in TypeScript**
@@ -120,6 +120,7 @@ At the time there is no good IntelliSense support for the `add` and `remove` fun
 ## Writing Rules
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
 They can also alternatively return a promise when you have a rule that requires asynchronous code.
+
 **Typing:**
 ```ts
 type SimpleRule<T = any> = (value: T) => Promise<unknown> | unknown;
