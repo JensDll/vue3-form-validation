@@ -31,7 +31,14 @@
       v-model="form.repeatPassword.value"
       @blur="form.repeatPassword.onBlur()"
     />
-    <BaseButton class="mt-8" type="primary" htmlType="submit">Login</BaseButton>
+    <BaseButton
+      class="mt-8"
+      type="primary"
+      htmlType="submit"
+      :disabled="submitting"
+    >
+      Login
+    </BaseButton>
     <BaseButton class="mt-8">Cancel</BaseButton>
   </form>
   <pre>{{ form }}</pre>
@@ -41,10 +48,7 @@
 import BaseInput from '../components/form/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
 import { defineComponent, markRaw, reactive, ref, watch } from 'vue';
-import {
-  useValidation,
-  Field
-} from '../../vue3-form-validation/composable/useValidation';
+import { useValidation, Field } from '../../main/composable/useValidation';
 
 interface FormData {
   name: Field<string>;
@@ -58,10 +62,11 @@ export default defineComponent({
   setup() {
     const password = ref('');
     const repeatPassword = ref('');
+    const submitting = ref(false);
 
     const { form, onSubmit } = useValidation<FormData>({
       name: {
-        value: ref(''),
+        value: '',
         rules: [
           name => !name && 'Name is required',
           name => name.length > 2 || 'Name has to be longer than 2 characters',
@@ -78,7 +83,7 @@ export default defineComponent({
         ]
       },
       email: {
-        value: ref(''),
+        value: '',
         rules: [email => !email && 'E-Mail is required']
       },
       password: {
@@ -108,14 +113,22 @@ export default defineComponent({
     });
 
     const handleSubmit = () => {
-      onSubmit(formData => {
-        console.log(formData);
-      });
+      submitting.value = true;
+      onSubmit(
+        formData => {
+          console.log(formData);
+          submitting.value = false;
+        },
+        () => {
+          submitting.value = false;
+        }
+      );
     };
 
     return {
       form,
-      handleSubmit
+      handleSubmit,
+      submitting
     };
   }
 });
@@ -123,7 +136,7 @@ export default defineComponent({
 
 <style scoped>
 .form {
-  width: 75%;
+  max-width: 1000px;
   display: grid;
   column-gap: 25px;
   row-gap: 10px;

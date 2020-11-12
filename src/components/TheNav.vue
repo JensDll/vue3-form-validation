@@ -1,43 +1,45 @@
 <template>
-  <nav class="nav border-r">
-    <router-link
-      class="block relative py-3 pl-16"
-      exact-active-class="nav-link-active"
-      to="/"
-    >
-      <span @click="demoMenu.active = false">Login Form</span>
-    </router-link>
-    <router-link
-      class="block relative py-3 pl-16"
-      exact-active-class="nav-link-active"
-      to="/dynamic-form"
-    >
-      <span @click="demoMenu.active = false">Dynamic Form</span>
-    </router-link>
-    <router-link
-      class="block relative py-3 pl-16"
-      exact-active-class="nav-link-active"
-      to="/search-select"
-    >
-      <span @click="demoMenu.active = false">Search select</span>
-    </router-link>
-    <div
-      class="py-3 pl-16 font-semibold cursor-pointer"
-      :class="{ 'text-green-500': demoMenu.active }"
-      @click="demoMenu.open = !demoMenu.open"
-    >
-      Demos
-    </div>
-    <div v-if="demoMenu.open">
+  <div class="cont border-r">
+    <nav class="nav">
       <router-link
-        class="block relative py-3 pl-20"
+        class="block relative py-3 pl-16"
         exact-active-class="nav-link-active"
-        to="/button-demo"
+        to="/"
       >
-        <span @click="demoMenu.active = true">Button demo</span>
+        <span @click="demoMenu.active = false">Login Form</span>
       </router-link>
-    </div>
-  </nav>
+      <router-link
+        class="block relative py-3 pl-16"
+        exact-active-class="nav-link-active"
+        to="/dynamic-form"
+      >
+        <span @click="demoMenu.active = false">Dynamic Form</span>
+      </router-link>
+      <router-link
+        class="block relative py-3 pl-16"
+        exact-active-class="nav-link-active"
+        to="/search-select"
+      >
+        <span @click="demoMenu.active = false">Search select</span>
+      </router-link>
+      <div
+        class="py-3 pl-16 font-semibold cursor-pointer"
+        :class="{ 'text-green-500': demoMenu.active }"
+        @click="demoMenu.open = !demoMenu.open"
+      >
+        Demos
+      </div>
+      <div v-if="demoMenu.open">
+        <router-link
+          class="block relative py-3 pl-20"
+          exact-active-class="nav-link-active"
+          to="/button-demo"
+        >
+          <span @click="demoMenu.active = true">Button demo</span>
+        </router-link>
+      </div>
+    </nav>
+  </div>
 </template>
 
 <script lang="ts">
@@ -56,9 +58,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.nav {
+.cont {
   grid-area: nav;
   width: 300px;
+}
+
+.nav {
+  position: sticky;
+  top: 30px;
 }
 
 .nav-link-active {

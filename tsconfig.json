@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["ES2020.Promise"],
+    "lib": ["ES2020.Promise", "DOM"],
     "downlevelIteration": true,
     "strict": true,
     "moduleResolution": "node",

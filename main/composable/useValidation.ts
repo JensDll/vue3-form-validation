@@ -3,9 +3,7 @@ import useUid from './useUid';
 import Form from '../Form';
 import { path } from '../utils';
 
-export type SimpleRule<T = any> = (
-  value: T
-) => Promise<string | unknown> | string | unknown;
+export type SimpleRule<T = any> = (value: T) => Promise<unknown> | unknown;
 export type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 export type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 
@@ -19,11 +17,12 @@ export type TransformedField<T> = {
   value: T;
   errors: string[];
   validating: boolean;
+  onBlur(): void;
 };
 
 type ValidateFormData<T> = T extends unknown
   ? {
-      [K in keyof T]: T[K] extends { value: Ref<infer TValue> | infer TValue }
+      [K in keyof T]: T[K] extends Field<infer TValue>
         ? Field<TValue>
         : T[K] extends Array<infer TArray>
         ? ValidateFormData<TArray>[]
@@ -31,19 +30,19 @@ type ValidateFormData<T> = T extends unknown
     }
   : never;
 
-type UseValidation<T> = T extends unknown
+type TransformedFormData<T> = T extends unknown
   ? {
-      [K in keyof T]: T[K] extends { value: Ref<infer TValue> }
+      [K in keyof T]: T[K] extends Field<infer TValue>
         ? TransformedField<TValue>
         : T[K] extends Array<infer TArray>
-        ? UseValidation<TArray>[]
+        ? TransformedFormData<TArray>[]
         : never;
     }
   : never;
 
 type FormData<T> = T extends unknown
   ? {
-      [K in keyof T]: T[K] extends { value: Ref<infer TValue> }
+      [K in keyof T]: T[K] extends Field<infer TValue>
         ? TValue
         : T[K] extends Array<infer TArray>
         ? FormData<TArray>[]
@@ -153,11 +152,16 @@ export function useValidation<T>(formData: T & ValidateFormData<T>) {
   const reactiveFormData = reactive(formData) as any;
 
   return {
-    form: reactiveFormData as UseValidation<T>,
+    form: reactiveFormData as TransformedFormData<T>,
 
-    onSubmit: (success: (formData: FormData<T>) => void) => {
+    onSubmit: (
+      success: (formData: FormData<T>) => void,
+      errror?: () => void
+    ) => {
       form.validateAll().then(hasError => {
-        if (!hasError) {
+        if (hasError) {
+          errror?.();
+        } else {
           const resultFormData = {} as any;
           getResultFormData(reactiveFormData, resultFormData);
           success(resultFormData);

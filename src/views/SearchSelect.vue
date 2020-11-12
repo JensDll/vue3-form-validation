@@ -1,36 +1,22 @@
 <template>
   <div>
-    <BaseInput label="Name" v-model="formData.name.value" />
+    <!-- <BaseInput label="Name" v-model="formData.name.value" /> -->
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, markRaw, reactive, ref, watch } from 'vue';
 import BaseInput from '../components/form/BaseInput.vue';
+import { useValidation, Field } from '../../main/composable/useValidation';
 
 export default defineComponent({
   components: { BaseInput },
   setup() {
-    const name = ref('');
-
-    watch(name, name => {
-      console.log(name);
+    const { form } = useValidation({
+      name: {
+        value: ''
+      }
     });
-
-    const formData = reactive({
-      name: markRaw({
-        value: name
-      })
-    });
-
-    formData.name = {
-      value: formData.name.value,
-      test: 10
-    };
-
-    return {
-      formData
-    };
   }
 });
 </script>

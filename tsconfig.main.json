@@ -6,6 +6,6 @@
     "outDir": "dist"
   },
   "extends": "./tsconfig.json",
-  "include": ["vue3-form-validation"],
+  "include": ["main"],
   "exclude": ["**/__tests__"]
 }
