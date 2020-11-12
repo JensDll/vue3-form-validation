@@ -35,6 +35,7 @@ const formData = {
   password: ''
 }
 
+// The above can be converted to the following
 const formDataWithRules = {
   name: {
     value: '',
