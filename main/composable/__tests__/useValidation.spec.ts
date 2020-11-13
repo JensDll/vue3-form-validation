@@ -103,63 +103,59 @@ describe('transformFormData', () => {
 
       transformFormData(form, formData);
 
-      // Top level foo
-      expect(formData).toHaveProperty(['foo', 'uid']);
-      expect(typeof formData.foo.uid).toBe('number');
-      expect(formData).toHaveProperty(['foo', 'value'], 1);
-      expect(formData).toHaveProperty(['foo', 'errors']);
-      expect(Array.isArray(formData.foo.errors)).toBe(true);
-      expect(formData).toHaveProperty(['foo', 'validating'], false);
-
-      // Top level bar
-      expect(formData).toHaveProperty(['bar', 'uid']);
-      expect(typeof formData.bar.uid).toBe('number');
-      expect(formData).toHaveProperty(['bar', 'value'], '2');
-      expect(formData).toHaveProperty(['bar', 'errors']);
-      expect(Array.isArray(formData.bar.errors)).toBe(true);
-      expect(formData).toHaveProperty(['bar', 'validating'], false);
-
-      // xs -> 0 -> foo
-      expect(formData).toHaveProperty(['xs', '0', 'foo', 'uid']);
-      expect(typeof formData.xs[0].foo.uid).toBe('number');
-      expect(formData).toHaveProperty(['xs', '0', 'foo', 'value'], {
-        a: 1,
-        b: 2,
-        c: {
-          d: 4
-        }
+      expect(formData).toEqual({
+        foo: {
+          uid: expect.any(Number),
+          value: 1,
+          errors: [],
+          validating: false,
+          onBlur: expect.any(Function)
+        },
+        bar: {
+          uid: expect.any(Number),
+          value: '2',
+          errors: [],
+          validating: false,
+          onBlur: expect.any(Function)
+        },
+        xs: [
+          {
+            foo: {
+              uid: expect.any(Number),
+              value: {
+                a: 1,
+                b: 2,
+                c: {
+                  d: 4
+                }
+              },
+              errors: [],
+              validating: false,
+              onBlur: expect.any(Function)
+            },
+            ys: [
+              {
+                foo: {
+                  uid: expect.any(Number),
+                  value: 100,
+                  errors: [],
+                  validating: false,
+                  onBlur: expect.any(Function)
+                }
+              },
+              {
+                foo: {
+                  uid: expect.any(Number),
+                  value: 200,
+                  errors: [],
+                  validating: false,
+                  onBlur: expect.any(Function)
+                }
+              }
+            ]
+          }
+        ]
       });
-      expect(formData).toHaveProperty(['xs', '0', 'foo', 'errors']);
-      expect(Array.isArray(formData.xs[0].foo.errors)).toBe(true);
-      expect(formData).toHaveProperty(['xs', '0', 'foo', 'validating'], false);
-
-      // xs -> 0 -> ys -> 0 -> foo
-      expect(formData).toHaveProperty(['xs', '0', 'ys', '0', 'foo', 'uid']);
-      expect(typeof formData.xs[0].ys[0].foo.uid).toBe('number');
-      expect(formData).toHaveProperty(
-        ['xs', '0', 'ys', '0', 'foo', 'value'],
-        100
-      );
-      expect(formData).toHaveProperty(['xs', '0', 'ys', '0', 'foo', 'errors']);
-      expect(Array.isArray(formData.xs[0].ys[0].foo.errors)).toBe(true);
-      expect(formData).toHaveProperty(
-        ['xs', '0', 'ys', '0', 'foo', 'validating'],
-        false
-      );
-
-      // xs -> 0 -> ys -> 1 -> foo
-      expect(formData).toHaveProperty(['xs', '0', 'ys', '1', 'foo', 'uid']);
-      expect(typeof formData.xs[0].ys[1].foo.uid).toBe('number');
-      expect(formData).toHaveProperty(
-        ['xs', '0', 'ys', '1', 'foo', 'value'],
-        200
-      );
-      expect(formData).toHaveProperty(['xs', '0', 'ys', '1', 'foo', 'errors']);
-      expect(Array.isArray(formData.xs[0].ys[0].foo.errors)).toBe(true);
-      expect(formData).toHaveProperty(
-        ['xs', '0', 'ys', '1', 'foo', 'validating'],
-        false
-      );
     }
   );
 });
@@ -500,18 +496,28 @@ describe('useValidation', () => {
         bs: [
           {
             c: {
-              value: ''
+              value: '',
+              rules: [(x: string) => x]
             },
             ds: []
           },
           {
             c: {
-              value: ''
+              value: '',
+              rules: [
+                (x: string) => x,
+                (x: string) => x,
+                (x: string) => x,
+                (x: string) => x
+              ]
             },
             ds: [
               {
                 e: {
-                  value: 1
+                  value: ref({
+                    foo: 'bar',
+                    bar: 'foo'
+                  })
                 }
               }
             ]
@@ -529,7 +535,7 @@ describe('useValidation', () => {
             },
             {
               c: '',
-              ds: [{ e: 1 }]
+              ds: [{ e: { foo: 'bar', bar: 'foo' } }]
             }
           ]
         });
