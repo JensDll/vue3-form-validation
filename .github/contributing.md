@@ -27,5 +27,5 @@ Starts a local development server with an example site. This is the perfect plac
 
 ## Project Structure
 * The code of the package lies in the folder `<root>/main`.
-* Unit tests are located alongside the code,  inside directories named `__tests__`. Test files all have the ending `.spec.ts`.
+* Unit tests are located alongside the code,  inside directories named `__tests__`. Test files have the ending `.spec.ts`.
 * Under `<root>/src` is where you will find the Vue code for the example site.
