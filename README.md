@@ -168,3 +168,9 @@ const isNameTaken = name =>
     }, 2000);
   })
 ```
+
+## Contributing
+[Contributing](https://github.com/JensD98/vue3-form-validation/blob/master/.github/contributing.md)
+
+## License
+[MIT](https://github.com/JensD98/vue3-form-validation/blob/master/LICENSE)
