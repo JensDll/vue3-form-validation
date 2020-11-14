@@ -91,7 +91,7 @@ type TransformedField<T> = {
   $onBlur(): void;
 };
 
-// The type of form in the example above would be
+// The type of form in the example above would therefore be
 const form: {
   name: TransformedField<string>;
   email: TransformedField<string>;
