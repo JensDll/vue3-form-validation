@@ -137,7 +137,9 @@ export function cleanupForm(form: Form, formData: any) {
       return;
     }
 
-    cleanupForm(form, value);
+    if (typeof value === 'object') {
+      cleanupForm(form, value);
+    }
   });
 }
 
@@ -154,7 +156,9 @@ export function getResultFormData(formData: any, resultFormData: any) {
       resultFormData[key] = [];
     }
 
-    getResultFormData(value, resultFormData[key]);
+    if (typeof value === 'object') {
+      getResultFormData(value, resultFormData[key]);
+    }
   });
 }
 
