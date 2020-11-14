@@ -1,4 +1,4 @@
-import { reactive, Ref, watch } from 'vue';
+import { isReactive, reactive, Ref, watch } from 'vue';
 import useUid from './useUid';
 import Form from '../Form';
 import { path } from '../utils';
@@ -8,16 +8,16 @@ export type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 export type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 
 export type Field<T> = {
-  value: Ref<T> | T;
-  rules?: Rule<T>[];
+  $value: Ref<T> | T;
+  $rules?: Rule<T>[];
 };
 
 export type TransformedField<T> = {
-  uid: number;
-  value: T;
-  errors: string[];
-  validating: boolean;
-  onBlur(): void;
+  $uid: number;
+  $value: T;
+  $errors: string[];
+  $validating: boolean;
+  $onBlur(): void;
 };
 
 type ValidateFormData<T> = T extends unknown
@@ -68,16 +68,16 @@ export const isKeyedRule = (rule: Rule): rule is KeyedRule =>
     : false;
 
 export const isField = <T>(field: any): field is Field<T> =>
-  typeof field === 'object' ? 'value' in field : false;
+  typeof field === 'object' ? '$value' in field : false;
 
 export const isTransformedField = <T>(
   field: any
 ): field is TransformedField<T> =>
   typeof field === 'object'
-    ? 'uid' in field &&
-      'value' in field &&
-      'errors' in field &&
-      'validating' in field
+    ? '$uid' in field &&
+      '$value' in field &&
+      '$errors' in field &&
+      '$validating' in field
     : false;
 
 /**
@@ -91,14 +91,14 @@ export function transformFormData(form: Form, formData: any) {
   Object.entries(formData).forEach(([key, value]) => {
     if (isField(value)) {
       const uid = useUid();
-      const formField = form.registerField(uid, value.rules ?? []);
+      const formField = form.registerField(uid, value.$rules ?? []);
 
       formData[key] = reactive({
-        uid,
-        value: value.value,
-        errors: formField.getErrors(),
-        validating: formField.validating(),
-        async onBlur() {
+        $uid: uid,
+        $value: value.$value,
+        $errors: formField.getErrors(),
+        $validating: formField.validating(),
+        async $onBlur() {
           if (!formField.touched) {
             formField.touched = true;
             await form.validate(uid);
@@ -106,17 +106,20 @@ export function transformFormData(form: Form, formData: any) {
         }
       });
 
-      formField.modelValue = formData[key].value;
+      formField.modelValue = formData[key].$value;
 
-      watch(
-        () => formData[key].value,
-        async (modelValue: unknown) => {
-          formField.modelValue = modelValue;
-          if (formField.touched) {
-            await form.validate(uid);
-          }
+      const watchHandler = async (modelValue: unknown) => {
+        formField.modelValue = modelValue;
+        if (formField.touched) {
+          await form.validate(uid);
         }
-      );
+      };
+
+      if (isReactive(formData[key].$value)) {
+        watch(formData[key].$value, watchHandler);
+      } else {
+        watch(() => formData[key].$value, watchHandler);
+      }
 
       return;
     }
@@ -128,7 +131,7 @@ export function transformFormData(form: Form, formData: any) {
 export function cleanupForm(form: Form, formData: any) {
   Object.values(formData).forEach(value => {
     if (isTransformedField(value)) {
-      form.onDelete(value.uid);
+      form.onDelete(value.$uid);
       return;
     }
 
@@ -139,7 +142,7 @@ export function cleanupForm(form: Form, formData: any) {
 export function getResultFormData(formData: any, resultFormData: any) {
   Object.entries(formData).forEach(([key, value]) => {
     if (isTransformedField(value)) {
-      resultFormData[key] = value.value;
+      resultFormData[key] = value.$value;
       return;
     }
 

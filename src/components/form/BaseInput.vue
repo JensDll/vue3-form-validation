@@ -7,7 +7,7 @@
       class="w-full border border-gray-300 outline-none px-2 py-1 mt-2 input"
       :class="{ error: errors.length > 0 }"
       v-bind="attrsRest"
-      @input="e => $emit('update:modelValue', e.target.value)"
+      v-model="value"
     />
     <div class="mt-2" v-if="errors.length">
       <div class="text-sm text-red-500" v-for="(error, index) in errors">
@@ -27,7 +27,7 @@ export default defineComponent({
       type: String
     },
     modelValue: {
-      type: [String, Number],
+      type: [String, Number, Boolean],
       default: ''
     },
     errors: {
@@ -42,6 +42,16 @@ export default defineComponent({
       attrsClassName,
       attrsRest
     };
+  },
+  computed: {
+    value: {
+      get(): string | number | boolean {
+        return this.modelValue;
+      },
+      set(value: string | number | boolean) {
+        this.$emit('update:modelValue', value);
+      }
+    }
   }
 });
 </script>
