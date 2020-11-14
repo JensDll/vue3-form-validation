@@ -25,7 +25,7 @@ Parameters | Type | Required | Description
 ---|:-:|:-:|---
 formData | `object` | `true` | The structure of your Form data.
 
-The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that for every value you can provide rules to display validation errors.
+The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
 
 Let's look at an example how the structure of some `formData` object, can be converted to an object with the addition of rules:
 ```ts
@@ -38,30 +38,30 @@ const formData = {
 // The above can be converted to the following
 const formDataWithRules = {
   name: {
-    value: '',
-    rules: [name => !name && 'Name is required']
+    $value: '',
+    $rules: [name => !name && 'Name is required']
   },
   email: {
-    value: '',
-    rules: [email => !email && 'E-Mail is required']
+    $value: '',
+    $rules: [email => !email && 'E-Mail is required']
   },
   password: {
-    value: '',
-    rules: [pw => pw.length > 7 || 'Password has to be longer than 7 characters']
+    $value: '',
+    $rules: [pw => pw.length > 7 || 'Password has to be longer than 7 characters']
   }
 }
 ```
 
-The `formData` object can be deeply nested and it can contain arrays. At the leaf level the object should contain Form Fields whose type definition looks like the following:
+The `formData` object can contain arrays and can be deeply nested. At the leaf level, the object should contain Form Fields whose type definition looks like the following:
 
 ```ts
 type Field<T> = {
-  value: Ref<T> | T;
-  rules?: Rule<T>[];
+  $value: Ref<T> | T;
+  $rules?: Rule<T>[];
 };
 ```
 
-To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic paramter `T`. If at some point the provided type does not fit the required structure, it will let you know by converting the problematic part to be of type `never`. Please note that when writing in a normal `.js` file, the type will often result in `never` even though the structure of the input might be correct. This is definitely not ideal and can probably be changed, but type inference can be a bit tricky sometimes.
+To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic parameter `T`. If at some point the provided type does not fit the required structure, it will let you know by converting that section to be of type `never`. Please note that when writing in a normal `.js` file, the type will often result in `never` even though the structure of the input might be correct. This is definitely not ideal and can probably be changed, but type inference can be a bit tricky sometimes.
 The type for the example above is pretty straightforward:
 
 ```ts
@@ -76,7 +76,7 @@ type FormData = {
 
 State | Type | Description
 ---|:-:|---
-form | `object` | Transformed `formData` object with added metadata for every Form Field.
+form | `object` | Transformed `formData` object with added metadata to every Form Field.
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
 
@@ -84,11 +84,11 @@ form | `object` | Transformed `formData` object with added metadata for every Fo
 
 ```ts
 type TransformedField<T> = {
-  uid: number;
-  value: T;
-  errors: string[];
-  validating: boolean;
-  onBlur(): void;
+  $uid: number;
+  $value: T;
+  $errors: string[];
+  $validating: boolean;
+  $onBlur(): void;
 };
 
 // The type of form in the example above would be
@@ -98,27 +98,29 @@ const form: {
   password: TransformedField<string>;
 }
 ```
+
+As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts.
 Key | Value | Description
 ---|:-:|---
 uid | `number` | Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
 value | `T` | The `modelValue` of the Form Field which is meant to be used together with `v-model`.
 errors | `string[]` | Array of validation error messages.
 validating | `boolean` | `True` while atleast one rule is validating.
-onBlur | `function` | Function that will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
+onBlur | `function` | Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
 * `useValidation` exposes the following methods:
 
 Signature | Parameters |  Description
 --- | :-: | ---
 `onSubmit(success, error?)` | | Function that will validate all Form Fields. It takes two parameters, a `success` callback and an optional `error` callback.
-|| `success` | Callback which will be executed if there are no validation errors. Receives the `formData` as it's first argument.
-|| `error?` | Callback which will be executed if there are validation errors. Receives no arguments.
+|| `success` | Will be called if there are no validation errors. Receives the `formData` as it's first argument.
+|| `error?` | Will be called if there are validation errors. Receives no arguments.
 `add(pathToArray, value)` || Utility function for writing dynamic Forms. It takes two parameters, a `pathToArray` of type `(string \| number)[]` and a `value`.
-|| `pathToArray` | An array of `string` and `numbers` representing the path to an array in the `formData`. 
+|| `pathToArray` | Tupel of `string` and `numbers` representing the path to an array in the `formData`. 
 || `value` | The `value` that will be pushed to the array at the given path.
 `remove(pathToArray, index)` || Identical to `add` but instead of providing a `value` you provide an `index` that will be removed.
 
-At the time there is no good IntelliSense support for the `add` and `remove` methods. When TypeScript 4.1 will be released and Vue supports it, this can be changed however. Also if you want to take a look at some more examples, you can clone this repository to your local machine and run `npm run dev`, which will start a development server with an example site.
+At the moment, there is no good IntelliSense support for the `add` and `remove` methods. When TypeScript 4.1 will be released and Vue supports it, this can be changed however. Also if you want to take a look at some more examples, you can clone this repository to your local machine and run `npm run dev`, which will start a development server with an example site.
 ## Writing Rules
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
 They can also alternatively return a `Promise` when you have a rule that requires asynchronous code.
@@ -152,8 +154,9 @@ This allows you to write many rules in one line:
 const required = value => !value && 'This field is required';
 const min = value => value.length > 3 || 'This field has to be longer than 3 characters';
 const max = value => value.length < 7 || 'This field is too long (maximum is 6 characters)';
-
-// Async rule
+```
+Async rules allow you to perform network requests, for example checking if a username already exists in the database:
+```ts
 const isNameTaken = name =>
   new Promise(resolve => {
     setTimeout(() => {
@@ -165,4 +168,3 @@ const isNameTaken = name =>
     }, 2000);
   })
 ```
-Of course you can also return a `Promise` directly or perform network requests, for example checking if a username already exists in the database.
