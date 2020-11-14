@@ -120,7 +120,7 @@ Signature | Parameters |  Description
 || `value` | The `value` that will be pushed to the array at the given path.
 `remove(pathToArray, index)` || Identical to `add` but instead of providing a `value` you provide an `index` that will be removed.
 
-At the moment, there is no good IntelliSense support for the `add` and `remove` methods. When TypeScript 4.1 will be released and Vue supports it, this can be changed however. Also if you want to take a look at some more examples, you can clone this repository to your local machine and run `npm run dev`, which will start a development server with an example site.
+At the moment, there is no good IntelliSense support for the `add` and `remove` methods. When TypeScript 4.1 will be released and Vue supports it, this can be changed however.
 ## Writing Rules
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
 They can also alternatively return a `Promise` when you have a rule that requires asynchronous code.
