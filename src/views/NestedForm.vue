@@ -1,24 +1,24 @@
 <template>
-  <h1 class="font-semibold text-2xl">Nested form</h1>
+  <h1 class="font-semibold text-2xl">Nested Form</h1>
   <form class="form my-8" @submit.prevent="handleSubmit()">
     <BaseInput
-      label="Nested d"
-      v-model="form.test.a.b.c.d.value"
-      :errors="form.test.a.b.c.d.errors"
-      @blur="form.test.a.b.c.d.onBlur()"
+      label="Nested A"
+      v-model="form.test.a.b.c.d.$value"
+      :errors="form.test.a.b.c.d.$errors"
+      @blur="form.test.a.b.c.d.$onBlur()"
     />
     <BaseInput
-      label="Nested e"
+      label="Nested E"
       type="number"
-      v-model.number="form.test.a.b.e.value"
-      :errors="form.test.a.b.e.errors"
-      @blur="form.test.a.b.e.onBlur()"
+      v-model.number="form.test.a.b.e.$value"
+      :errors="form.test.a.b.e.$errors"
+      @blur="form.test.a.b.e.$onBlur()"
     />
     <BaseInput
-      label="Nested f"
-      v-model.number="form.test.f.value"
-      :errors="form.test.f.errors"
-      @blur="form.test.f.onBlur()"
+      label="Nested F"
+      v-model="form.test.f.$value.foo.a.c"
+      :errors="form.test.f.$errors"
+      @blur="form.test.f.$onBlur()"
     />
     <BaseButton class="mt-8" type="primary" htmlType="submit">
       Submit
@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, markRaw, reactive, ref, watch } from 'vue';
+import { defineComponent, reactive, ref } from 'vue';
 import BaseInput from '../components/form/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
 import { useValidation, Field } from '../../main/composable/useValidation';
@@ -42,33 +42,41 @@ export default defineComponent({
           b: {
             c: {
               d: {
-                value: '',
-                rules: [(d: string) => !d && 'a is required']
+                $value: '',
+                $rules: [(d: string) => !d && 'a is required']
               }
             },
             e: {
-              value: 0,
-              rules: [(e: number) => !e && 'e is required']
+              $value: (null as unknown) as number,
+              $rules: [(e: number) => !e && 'e is required']
             }
           }
         },
         f: {
-          value: '',
-          rules: [(f: string) => !f && 'f is required']
+          $value: {
+            foo: {
+              a: {
+                c: ''
+              }
+            }
+          },
+          $rules: [
+            (f: { foo: { a: { c: string } } }) => !f.foo.a.c && 'f is required'
+          ]
         }
       },
       xs: [
         {
           a: {
             b: {
-              value: true
+              $value: true
             }
           }
         },
         {
           a: {
             b: {
-              value: true
+              $value: true
             }
           }
         }
@@ -77,7 +85,7 @@ export default defineComponent({
 
     const handleSubmit = () => {
       onSubmit(formData => {
-        console.log(formData);
+        console.log(JSON.stringify(formData, null, 2));
       });
     };
 
@@ -91,7 +99,7 @@ export default defineComponent({
 
 <style scoped>
 .form {
-  max-width: 1000px;
+  max-width: 900px;
   row-gap: 10px;
   display: grid;
 }

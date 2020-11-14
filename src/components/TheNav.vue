@@ -2,26 +2,64 @@
   <div class="cont border-r">
     <nav class="nav">
       <router-link
-        class="block relative py-3 pl-16"
+        class="block relative"
         exact-active-class="nav-link-active"
         to="/"
       >
-        <span @click="demoMenu.active = false">Login Form</span>
+        <div class="py-3 pl-16" @click="inactiveAll()">Home</div>
       </router-link>
-      <router-link
-        class="block relative py-3 pl-16"
-        exact-active-class="nav-link-active"
-        to="/dynamic-form"
+
+      <!-- Form sub menu -->
+      <div
+        class="py-3 pl-16 font-semibold cursor-pointer"
+        :class="{ 'text-green-500': formMenu.active }"
+        @click="formMenu.open = !formMenu.open"
       >
-        <span @click="demoMenu.active = false">Dynamic Form</span>
-      </router-link>
-      <router-link
-        class="block relative py-3 pl-16"
-        exact-active-class="nav-link-active"
-        to="/nested-form"
-      >
-        <span @click="demoMenu.active = false">Nested form</span>
-      </router-link>
+        Forms
+      </div>
+      <div v-if="formMenu.open">
+        <router-link
+          class="block relative"
+          exact-active-class="nav-link-active"
+          to="/login-form"
+        >
+          <div class="py-3 pl-20" @click="setFormMenuActive()">Login Form</div>
+        </router-link>
+        <router-link
+          class="block relative"
+          exact-active-class="nav-link-active"
+          to="/dynamic-form"
+        >
+          <div class="py-3 pl-20" @click="setFormMenuActive()">
+            Dynamic Form
+          </div>
+        </router-link>
+        <router-link
+          class="block relative"
+          exact-active-class="nav-link-active"
+          to="/nested-form"
+        >
+          <div class="py-3 pl-20" @click="setFormMenuActive()">Nested Form</div>
+        </router-link>
+        <router-link
+          class="block relative"
+          exact-active-class="nav-link-active"
+          to="/test-form"
+        >
+          <div class="py-3 pl-20" @click="setFormMenuActive()">Test Form</div>
+        </router-link>
+        <router-link
+          class="block relative"
+          exact-active-class="nav-link-active"
+          to="/another-test-form"
+        >
+          <div class="py-3 pl-20" @click="setFormMenuActive()">
+            Another Form
+          </div>
+        </router-link>
+      </div>
+
+      <!-- Demo sub menu -->
       <div
         class="py-3 pl-16 font-semibold cursor-pointer"
         :class="{ 'text-green-500': demoMenu.active }"
@@ -31,11 +69,11 @@
       </div>
       <div v-if="demoMenu.open">
         <router-link
-          class="block relative py-3 pl-20"
+          class="block relative"
           exact-active-class="nav-link-active"
           to="/button-demo"
         >
-          <span @click="demoMenu.active = true">Button demo</span>
+          <div class="py-3 pl-20" @click="setDemoMenuActive()">Button Demo</div>
         </router-link>
       </div>
     </nav>
@@ -51,8 +89,26 @@ export default defineComponent({
       demoMenu: {
         open: true,
         active: false
+      },
+      formMenu: {
+        open: true,
+        active: false
       }
     };
+  },
+  methods: {
+    inactiveAll() {
+      this.formMenu.active = false;
+      this.demoMenu.active = false;
+    },
+    setFormMenuActive() {
+      this.formMenu.active = true;
+      this.demoMenu.active = false;
+    },
+    setDemoMenuActive() {
+      this.demoMenu.active = true;
+      this.formMenu.active = false;
+    }
   }
 });
 </script>

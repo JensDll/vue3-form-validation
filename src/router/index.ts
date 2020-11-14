@@ -1,12 +1,19 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import Home from '../views/Home.vue';
 import LoginForm from '../views/LoginForm.vue';
 import DynamicForm from '../views/DynamicForm.vue';
 import ButtonDemo from '../views/ButtonDemo.vue';
 import NestedForm from '../views/NestedForm.vue';
+import TestForm from '../views/TestForm.vue';
+import AnotherTestForm from '../views/AnotherTestForm.vue';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    component: Home
+  },
+  {
+    path: '/login-form',
     component: LoginForm
   },
   {
@@ -20,6 +27,14 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/nested-form',
     component: NestedForm
+  },
+  {
+    path: '/test-form',
+    component: TestForm
+  },
+  {
+    path: '/another-test-form',
+    component: AnotherTestForm
   }
 ];
 

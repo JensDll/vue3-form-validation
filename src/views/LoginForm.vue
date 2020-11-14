@@ -4,32 +4,32 @@
     <BaseInput
       class="name input-error"
       label="Name"
-      :errors="form.name.errors"
-      v-model="form.name.value"
-      @blur="form.name.onBlur()"
+      :errors="form.name.$errors"
+      v-model="form.name.$value"
+      @blur="form.name.$onBlur()"
     />
     <BaseInput
       class="mail"
       label="E-Mail"
-      :errors="form.email.errors"
-      v-model="form.email.value"
-      @blur="form.email.onBlur()"
+      :errors="form.email.$errors"
+      v-model="form.email.$value"
+      @blur="form.email.$onBlur()"
     />
     <BaseInput
       class="password"
       label="Password"
       type="password"
-      :errors="form.password.errors"
-      v-model="form.password.value"
-      @blur="form.password.onBlur()"
+      :errors="form.password.$errors"
+      v-model="form.password.$value"
+      @blur="form.password.$onBlur()"
     />
     <BaseInput
       class="repeat-password"
       label="Repeat password"
       type="password"
-      :errors="form.repeatPassword.errors"
-      v-model="form.repeatPassword.value"
-      @blur="form.repeatPassword.onBlur()"
+      :errors="form.repeatPassword.$errors"
+      v-model="form.repeatPassword.$value"
+      @blur="form.repeatPassword.$onBlur()"
     />
     <BaseButton
       class="mt-8"
@@ -66,8 +66,8 @@ export default defineComponent({
 
     const { form, onSubmit } = useValidation<FormData>({
       name: {
-        value: '',
-        rules: [
+        $value: '',
+        $rules: [
           name => !name && 'Name is required',
           name => name.length > 2 || 'Name has to be longer than 2 characters',
           name =>
@@ -83,12 +83,12 @@ export default defineComponent({
         ]
       },
       email: {
-        value: '',
-        rules: [email => !email && 'E-Mail is required']
+        $value: '',
+        $rules: [email => !email && 'E-Mail is required']
       },
       password: {
-        value: password,
-        rules: [
+        $value: password,
+        $rules: [
           pw => pw.length > 7 || 'Password has to be longer than 7 characters',
           {
             key: 'pw',
@@ -99,8 +99,8 @@ export default defineComponent({
         ]
       },
       repeatPassword: {
-        value: repeatPassword,
-        rules: [
+        $value: repeatPassword,
+        $rules: [
           pw => pw.length > 7 || 'Password has to be longer than 7 characters',
           {
             key: 'pw',
@@ -116,7 +116,7 @@ export default defineComponent({
       submitting.value = true;
       onSubmit(
         formData => {
-          console.log(formData);
+          console.log(JSON.stringify(formData, null, 2));
           submitting.value = false;
         },
         () => {
@@ -136,7 +136,7 @@ export default defineComponent({
 
 <style scoped>
 .form {
-  max-width: 1000px;
+  max-width: 900px;
   display: grid;
   column-gap: 25px;
   row-gap: 10px;

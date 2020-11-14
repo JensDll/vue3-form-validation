@@ -13,36 +13,36 @@ const testData = [
     () => new Form(),
     () => ({
       foo: {
-        value: 1,
-        rules: []
+        $value: 1,
+        $rules: []
       },
       bar: {
-        value: '2',
-        rules: []
+        $value: '2',
+        $rules: []
       },
       xs: [
         {
           foo: {
-            value: {
+            $value: {
               a: 1,
               b: 2,
               c: {
                 d: 4
               }
             },
-            rules: []
+            $rules: []
           },
           ys: [
             {
               foo: {
-                value: 100,
-                rules: []
+                $value: 100,
+                $rules: []
               }
             },
             {
               foo: {
-                value: 200,
-                rules: []
+                $value: 200,
+                $rules: []
               }
             }
           ]
@@ -55,36 +55,36 @@ const testData = [
     () => new Form(),
     () => ({
       foo: {
-        value: ref(1),
-        rules: []
+        $value: ref(1),
+        $rules: []
       },
       bar: {
-        value: ref('2'),
-        rules: []
+        $value: ref('2'),
+        $rules: []
       },
       xs: [
         {
           foo: {
-            value: ref({
+            $value: ref({
               a: 1,
               b: 2,
               c: {
                 d: 4
               }
             }),
-            rules: []
+            $rules: []
           },
           ys: [
             {
               foo: {
-                value: ref(100),
-                rules: []
+                $value: ref(100),
+                $rules: []
               }
             },
             {
               foo: {
-                value: ref(200),
-                rules: []
+                $value: ref(200),
+                $rules: []
               }
             }
           ]
@@ -99,57 +99,57 @@ describe('transformFormData', () => {
     'should add metadata to all form fields (%s)',
     (_, getForm, getFormData) => {
       const form = getForm();
-      const formData = getFormData() as any;
+      const formData = getFormData();
 
       transformFormData(form, formData);
 
       expect(formData).toEqual({
         foo: {
-          uid: expect.any(Number),
-          value: 1,
-          errors: [],
-          validating: false,
-          onBlur: expect.any(Function)
+          $uid: expect.any(Number),
+          $value: 1,
+          $errors: [],
+          $validating: false,
+          $onBlur: expect.any(Function)
         },
         bar: {
-          uid: expect.any(Number),
-          value: '2',
-          errors: [],
-          validating: false,
-          onBlur: expect.any(Function)
+          $uid: expect.any(Number),
+          $value: '2',
+          $errors: [],
+          $validating: false,
+          $onBlur: expect.any(Function)
         },
         xs: [
           {
             foo: {
-              uid: expect.any(Number),
-              value: {
+              $uid: expect.any(Number),
+              $value: {
                 a: 1,
                 b: 2,
                 c: {
                   d: 4
                 }
               },
-              errors: [],
-              validating: false,
-              onBlur: expect.any(Function)
+              $errors: [],
+              $validating: false,
+              $onBlur: expect.any(Function)
             },
             ys: [
               {
                 foo: {
-                  uid: expect.any(Number),
-                  value: 100,
-                  errors: [],
-                  validating: false,
-                  onBlur: expect.any(Function)
+                  $uid: expect.any(Number),
+                  $value: 100,
+                  $errors: [],
+                  $validating: false,
+                  $onBlur: expect.any(Function)
                 }
               },
               {
                 foo: {
-                  uid: expect.any(Number),
-                  value: 200,
-                  errors: [],
-                  validating: false,
-                  onBlur: expect.any(Function)
+                  $uid: expect.any(Number),
+                  $value: 200,
+                  $errors: [],
+                  $validating: false,
+                  $onBlur: expect.any(Function)
                 }
               }
             ]
@@ -244,17 +244,23 @@ describe('useValidation', () => {
           b: {
             c: {
               d: {
-                e: {
-                  value: {
-                    foo: '',
-                    bar: 10
+                value: {
+                  e: {
+                    $value: {
+                      foo: '',
+                      bar: ref(10)
+                    }
                   }
                 }
               }
             }
           },
           f: {
-            value: ''
+            $value: '',
+            $rules: [],
+            x: 1,
+            y: 2,
+            z: 3
           }
         }
       });
@@ -264,25 +270,27 @@ describe('useValidation', () => {
           b: {
             c: {
               d: {
-                e: {
-                  uid: expect.any(Number),
-                  value: {
-                    foo: '',
-                    bar: 10
-                  },
-                  errors: [],
-                  validating: false,
-                  onBlur: expect.any(Function)
+                value: {
+                  e: {
+                    $uid: expect.any(Number),
+                    $value: {
+                      foo: '',
+                      bar: 10
+                    },
+                    $errors: [],
+                    $validating: false,
+                    $onBlur: expect.any(Function)
+                  }
                 }
               }
             }
           },
           f: {
-            uid: expect.any(Number),
-            value: '',
-            errors: [],
-            validating: false,
-            onBlur: expect.any(Function)
+            $uid: expect.any(Number),
+            $value: '',
+            $errors: [],
+            $validating: false,
+            $onBlur: expect.any(Function)
           }
         }
       });
@@ -290,10 +298,10 @@ describe('useValidation', () => {
       const { form: form2 } = useValidation({
         a: {
           b: {
-            value: 1
+            $value: 1
           },
           c: {
-            value: 2
+            $value: 2
           }
         },
         ds: [
@@ -301,10 +309,10 @@ describe('useValidation', () => {
             e: {
               f: {
                 g: {
-                  value: 'foo'
+                  $value: 'foo'
                 },
                 e: {
-                  value: 'bar'
+                  $value: 'bar'
                 }
               }
             }
@@ -313,10 +321,10 @@ describe('useValidation', () => {
             e: {
               f: {
                 g: {
-                  value: 'abc'
+                  $value: 'abc'
                 },
                 e: {
-                  value: 'def'
+                  $value: 'def'
                 }
               }
             }
@@ -327,18 +335,18 @@ describe('useValidation', () => {
       expect(form2).toEqual({
         a: {
           b: {
-            uid: expect.any(Number),
-            value: 1,
-            errors: [],
-            validating: false,
-            onBlur: expect.any(Function)
+            $uid: expect.any(Number),
+            $value: 1,
+            $errors: [],
+            $validating: false,
+            $onBlur: expect.any(Function)
           },
           c: {
-            uid: expect.any(Number),
-            value: 2,
-            errors: [],
-            validating: false,
-            onBlur: expect.any(Function)
+            $uid: expect.any(Number),
+            $value: 2,
+            $errors: [],
+            $validating: false,
+            $onBlur: expect.any(Function)
           }
         },
         ds: [
@@ -346,18 +354,18 @@ describe('useValidation', () => {
             e: {
               f: {
                 g: {
-                  uid: expect.any(Number),
-                  value: 'foo',
-                  errors: [],
-                  validating: false,
-                  onBlur: expect.any(Function)
+                  $uid: expect.any(Number),
+                  $value: 'foo',
+                  $errors: [],
+                  $validating: false,
+                  $onBlur: expect.any(Function)
                 },
                 e: {
-                  uid: expect.any(Number),
-                  value: 'bar',
-                  errors: [],
-                  validating: false,
-                  onBlur: expect.any(Function)
+                  $uid: expect.any(Number),
+                  $value: 'bar',
+                  $errors: [],
+                  $validating: false,
+                  $onBlur: expect.any(Function)
                 }
               }
             }
@@ -366,18 +374,18 @@ describe('useValidation', () => {
             e: {
               f: {
                 g: {
-                  uid: expect.any(Number),
-                  value: 'abc',
-                  errors: [],
-                  validating: false,
-                  onBlur: expect.any(Function)
+                  $uid: expect.any(Number),
+                  $value: 'abc',
+                  $errors: [],
+                  $validating: false,
+                  $onBlur: expect.any(Function)
                 },
                 e: {
-                  uid: expect.any(Number),
-                  value: 'def',
-                  errors: [],
-                  validating: false,
-                  onBlur: expect.any(Function)
+                  $uid: expect.any(Number),
+                  $value: 'def',
+                  $errors: [],
+                  $validating: false,
+                  $onBlur: expect.any(Function)
                 }
               }
             }
@@ -388,52 +396,27 @@ describe('useValidation', () => {
   });
 
   describe('onSubmit', () => {
-    it('should discard everything except the value properties', () => {
-      const { onSubmit: onSubmit1 } = useValidation({
+    it('should discard everything except the value properties', done => {
+      const { onSubmit } = useValidation({
         a: {
           b: {
-            c: {
-              d: {
-                e: {
-                  value: {
-                    foo: '',
-                    bar: 10
-                  }
+            $value: 1
+          },
+          c: {
+            $value: {
+              a: {
+                b: {
+                  c: ref(2)
                 }
               }
             }
-          },
-          f: {
-            value: ''
           }
-        }
-      });
-
-      onSubmit1(formData => {
-        expect(formData).toEqual({
-          a: {
-            b: {
-              c: {
-                d: {
-                  e: {
-                    foo: '',
-                    bar: 10
-                  }
-                }
-              }
-            },
-            f: ''
-          }
-        });
-      });
-
-      const { onSubmit: onSubmit2 } = useValidation({
-        a: {
-          b: {
-            value: 1
-          },
-          c: {
-            value: 2
+        },
+        rules: {
+          value: {
+            value: {
+              xs: []
+            }
           }
         },
         ds: [
@@ -441,10 +424,10 @@ describe('useValidation', () => {
             e: {
               f: {
                 g: {
-                  value: 'foo'
+                  $value: 'foo'
                 },
                 e: {
-                  value: 'bar'
+                  $value: 'bar'
                 }
               }
             }
@@ -453,10 +436,13 @@ describe('useValidation', () => {
             e: {
               f: {
                 g: {
-                  value: 'abc'
+                  $value: 'abc',
+                  x: '',
+                  y: '',
+                  z: ''
                 },
                 e: {
-                  value: 'def'
+                  $value: 'def'
                 }
               }
             }
@@ -464,11 +450,24 @@ describe('useValidation', () => {
         ]
       });
 
-      onSubmit2(formData => {
+      onSubmit(formData => {
         expect(formData).toEqual({
           a: {
             b: 1,
-            c: 2
+            c: {
+              a: {
+                b: {
+                  c: 2
+                }
+              }
+            }
+          },
+          rules: {
+            value: {
+              value: {
+                xs: []
+              }
+            }
           },
           ds: [
             {
@@ -489,56 +488,8 @@ describe('useValidation', () => {
             }
           ]
         });
-      });
 
-      const { onSubmit: onSubmit3 } = useValidation({
-        as: [],
-        bs: [
-          {
-            c: {
-              value: '',
-              rules: [(x: string) => x]
-            },
-            ds: []
-          },
-          {
-            c: {
-              value: '',
-              rules: [
-                (x: string) => x,
-                (x: string) => x,
-                (x: string) => x,
-                (x: string) => x
-              ]
-            },
-            ds: [
-              {
-                e: {
-                  value: ref({
-                    foo: 'bar',
-                    bar: 'foo'
-                  })
-                }
-              }
-            ]
-          }
-        ]
-      });
-
-      onSubmit3(formData => {
-        expect(formData).toEqual({
-          as: [],
-          bs: [
-            {
-              c: '',
-              ds: []
-            },
-            {
-              c: '',
-              ds: [{ e: { foo: 'bar', bar: 'foo' } }]
-            }
-          ]
-        });
+        done();
       });
     });
   });
