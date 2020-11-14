@@ -4,19 +4,19 @@
     <BaseInput
       class="col-span-3"
       label="Profile"
-      v-model="form.profile.value"
-      :errors="form.profile.errors"
-      @blur="form.profile.onBlur()"
+      v-model="form.profile.$value"
+      :errors="form.profile.$errors"
+      @blur="form.profile.$onBlur()"
     />
     <BaseButton @click="addGroup()" class="mt-4 col-span-3">
       Add group
     </BaseButton>
-    <template v-for="(group, groupIndex) in form.groups" :key="group.name.uid">
+    <template v-for="(group, groupIndex) in form.groups" :key="group.name.$uid">
       <BaseInput
         label="Group"
-        v-model="group.name.value"
-        :errors="group.name.errors"
-        @blur="group.name.onBlur()"
+        v-model="group.name.$value"
+        :errors="group.name.$errors"
+        @blur="group.name.$onBlur()"
       />
       <BaseButton @click="addDetail(groupIndex)" class="mt-8 self-start">
         Add detail
@@ -26,19 +26,19 @@
       </BaseButton>
       <template
         v-for="(detail, detailIndex) in group.details"
-        :key="detail.name.uid"
+        :key="detail.name.$uid"
       >
         <BaseInput
           label="Name"
-          v-model="detail.name.value"
-          :errors="detail.name.errors"
-          @blur="detail.name.onBlur()"
+          v-model="detail.name.$value"
+          :errors="detail.name.$errors"
+          @blur="detail.name.$onBlur()"
         />
         <BaseInput
           label="Short"
-          v-model="detail.short.value"
-          :errors="detail.short.errors"
-          @blur="detail.short.onBlur()"
+          v-model="detail.short.$value"
+          :errors="detail.short.$errors"
+          @blur="detail.short.$onBlur()"
         />
         <BaseButton
           @click="removeDetail(groupIndex, detailIndex)"
@@ -85,8 +85,8 @@ export default defineComponent({
   setup() {
     const { form, add, remove, onSubmit } = useValidation<Input>({
       profile: {
-        value: '',
-        rules: [profile => !profile && 'Profile name is required']
+        $value: '',
+        $rules: [profile => !profile && 'Profile name is required']
       },
       groups: []
     });
@@ -94,8 +94,8 @@ export default defineComponent({
     const addGroup = () => {
       add(['groups'], {
         name: {
-          value: '',
-          rules: [(name: string) => !name && 'Group name is required']
+          $value: '',
+          $rules: [(name: string) => !name && 'Group name is required']
         },
         details: []
       });
@@ -108,12 +108,12 @@ export default defineComponent({
     const addDetail = (groupIndex: number) => {
       add(['groups', groupIndex, 'details'], {
         name: {
-          value: '',
-          rules: [(name: string) => !name && 'Detail name is required']
+          $value: '',
+          $rules: [(name: string) => !name && 'Detail name is required']
         },
         short: {
-          value: '',
-          rules: [(short: string) => !short && 'Detail short is required']
+          $value: '',
+          $rules: [(short: string) => !short && 'Detail short is required']
         }
       });
     };
@@ -128,7 +128,7 @@ export default defineComponent({
       submitting.value = true;
       onSubmit(
         formData => {
-          console.log(formData);
+          console.log(JSON.stringify(formData, null, 2));
           submitting.value = false;
         },
         () => {
@@ -152,7 +152,7 @@ export default defineComponent({
 
 <style scoped>
 .form {
-  max-width: 1000px;
+  max-width: 900px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   row-gap: 10px;
