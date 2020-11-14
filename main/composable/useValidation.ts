@@ -124,7 +124,9 @@ export function transformFormData(form: Form, formData: any) {
       return;
     }
 
-    transformFormData(form, value);
+    if (typeof value === 'object') {
+      transformFormData(form, value);
+    }
   });
 }
 
