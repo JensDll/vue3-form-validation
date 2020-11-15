@@ -73,6 +73,10 @@ export default class Form {
   }
 
   async validateAll() {
+    for (const { formField } of this.simpleValidators.values()) {
+      formField.touched = false;
+    }
+
     const promises = [...this.simpleValidators.entries()].map(
       ([uid, { formField }]) => {
         formField.touched = true;

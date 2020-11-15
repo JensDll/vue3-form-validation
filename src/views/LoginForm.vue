@@ -41,7 +41,7 @@
     </BaseButton>
     <BaseButton class="mt-8">Cancel</BaseButton>
   </form>
-  <pre>{{ form }}</pre>
+  <pre>{{ formJSON }}</pre>
 </template>
 
 <script lang="ts">
@@ -130,6 +130,15 @@ export default defineComponent({
       handleSubmit,
       submitting
     };
+  },
+  computed: {
+    formJSON(): string {
+      return JSON.stringify(
+        this.form,
+        (k, v) => (typeof v === 'function' ? 'function' : v),
+        2
+      );
+    }
   }
 });
 </script>

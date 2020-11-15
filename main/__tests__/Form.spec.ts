@@ -253,12 +253,26 @@ describe('complex examples', () => {
     expect(simpleRule1).toHaveBeenCalledTimes(2);
     expect(simpleRule2).toHaveBeenCalledTimes(2);
     expect(simpleRule3).toHaveBeenCalledTimes(2);
-    // Keyed rules are being called more often than necessary
-    // Worst case n * n times (n = #FormFields)
-    expect(keyedRule1.mock.calls.length).toBeGreaterThanOrEqual(2);
-    expect(keyedRule2.mock.calls.length).toBeGreaterThanOrEqual(2);
-    expect(keyedRule3.mock.calls.length).toBeGreaterThanOrEqual(2);
-    expect(keyedRule4.mock.calls.length).toBeGreaterThanOrEqual(2);
+
+    expect(keyedRule1).toHaveBeenCalledTimes(2);
+    expect(keyedRule2).toHaveBeenCalledTimes(2);
+    expect(keyedRule3).toHaveBeenCalledTimes(2);
+    expect(keyedRule4).toHaveBeenCalledTimes(2);
+
+    formField1.modelValue = null;
+
+    hasError = await form.validateAll();
+
+    expect(hasError).toBe(false);
+
+    expect(simpleRule1).toHaveBeenCalledTimes(3);
+    expect(simpleRule2).toHaveBeenCalledTimes(3);
+    expect(simpleRule3).toHaveBeenCalledTimes(3);
+
+    expect(keyedRule1).toHaveBeenCalledTimes(3);
+    expect(keyedRule2).toHaveBeenCalledTimes(3);
+    expect(keyedRule3).toHaveBeenCalledTimes(3);
+    expect(keyedRule4).toHaveBeenCalledTimes(3);
   });
 });
 
