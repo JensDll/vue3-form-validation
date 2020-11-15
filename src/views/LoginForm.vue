@@ -2,44 +2,44 @@
   <h1 class="font-semibold text-2xl">Login</h1>
   <form class="form my-8" @submit.prevent="handleSubmit()">
     <BaseInput
+      v-model="form.name.$value"
       class="name input-error"
       label="Name"
       :errors="form.name.$errors"
-      v-model="form.name.$value"
       @blur="form.name.$onBlur()"
     />
     <BaseInput
+      v-model="form.email.$value"
       class="mail"
       label="E-Mail"
       :errors="form.email.$errors"
-      v-model="form.email.$value"
       @blur="form.email.$onBlur()"
     />
     <BaseInput
+      v-model="form.password.$value"
       class="password"
       label="Password"
       type="password"
       :errors="form.password.$errors"
-      v-model="form.password.$value"
       @blur="form.password.$onBlur()"
     />
     <BaseInput
+      v-model="form.repeatPassword.$value"
       class="repeat-password"
       label="Repeat password"
       type="password"
       :errors="form.repeatPassword.$errors"
-      v-model="form.repeatPassword.$value"
       @blur="form.repeatPassword.$onBlur()"
     />
     <BaseButton
       class="mt-8"
       type="primary"
-      htmlType="submit"
+      html-type="submit"
       :disabled="submitting"
     >
       Login
     </BaseButton>
-    <BaseButton class="mt-8">Cancel</BaseButton>
+    <BaseButton class="mt-8"> Cancel </BaseButton>
   </form>
   <pre>{{ formJSON }}</pre>
 </template>
@@ -47,7 +47,7 @@
 <script lang="ts">
 import BaseInput from '../components/form/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
-import { defineComponent, markRaw, reactive, ref, watch } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useValidation, Field } from '../../main/composable/useValidation';
 
 interface FormData {

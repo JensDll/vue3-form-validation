@@ -2,26 +2,26 @@
   <h1 class="font-semibold text-2xl">Dynamic Form</h1>
   <form class="form my-8 w-3/4" @submit.prevent="handleSubmit()">
     <BaseInput
+      v-model="form.profile.$value"
       class="col-span-3"
       label="Profile"
-      v-model="form.profile.$value"
       :errors="form.profile.$errors"
       @blur="form.profile.$onBlur()"
     />
-    <BaseButton @click="addGroup()" class="mt-4 col-span-3">
+    <BaseButton class="mt-4 col-span-3" @click="addGroup()">
       Add group
     </BaseButton>
     <template v-for="(group, groupIndex) in form.groups" :key="group.name.$uid">
       <BaseInput
-        label="Group"
         v-model="group.name.$value"
+        label="Group"
         :errors="group.name.$errors"
         @blur="group.name.$onBlur()"
       />
-      <BaseButton @click="addDetail(groupIndex)" class="mt-8 self-start">
+      <BaseButton class="mt-8 self-start" @click="addDetail(groupIndex)">
         Add detail
       </BaseButton>
-      <BaseButton @click="removeGroup(groupIndex)" class="mt-8 self-start">
+      <BaseButton class="mt-8 self-start" @click="removeGroup(groupIndex)">
         Remove group
       </BaseButton>
       <template
@@ -29,20 +29,20 @@
         :key="detail.name.$uid"
       >
         <BaseInput
-          label="Name"
           v-model="detail.name.$value"
+          label="Name"
           :errors="detail.name.$errors"
           @blur="detail.name.$onBlur()"
         />
         <BaseInput
-          label="Short"
           v-model="detail.short.$value"
+          label="Short"
           :errors="detail.short.$errors"
           @blur="detail.short.$onBlur()"
         />
         <BaseButton
-          @click="removeDetail(groupIndex, detailIndex)"
           class="mt-8 self-start"
+          @click="removeDetail(groupIndex, detailIndex)"
         >
           Remove detail
         </BaseButton>
@@ -51,7 +51,7 @@
     <BaseButton
       class="col-span-3 mt-8"
       type="primary"
-      htmlType="submit"
+      html-type="submit"
       :disabled="submitting"
     >
       Submit
@@ -63,7 +63,7 @@
 <script lang="ts">
 import BaseButton from '../components/BaseButton.vue';
 import BaseInput from '../components/form/BaseInput.vue';
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useValidation, Field } from '../../main/composable/useValidation';
 
 type Input = {

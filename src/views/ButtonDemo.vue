@@ -1,9 +1,9 @@
 <template>
   <div>
-    <BaseButton class="mt-4">Button default</BaseButton>
-    <BaseButton class="mt-4" type="primary">Button primary</BaseButton>
-    <BaseButton class="mt-4" type="danger">Button danger</BaseButton>
-    <BaseButton class="mt-4" disabled>Button default (disabled)</BaseButton>
+    <BaseButton class="mt-4"> Button default </BaseButton>
+    <BaseButton class="mt-4" type="primary"> Button primary </BaseButton>
+    <BaseButton class="mt-4" type="danger"> Button danger </BaseButton>
+    <BaseButton class="mt-4" disabled> Button default (disabled) </BaseButton>
     <BaseButton class="mt-4" type="primary" disabled>
       Button primary (disabled)
     </BaseButton>

@@ -1,6 +1,6 @@
 <template>
   <main class="main px-16 pb-16">
-    <router-view></router-view>
+    <router-view />
   </main>
 </template>
 

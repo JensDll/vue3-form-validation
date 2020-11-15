@@ -4,13 +4,17 @@
       <span>{{ label }}</span>
     </label>
     <input
+      v-model="value"
       class="w-full border border-gray-300 outline-none px-2 py-1 mt-2 input"
       :class="{ error: errors.length > 0 }"
       v-bind="attrsRest"
-      v-model="value"
     />
-    <div class="mt-2" v-if="errors.length">
-      <div class="text-sm text-red-500" v-for="(error, index) in errors">
+    <div v-if="errors.length" class="mt-2">
+      <div
+        v-for="(error, index) in errors"
+        :key="index"
+        class="text-sm text-red-500"
+      >
         {{ error }}
       </div>
     </div>
@@ -24,7 +28,8 @@ export default defineComponent({
   inheritAttrs: false,
   props: {
     label: {
-      type: String
+      type: String,
+      default: undefined
     },
     modelValue: {
       type: [String, Number, Boolean],
@@ -35,6 +40,7 @@ export default defineComponent({
       default: () => []
     }
   },
+  emits: ['update:modelValue'],
   setup(props, { attrs }) {
     const { class: attrsClassName, ...attrsRest } = attrs;
 

@@ -1,6 +1,6 @@
 <template>
   <button :class="['button', type, { disabled }]" :type="htmlType">
-    <slot></slot>
+    <slot />
   </button>
 </template>
 

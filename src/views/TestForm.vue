@@ -1,11 +1,11 @@
 <template>
   <h1 class="font-semibold text-2xl">Test Form</h1>
-  <BaseInput type="checkbox" v-model="bool" />
+  <BaseInput v-model="bool" type="checkbox" />
 </template>
 
 <script lang="ts">
 import BaseInput from '../components/form/BaseInput.vue';
-import { defineComponent, reactive, ref, watch } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 
 export default defineComponent({
   components: {

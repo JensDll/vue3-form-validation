@@ -2,35 +2,35 @@
   <h1 class="font-semibold text-2xl">Test Form</h1>
   <form class="form my-8" @submit.prevent="handleSubmit()">
     <BaseInput
+      v-model="form.nested.$value.a.b.c"
       class="mb-4"
       label="Nested object"
-      v-model="form.nested.$value.a.b.c"
       :errors="form.nested.$errors"
       @blur="form.nested.$onBlur()"
     />
     <BaseInput
+      v-model="form.flatRef.$value"
       class="mb-4"
       label="Flat string ref"
-      v-model="form.flatRef.$value"
       :errors="form.flatRef.$errors"
       @blur="form.flatRef.$onBlur()"
     />
     <BaseInput
+      v-model="form.flatString.$value"
       class="mb-8"
       label="Flat string"
-      v-model="form.flatString.$value"
       :errors="form.flatString.$errors"
       @blur="form.flatString.$onBlur()"
     />
     <BaseInput
+      v-model="form.bool.$value"
       class="mb-8"
       label="Checkbox"
       type="checkbox"
-      v-model="form.bool.$value"
       :errors="form.bool.$errors"
       @blur="form.bool.$onBlur()"
     />
-    <BaseButton class="w-full" type="primary" htmlType="submit">
+    <BaseButton class="w-full" type="primary" html-type="submit">
       Submit
     </BaseButton>
   </form>
@@ -41,7 +41,7 @@
 <script lang="ts">
 import BaseInput from '../components/form/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
-import { defineComponent, reactive, ref, watch } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useValidation } from '../../main/composable/useValidation';
 
 export default defineComponent({
