@@ -3,8 +3,7 @@
 Hi! :wave: I'm exited that you are interested in contributing to this project. Below are some information that might help you get started.
 
 ## Prerequisites
-* A recent version of [Node.js](https://nodejs.org/en/).
-
+* You will need [Node.js](https://nodejs.org/en/) **version 12+** for `Promise.allSettled` to work.
 ## Setup
 After cloning the repository, run:
 ```bash
