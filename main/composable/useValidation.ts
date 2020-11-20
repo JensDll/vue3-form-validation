@@ -158,6 +158,8 @@ export function getResultFormData(formData: any, resultFormData: any) {
 
     if (typeof value === 'object') {
       getResultFormData(value, resultFormData[key]);
+    } else {
+      delete resultFormData[key];
     }
   });
 }

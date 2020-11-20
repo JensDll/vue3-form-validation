@@ -125,7 +125,7 @@ export default defineComponent({
 }
 
 .nav-link-active {
-  @apply bg-green-100;
+  @apply bg-green-50;
 }
 
 .nav-link-active::after {

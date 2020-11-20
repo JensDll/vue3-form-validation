@@ -1,25 +1,22 @@
 <template>
   <h1 class="font-semibold text-2xl">Test Form</h1>
-  <BaseInput v-model="bool" type="checkbox" />
 </template>
 
-<script lang="ts">
-import BaseInput from '../components/form/BaseInput.vue';
-import { defineComponent, ref, watch } from 'vue';
+<script>
+import { defineComponent } from 'vue';
+import { useValidation } from '../../main/composable/useValidation';
 
 export default defineComponent({
-  components: {
-    BaseInput
-  },
   setup() {
-    const bool = ref(false);
-
-    watch(bool, bool => {
-      console.log(bool);
+    const { form } = useValidation({
+      name: {
+        $value: '',
+        $rules: [name => name]
+      }
     });
 
     return {
-      bool
+      form
     };
   }
 });

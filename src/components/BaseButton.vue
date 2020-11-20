@@ -35,7 +35,7 @@ export default defineComponent({
 }
 
 .disabled {
-  @apply bg-gray-300 border-gray-500 cursor-not-allowed shadow-none !important;
+  @apply bg-gray-200 border-gray-400 cursor-not-allowed shadow-none !important;
   opacity: 0.3;
 }
 
@@ -49,11 +49,11 @@ export default defineComponent({
 }
 
 .primary {
-  @apply border-green-500 bg-green-100;
+  @apply border-green-500 bg-green-50;
 }
 
 .primary:hover {
-  @apply bg-green-200;
+  @apply bg-green-100;
 }
 
 .primary:focus {
@@ -61,11 +61,11 @@ export default defineComponent({
 }
 
 .danger {
-  @apply border-red-500 bg-red-100;
+  @apply border-red-500 bg-red-50;
 }
 
 .danger:hover {
-  @apply bg-red-200;
+  @apply bg-red-100;
 }
 
 .danger:focus {

@@ -1,14 +1,14 @@
 <template>
   <div :class="attrsClassName">
-    <label class="flex items-center">
-      <span>{{ label }}</span>
+    <label>
+      {{ label }}
+      <input
+        v-model="value"
+        class="w-full border outline-none px-2 py-1 mt-2 input"
+        :class="{ error: errors.length > 0 }"
+        v-bind="attrsRest"
+      />
     </label>
-    <input
-      v-model="value"
-      class="w-full border border-gray-300 outline-none px-2 py-1 mt-2 input"
-      :class="{ error: errors.length > 0 }"
-      v-bind="attrsRest"
-    />
     <div v-if="errors.length" class="mt-2">
       <div
         v-for="(error, index) in errors"
@@ -29,7 +29,7 @@ export default defineComponent({
   props: {
     label: {
       type: String,
-      default: undefined
+      default: ''
     },
     modelValue: {
       type: [String, Number, Boolean],

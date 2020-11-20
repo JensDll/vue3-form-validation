@@ -398,6 +398,9 @@ describe('useValidation', () => {
   describe('onSubmit', () => {
     it('should discard everything except the value properties', done => {
       const { onSubmit } = useValidation({
+        discard1: 10 as any,
+        discard2: 'foo' as any,
+        discard3: false as any,
         a: {
           b: {
             $value: 1
