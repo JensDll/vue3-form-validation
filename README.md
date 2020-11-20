@@ -61,8 +61,7 @@ type Field<T> = {
 };
 ```
 
-To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic parameter `T`. If at some point the provided type does not fit the required structure, it will let you know by converting that section to be of type `never`. Please note that when writing in a normal `.js` file, the type will often result in `never` even though the structure of the input might be correct. This is definitely not ideal and can probably be changed, but type inference can be a bit tricky sometimes.
-The type for the example above is pretty straightforward:
+To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic parameter `T`. If at some point the provided type does not fit the required structure, it will let you know by converting that section to be of type `never`. The type for the example above is pretty straightforward:
 
 ```ts
 type FormData = {
