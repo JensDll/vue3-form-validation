@@ -64,7 +64,7 @@
 import BaseButton from '../components/BaseButton.vue';
 import BaseInput from '../components/form/BaseInput.vue';
 import { defineComponent, ref } from 'vue';
-import { useValidation, Field } from '../../main/composable/useValidation';
+import { useValidation, Field } from '../../main';
 
 type Input = {
   profile: Field<string>;
@@ -95,7 +95,7 @@ export default defineComponent({
       add(['groups'], {
         name: {
           $value: '',
-          $rules: [(name: string) => !name && 'Group name is required']
+          $rules: [group => !group && 'Group name is required']
         },
         details: []
       });

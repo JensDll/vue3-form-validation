@@ -1,5 +1,5 @@
 export function path(
-  path: (string | number)[],
+  path: readonly any[],
   o: Record<string | number, unknown>
 ) {
   let value = o[path[0]] as any;

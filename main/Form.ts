@@ -1,4 +1,4 @@
-import { SimpleRule, Rule, isSimpleRule } from './composable/useValidation';
+import { SimpleRule, Rule } from './composable/useValidation';
 import FormField from './FormField';
 import { tryGet, trySet } from './utils';
 
@@ -19,6 +19,9 @@ type Keyed = Set<{
   formField: FormField;
   validator: Validate;
 }>;
+
+const isSimpleRule = (rule: Rule): rule is SimpleRule =>
+  typeof rule === 'function';
 
 export default class Form {
   private simpleValidators: Map<number, Simple> = new Map();

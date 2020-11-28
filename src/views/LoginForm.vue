@@ -71,7 +71,7 @@ export default defineComponent({
           name => !name && 'Name is required',
           name => name.length > 2 || 'Name has to be longer than 2 characters',
           name =>
-            new Promise(resolve => {
+            new Promise<void | string>(resolve => {
               setTimeout(() => {
                 if (['Jens', 'foo', 'bar'].includes(name)) {
                   resolve();

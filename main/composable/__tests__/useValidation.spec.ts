@@ -401,6 +401,10 @@ describe('useValidation', () => {
         discard1: 10 as any,
         discard2: 'foo' as any,
         discard3: false as any,
+        discard4: Symbol(),
+        discard5: () => {
+          //
+        },
         a: {
           b: {
             $value: 1
