@@ -1,4 +1,4 @@
-import { isReactive, reactive, Ref, watch } from 'vue';
+import { isReactive, reactive, Ref, watch, UnwrapRef } from 'vue';
 import useUid from './useUid';
 import Form from '../Form';
 import { path } from '../utils';
@@ -20,19 +20,21 @@ export type TransformedField<T> = {
   $onBlur(): void;
 };
 
-type ValidateFormData<T> = T extends unknown
-  ? {
-      [K in keyof T]: T[K] extends Field<infer TValue>
-        ? Field<TValue>
-        : T[K] extends Array<infer TArray>
-        ? ValidateFormData<TArray>[]
-        : T[K] extends Record<string, unknown>
-        ? ValidateFormData<T[K]>
-        : never;
-    }
-  : never;
+type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRef<T>;
 
-type TransformedFormData<T> = T extends unknown
+type ValidateFormData<T> = {
+  [K in keyof T]: T[K] extends { $value: infer TValue }
+    ? TValue extends Ref<infer TRef>
+      ? Field<TRef>
+      : Field<TValue>
+    : T[K] extends Array<infer TArray>
+    ? ValidateFormData<TArray>[]
+    : T[K] extends Record<string, unknown>
+    ? ValidateFormData<T[K]>
+    : unknown;
+};
+
+type TransformedFormData<T> = T extends any
   ? {
       [K in keyof T]: T[K] extends Field<infer TValue>
         ? TransformedField<TValue>
@@ -40,14 +42,18 @@ type TransformedFormData<T> = T extends unknown
         ? TransformedFormData<TArray>[]
         : T[K] extends Record<string, unknown>
         ? TransformedFormData<T[K]>
-        : never;
+        : T[K];
     }
   : never;
 
-type FormData<T> = T extends unknown
+type FormData<T> = T extends any
   ? {
-      [K in keyof T]: T[K] extends Field<infer TValue>
-        ? TValue
+      [K in keyof T as T[K] extends any[]
+        ? K
+        : T[K] extends Record<string, unknown>
+        ? K
+        : never]: T[K] extends Field<infer TValue>
+        ? UnwrapNestedRefs<TValue>
         : T[K] extends Array<infer TArray>
         ? FormData<TArray>[]
         : T[K] extends Record<string, unknown>
@@ -56,23 +62,19 @@ type FormData<T> = T extends unknown
     }
   : never;
 
-export const isSimpleRule = (rule: Rule): rule is SimpleRule =>
-  typeof rule === 'function';
+type Keys = readonly (string | number)[];
+type DeepIndex<T, Ks extends Keys> = Ks extends [infer First, ...infer Rest]
+  ? First extends keyof T
+    ? Rest extends Keys
+      ? DeepIndex<T[First], Rest>
+      : undefined
+    : undefined
+  : T;
 
-export const isKeyedRule = (rule: Rule): rule is KeyedRule =>
-  typeof rule === 'object'
-    ? 'key' in rule &&
-      'rule' in rule &&
-      typeof rule.key === 'string' &&
-      isSimpleRule(rule.rule)
-    : false;
-
-export const isField = <T>(field: any): field is Field<T> =>
+const isField = <T>(field: any): field is Field<T> =>
   typeof field === 'object' ? '$value' in field : false;
 
-export const isTransformedField = <T>(
-  field: any
-): field is TransformedField<T> =>
+const isTransformedField = <T>(field: any): field is TransformedField<T> =>
   typeof field === 'object'
     ? '$uid' in field &&
       '$value' in field &&
@@ -82,8 +84,8 @@ export const isTransformedField = <T>(
 
 /**
  *
- * @param form Form object with methods like `registerField` and `validate`.
- * @param formData The form data to transform.
+ * @param form - Form object with methods like `registerField` and `validate`.
+ * @param formData - The form data to transform.
  * @description In place transformation of a given form data object.
  * Recursively add's some metadata to every form field.
  */
@@ -164,6 +166,13 @@ export function getResultFormData(formData: any, resultFormData: any) {
   });
 }
 
+/**
+ *
+ * @param formData - The structure of your Form Data
+ * @hint
+ * To get the best IntelliSense when using TypeScript, consider defining the structure
+ * of your `formData` upfront and pass it as the generic parameter `T`.
+ */
 export function useValidation<T>(formData: T & ValidateFormData<T>) {
   const form = new Form();
 
@@ -174,13 +183,10 @@ export function useValidation<T>(formData: T & ValidateFormData<T>) {
   return {
     form: reactiveFormData as TransformedFormData<T>,
 
-    onSubmit: (
-      success: (formData: FormData<T>) => void,
-      errror?: () => void
-    ) => {
+    onSubmit(success: (formData: FormData<T>) => void, error?: () => void) {
       form.validateAll().then(hasError => {
         if (hasError) {
-          errror?.();
+          error?.();
         } else {
           const resultFormData = {} as any;
           getResultFormData(reactiveFormData, resultFormData);
@@ -189,7 +195,12 @@ export function useValidation<T>(formData: T & ValidateFormData<T>) {
       });
     },
 
-    add(pathToArray: (string | number)[], value: Record<string, unknown>) {
+    add<Ks extends Keys>(
+      pathToArray: readonly [...Ks],
+      value: DeepIndex<ValidateFormData<T>, Ks> extends Array<infer TArray>
+        ? TArray
+        : never
+    ) {
       const xs = path(pathToArray, reactiveFormData);
 
       if (Array.isArray(xs)) {
@@ -198,7 +209,10 @@ export function useValidation<T>(formData: T & ValidateFormData<T>) {
       }
     },
 
-    remove(pathToArray: (string | number)[], index: number) {
+    remove<Ks extends Keys>(
+      pathToArray: readonly [...Ks],
+      index: DeepIndex<ValidateFormData<T>, Ks> extends any[] ? number : never
+    ) {
       const xs = path(pathToArray, reactiveFormData);
 
       if (Array.isArray(xs)) {

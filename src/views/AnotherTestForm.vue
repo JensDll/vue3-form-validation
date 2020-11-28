@@ -38,7 +38,7 @@
   <pre>{{ form }}</pre>
 </template>
 
-<script lang="ts">
+<script>
 import BaseInput from '../components/form/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
 import { defineComponent, ref } from 'vue';
@@ -61,24 +61,25 @@ export default defineComponent({
             }
           }
         },
-        $rules: [(nested: any) => !nested.a.b.c && 'This field is required']
+        $rules: [nested => !nested.a.b.c && 'This field is required']
       },
       flatRef: {
         $value: ref(''),
-        $rules: [(flat: string) => !flat && 'This field is required']
+        $rules: [flat => !flat && 'This field is required']
       },
       flatString: {
         $value: '',
-        $rules: [(flat: string) => !flat && 'This field is required']
+        $rules: [flat => !flat && 'This field is required']
       },
       bool: {
         $value: false,
-        $rules: [(bool: boolean) => bool || 'Value has to be true']
+        $rules: [bool => bool || 'Value has to be true']
       }
     });
 
     const handleSubmit = () => {
       onSubmit(formData => {
+        console.log(formData);
         console.log(JSON.stringify(formData, null, 2));
       });
     };

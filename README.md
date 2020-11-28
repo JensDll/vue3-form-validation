@@ -61,7 +61,7 @@ type Field<T> = {
 };
 ```
 
-To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic parameter `T`. If at some point the provided type does not fit the required structure, it will let you know by converting that section to be of type `never`. The type for the example above is pretty straightforward:
+To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic parameter `T`. The type for the example above is pretty straightforward:
 
 ```ts
 type FormData = {
@@ -119,7 +119,6 @@ Signature | Parameters |  Description
 || `value` | The `value` that will be pushed to the array at the given path.
 `remove(pathToArray, index)` || Identical to `add` but instead of providing a `value` you provide an `index` that will be removed.
 
-At the moment, there is no good IntelliSense support for the `add` and `remove` methods. When TypeScript 4.1 will be released and Vue supports it, this can be changed however.
 ## Writing Rules
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
 They can also alternatively return a `Promise` when you have a rule that requires asynchronous code.
