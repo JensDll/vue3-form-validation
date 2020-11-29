@@ -16,7 +16,7 @@ This package exports one function `useValidation`, plus some type definitions fo
 
 ### useValidation
 ```ts
-const { form, add, remove, onSubmit } = useValidation<T>(formData)
+const { form, onSubmit, add, remove } = useValidation<T>(formData)
 ```
 
 * `useValidation` takes the following parameters:
