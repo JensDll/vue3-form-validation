@@ -27,7 +27,7 @@ formData | `object` | `true` | The structure of your Form data.
 
 The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
 
-Let's look at an example how the structure of some `formData` object, can be converted to an object with the addition of rules:
+Let's look at an example how the structure of some `formData` object can be converted to an object with the addition of rules:
 ```ts
 const formData = {
   name: '',
