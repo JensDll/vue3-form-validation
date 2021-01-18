@@ -1,4 +1,7 @@
 # Form validation for Vue 3
+
+[![npm](https://img.shields.io/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
+
 Easy to use opinionated Form validation for Vue 3.
 
 * :milky_way: **Written in TypeScript**
