@@ -2,7 +2,6 @@ import { reactive, Ref, watch, ref, ComputedRef, UnwrapRef } from 'vue';
 import useUid from './useUid';
 import Form from '../Form';
 import { path } from '../utils';
-import { type } from 'os';
 
 export type SimpleRule<T = any> = (value: T) => Promise<unknown> | unknown;
 export type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
