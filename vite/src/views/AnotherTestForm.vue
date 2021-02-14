@@ -1,12 +1,12 @@
 <template>
   <h1 class="font-semibold text-2xl">Test Form</h1>
-  <form class="form my-8" @submit.prevent="handleSubmit()">
+  <form class="form my-8" @submit.prevent="handleSubmit()" @reset="resetFields">
     <BaseInput
-      v-model="form.nested.$value.a.b.c"
+      v-model="form.nestedRef.$value.a.b.c"
       class="mb-4"
       label="Nested object"
-      :errors="form.nested.$errors"
-      @blur="form.nested.$onBlur()"
+      :errors="form.nestedRef.$errors"
+      @blur="form.nestedRef.$onBlur()"
     />
     <BaseInput
       v-model="form.flatRef.$value"
@@ -30,9 +30,19 @@
       :errors="form.bool.$errors"
       @blur="form.bool.$onBlur()"
     />
-    <BaseButton class="w-full" type="primary" html-type="submit">
-      Submit
-    </BaseButton>
+    <div class="flex gap-4 mt-8 col-span-3">
+      <BaseButton
+        class="w-full"
+        type="primary"
+        html-type="submit"
+        :disabled="submitting"
+      >
+        Submit
+      </BaseButton>
+      <BaseButton class="w-full" html-type="reset" :disabled="submitting">
+        Reset
+      </BaseButton>
+    </div>
   </form>
 
   <pre>{{ form }}</pre>
@@ -42,7 +52,7 @@
 import BaseInput from '../components/form/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
 import { defineComponent, ref } from 'vue';
-import { useValidation } from '../../main/composable/useValidation';
+import { useValidation } from '../../../main';
 
 export default defineComponent({
   components: {
@@ -52,8 +62,9 @@ export default defineComponent({
   setup() {
     const nested = ref('');
 
-    const { form, onSubmit } = useValidation({
-      nested: {
+    const { form, submitting, resetFields, validateFields } = useValidation({
+      a: '',
+      nestedRef: {
         $value: {
           a: {
             b: {
@@ -78,15 +89,20 @@ export default defineComponent({
     });
 
     const handleSubmit = () => {
-      onSubmit(formData => {
-        console.log(formData);
-        console.log(JSON.stringify(formData, null, 2));
-      });
+      validateFields()
+        .then(formData => {
+          console.log(JSON.stringify(formData, null, 2));
+        })
+        .catch(() => {
+          //
+        });
     };
 
     return {
       form,
-      handleSubmit
+      handleSubmit,
+      submitting,
+      resetFields
     };
   }
 });

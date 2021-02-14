@@ -4,7 +4,8 @@ let formField: FormField;
 
 beforeEach(() => {
   formField = new FormField(
-    Array.from({ length: 10 }, () => async () => 'Error')
+    Array.from({ length: 10 }, () => async () => 'Error'),
+    ''
   );
 });
 

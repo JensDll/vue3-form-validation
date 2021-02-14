@@ -1,6 +1,6 @@
 <template>
   <h1 class="font-semibold text-2xl">Login</h1>
-  <form class="form my-8" @submit.prevent="handleSubmit()">
+  <form class="form my-8" @submit.prevent="handleSubmit()" @reset="resetFields">
     <BaseInput
       v-model="form.name.$value"
       class="name input-error"
@@ -39,8 +39,9 @@
     >
       Login
     </BaseButton>
-    <BaseButton class="mt-8"> Cancel </BaseButton>
+    <BaseButton class="mt-8" html-type="reset">Cancel</BaseButton>
   </form>
+  <pre>{{ errors }}</pre>
   <pre>{{ formJSON }}</pre>
 </template>
 
@@ -48,7 +49,7 @@
 import BaseInput from '../components/form/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
 import { defineComponent, ref } from 'vue';
-import { useValidation, Field } from '../../main/composable/useValidation';
+import { useValidation, Field } from '../../../main';
 
 interface FormData {
   name: Field<string>;
@@ -62,9 +63,14 @@ export default defineComponent({
   setup() {
     const password = ref('');
     const repeatPassword = ref('');
-    const submitting = ref(false);
 
-    const { form, onSubmit } = useValidation<FormData>({
+    const {
+      form,
+      validateFields,
+      errors,
+      resetFields,
+      submitting
+    } = useValidation<FormData>({
       name: {
         $value: '',
         $rules: [
@@ -113,22 +119,21 @@ export default defineComponent({
     });
 
     const handleSubmit = () => {
-      submitting.value = true;
-      onSubmit(
-        formData => {
+      validateFields()
+        .then(formData => {
           console.log(JSON.stringify(formData, null, 2));
-          submitting.value = false;
-        },
-        () => {
-          submitting.value = false;
-        }
-      );
+        })
+        .catch(() => {
+          //
+        });
     };
 
     return {
       form,
       handleSubmit,
-      submitting
+      submitting,
+      errors,
+      resetFields
     };
   },
   computed: {

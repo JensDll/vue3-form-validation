@@ -238,8 +238,8 @@ describe('getResultFormData', () => {
 
 describe('useValidation', () => {
   describe('form', () => {
-    it('should add metadata to every form field', () => {
-      const { form: form1 } = useValidation({
+    it('should add metadata to every form field (1)', () => {
+      const { form } = useValidation({
         a: {
           b: {
             c: {
@@ -265,7 +265,7 @@ describe('useValidation', () => {
         }
       });
 
-      expect(form1).toEqual({
+      expect(form).toEqual({
         a: {
           b: {
             c: {
@@ -294,8 +294,10 @@ describe('useValidation', () => {
           }
         }
       });
+    });
 
-      const { form: form2 } = useValidation({
+    it('should add metadata to every form field (2)', () => {
+      const { form } = useValidation({
         a: {
           b: {
             $value: 1
@@ -332,7 +334,7 @@ describe('useValidation', () => {
         ]
       });
 
-      expect(form2).toEqual({
+      expect(form).toEqual({
         a: {
           b: {
             $uid: expect.any(Number),
@@ -396,15 +398,8 @@ describe('useValidation', () => {
   });
 
   describe('onSubmit', () => {
-    it('should discard everything except the value properties', done => {
-      const { onSubmit } = useValidation({
-        discard1: 10 as any,
-        discard2: 'foo' as any,
-        discard3: false as any,
-        discard4: Symbol(),
-        discard5: () => {
-          //
-        },
+    it('should discard everything except the value properties', async () => {
+      const { validateFields } = useValidation({
         a: {
           b: {
             $value: 1
@@ -416,7 +411,10 @@ describe('useValidation', () => {
                   c: ref(2)
                 }
               }
-            }
+            },
+            x: 10,
+            y: '',
+            z: false
           }
         },
         rules: {
@@ -433,7 +431,7 @@ describe('useValidation', () => {
                 g: {
                   $value: 'foo'
                 },
-                e: {
+                h: {
                   $value: 'bar'
                 }
               }
@@ -448,7 +446,7 @@ describe('useValidation', () => {
                   y: '',
                   z: ''
                 },
-                e: {
+                h: {
                   $value: 'def'
                 }
               }
@@ -457,46 +455,44 @@ describe('useValidation', () => {
         ]
       });
 
-      onSubmit(formData => {
-        expect(formData).toEqual({
-          a: {
-            b: 1,
-            c: {
-              a: {
-                b: {
-                  c: 2
-                }
-              }
-            }
-          },
-          rules: {
-            value: {
-              value: {
-                xs: []
-              }
-            }
-          },
-          ds: [
-            {
-              e: {
-                f: {
-                  g: 'foo',
-                  e: 'bar'
-                }
-              }
-            },
-            {
-              e: {
-                f: {
-                  g: 'abc',
-                  e: 'def'
-                }
-              }
-            }
-          ]
-        });
+      const formData = await validateFields();
 
-        done();
+      expect(formData).toEqual({
+        a: {
+          b: 1,
+          c: {
+            a: {
+              b: {
+                c: 2
+              }
+            }
+          }
+        },
+        rules: {
+          value: {
+            value: {
+              xs: []
+            }
+          }
+        },
+        ds: [
+          {
+            e: {
+              f: {
+                g: 'foo',
+                h: 'bar'
+              }
+            }
+          },
+          {
+            e: {
+              f: {
+                g: 'abc',
+                h: 'def'
+              }
+            }
+          }
+        ]
       });
     });
   });

@@ -44,13 +44,6 @@
         <router-link
           class="block relative"
           exact-active-class="nav-link-active"
-          to="/test-form"
-        >
-          <div class="py-3 pl-20" @click="setFormMenuActive()">Test Form</div>
-        </router-link>
-        <router-link
-          class="block relative"
-          exact-active-class="nav-link-active"
           to="/another-test-form"
         >
           <div class="py-3 pl-20" @click="setFormMenuActive()">
@@ -129,8 +122,8 @@ export default defineComponent({
 }
 
 .nav-link-active::after {
-  content: '';
   @apply absolute w-1 bg-green-500;
+  content: '';
   top: 0;
   right: -1px;
   bottom: 0;
