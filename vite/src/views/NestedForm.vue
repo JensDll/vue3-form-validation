@@ -95,7 +95,6 @@ export default defineComponent({
       ]
     });
 
-    console.log(form);
     const handleSubmit = () => {
       validateFields()
         .then(formData => {

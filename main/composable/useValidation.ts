@@ -153,6 +153,7 @@ export function getResultFormData(formData: any, resultFormData: any) {
       resultFormData[key] = {};
     } else {
       resultFormData[key] = value;
+      return;
     }
 
     if (Array.isArray(value)) {
