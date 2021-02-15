@@ -112,7 +112,7 @@ Key | Value | Description
 uid | `number` | Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
 value | `T` | The `modelValue` of the Form Field which is meant to be used together with `v-model`.
 errors | `string[]` | Array of validation error messages.
-validating | `boolean` | `True` while atleast one rule is validating.
+validating | `boolean` | `True` while at least one rule is validating.
 onBlur | `function` | Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
 - `useValidation` exposes the following methods:
@@ -123,7 +123,7 @@ onBlur | `function` | Function which will mark this Form Field as touched. When 
 |                              |   `success`   | Will be called if there are no validation errors. Receives the `formData` as it's first argument.                                  |
 |                              |   `error?`    | Will be called if there are validation errors. Receives no arguments.                                                              |
 | `add(pathToArray, value)`    |               | Utility function for writing dynamic Forms. It takes two parameters, a `pathToArray` of type `(string \| number)[]` and a `value`. |
-|                              | `pathToArray` | Tupel of `string` and `numbers` representing the path to an array in the `formData`.                                               |
+|                              | `pathToArray` | Tuple of `string` and `numbers` representing the path to an array in the `formData`.                                               |
 |                              |    `value`    | The `value` that will be pushed to the array at the given path.                                                                    |
 | `remove(pathToArray, index)` |               | Identical to `add` but instead of providing a `value` you provide an `index` that will be removed.                                 |
 
