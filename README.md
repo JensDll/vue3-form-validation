@@ -30,7 +30,7 @@ const {
 } = useValidation<T>(formData);
 ```
 
-### `useValidation` takes the following parameters
+**`useValidation` takes the following parameters:**
 
 - `formData`
   - **Type** - `object`
@@ -86,7 +86,7 @@ type FormData = {
 };
 ```
 
-### `useValidation` exposes the following state
+**`useValidation` exposes the following state:**
 
 - `form`
   - **Type** - `object`
@@ -135,7 +135,7 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
   - **Type** - `function`
   - **Description** - Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
-### `useValidation` exposes the following methods
+**`useValidation` exposes the following methods:**
 
 - `validateFields() -> Promise`
   - **Description** - Validate all Form Fields.
@@ -158,7 +158,7 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
 They can also alternatively return a `Promise` when you have a rule that requires asynchronous code.
 
-#### Typing:
+**Typing:**
 
 ```ts
 type SimpleRule<T = any> = (value: T) => Promise<unknown> | unknown;
