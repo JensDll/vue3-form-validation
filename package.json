@@ -1,6 +1,6 @@
 {
   "name": "vue3-form-validation",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Vue composition function for Form Validation",
   "author": {
     "name": "jens",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/JensDll/vue3-form-validation#readme"
+    "url": "https://github.com/JensDll/vue3-form-validation"
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

@@ -1,7 +1,7 @@
 import { reactive, Ref, watch, ref, ComputedRef, UnwrapRef } from 'vue';
 import useUid from './useUid';
 import Form from '../Form';
-import { path } from '../utils';
+import { path, PromiseCancel } from '../utils';
 
 export type SimpleRule<T = any> = (value: T) => Promise<unknown> | unknown;
 export type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
@@ -207,6 +207,7 @@ export function useValidation<T extends object>(
 ): UseValidation<T> {
   const form = new Form();
   const submitting = ref(false);
+  const promiseCancel = new PromiseCancel<true>();
 
   transformFormData(form, formData);
 
@@ -221,7 +222,8 @@ export function useValidation<T extends object>(
 
     async validateFields() {
       submitting.value = true;
-      const hasError = await form.validateAll();
+
+      const hasError = await promiseCancel.race(form.validateAll());
 
       if (hasError) {
         submitting.value = false;
@@ -236,7 +238,10 @@ export function useValidation<T extends object>(
       return resultFormData as FormData<T>;
     },
 
-    resetFields() {
+    async resetFields() {
+      if (submitting.value) {
+        promiseCancel.cancelResolve(true);
+      }
       form.resetFields();
     },
 
