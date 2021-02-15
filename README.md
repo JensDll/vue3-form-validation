@@ -18,7 +18,7 @@ Validation is async and is utilising `Promise.allSettled`, [which](https://devel
 
 This package exports one function `useValidation`, plus some type definitions for when using TypeScript.
 
-#### `useValidation`
+### `useValidation`
 
 ```ts
 const {
@@ -32,7 +32,7 @@ const {
 } = useValidation<T>(formData);
 ```
 
-#### `useValidation` takes the following parameters:
+### `useValidation` takes the following parameters
 
 - `formData`
   - **Type** - `object`
@@ -88,7 +88,7 @@ type FormData = {
 };
 ```
 
-#### `useValidation` exposes the following state:
+### `useValidation` exposes the following state
 
 - `form`
   - **Type** - `object`
@@ -137,7 +137,7 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
   - **Type** - `function`
   - **Description** - Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
-#### `useValidation` exposes the following methods:
+### `useValidation` exposes the following methods
 
 - `validateFields() -> Promise`
   - **Description** - Validate all Form Fields.
