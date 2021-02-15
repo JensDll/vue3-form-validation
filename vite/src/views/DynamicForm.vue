@@ -61,14 +61,7 @@
       >
         Submit
       </BaseButton>
-      <BaseButton
-        class="w-full"
-        type="primary"
-        html-type="reset"
-        :disabled="submitting"
-      >
-        Reset
-      </BaseButton>
+      <BaseButton class="w-full" @click="resetFields">Reset</BaseButton>
     </div>
   </form>
   <pre>{{ errors }}</pre>

@@ -1,6 +1,6 @@
 <template>
   <h1 class="font-semibold text-2xl">Login</h1>
-  <form class="form my-8" @submit.prevent="handleSubmit()" @reset="resetFields">
+  <form class="form my-8" @submit.prevent="handleSubmit()">
     <BaseInput
       v-model="form.name.$value"
       class="name input-error"
@@ -39,7 +39,7 @@
     >
       Login
     </BaseButton>
-    <BaseButton class="mt-8" html-type="reset">Cancel</BaseButton>
+    <BaseButton class="mt-8" @click="resetFields">Reset</BaseButton>
   </form>
   <pre>{{ errors }}</pre>
   <pre>{{ formJSON }}</pre>
