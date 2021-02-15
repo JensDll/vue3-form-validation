@@ -83,7 +83,7 @@ export default class Form {
     return formField;
   }
 
-  errors() {
+  getErrors() {
     return computed(() => {
       const errors: string[] = [];
 
@@ -177,11 +177,12 @@ export default class Form {
 
     this.tryGetKeyed({
       success: keyed => {
-        keyed.forEach(({ formField }) => {
+        for (const { formField } of keyed) {
           if (!formField.touched) {
             everyFormFieldIsTouched = false;
+            break;
           }
-        });
+        }
       }
     })(key);
 
@@ -205,7 +206,7 @@ export default class Form {
         formField.decrementWaiting(index);
       }
 
-      if (formField.nooneIsWaiting(index)) {
+      if (formField.nooneIsWaiting(index) && formField.touched) {
         if (typeof error === 'string') {
           formField.setError(index, error);
           throw error;

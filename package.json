@@ -1,6 +1,6 @@
 {
   "name": "vue3-form-validation",
-  "version": "2.1.2",
+  "version": "3.0.0",
   "description": "Form validation for Vue 3",
   "author": {
     "name": "jens",
@@ -21,7 +21,9 @@
     "vue",
     "vuejs",
     "form",
-    "validation"
+    "validation",
+    "utils",
+    "vue-use"
   ],
   "scripts": {
     "build": "npx tsc --project ./main",

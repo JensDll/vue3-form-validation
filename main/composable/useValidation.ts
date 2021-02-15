@@ -216,7 +216,7 @@ export function useValidation<T extends object>(
 
     submitting,
 
-    errors: form.errors(),
+    errors: form.getErrors(),
 
     async validateFields() {
       submitting.value = true;

@@ -106,7 +106,7 @@ expectError(
   useValidation({
     a: {
       $value: '',
-      // make sure you can't assign wrong type
+      // make sure you can not assign a wrong type
       $rules: [(a: number) => a]
     }
   })
@@ -119,7 +119,7 @@ useValidation({
         c: ''
       }
     },
-    // make sure you can assign correct type
+    // make sure you can assign a correct type
     $rules: [(a: { b: { c: string } }) => expectType<{ b: { c: string } }>(a)]
   }
 });

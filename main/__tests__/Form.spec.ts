@@ -333,6 +333,9 @@ describe('async validation', () => {
         })
     );
 
+    // 1 -> S1, S2
+    // 2 -> (a,K1)
+    // 3 -> S3, (a,K2)
     formField1 = form.registerField(1, [simpleRule1, simpleRule2]);
     formField2 = form.registerField(2, [{ key: 'a', rule: keyedRule1 }]);
     formField3 = form.registerField(3, [
@@ -367,5 +370,17 @@ describe('async validation', () => {
 
     expect(formField3.getErrors().value).toContain('S3');
     expect(formField3.getErrors().value).toContain('K2');
+
+    expect(form.getErrors().value.sort()).toEqual(
+      ['S1', 'S2', 'S3', 'K1', 'K2'].sort()
+    );
+  });
+
+  it('should not set errors after resetting form', done => {
+    form.validateAll().then(() => {
+      expect(form.getErrors().value).toEqual([]);
+      done();
+    });
+    form.resetFields();
   });
 });
