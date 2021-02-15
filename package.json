@@ -31,7 +31,10 @@
     "test": "jest --config ./main/jest.config.ts",
     "test-dts": "npx tsd",
     "test-all": "npm run build && npm run test && npm run test-dts",
-    "dev": "vite"
+    "dev": "vite",
+    "postinstall": "husky install",
+    "prepublishOnly": "pinst --disable",
+    "postpublish": "pinst --enable"
   },
   "devDependencies": {
     "@types/jest": "^26.0.20",
@@ -61,11 +64,6 @@
     "arrowParens": "avoid",
     "trailingComma": "none",
     "endOfLine": "crlf"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npx eslint --rule=\"no-console:error\" --fix-dry-run main"
-    }
   },
   "tsd": {
     "directory": "test-dts"
