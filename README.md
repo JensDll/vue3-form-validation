@@ -35,9 +35,10 @@ const {
 ### `useValidation` takes the following parameters
 
 - `formData`
-  - Type - `object`
-  - Required - `true`
-  - Description - The structure of your `formData`.
+  - **Type** - `object`
+  - **Required** - `true`
+  - **Description** </br>
+    The structure of your `formData`.
 
 The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
 
@@ -91,14 +92,17 @@ type FormData = {
 ### `useValidation` exposes the following state
 
 - `form`
-  - Type - `object`
-  - Description - Transformed `formData` object.
+  - **Type** - `object`
+  - **Description** </br>
+    Transformed `formData` object.
 - `submitting`
-  - Type - `Ref<boolean>`
-  - Description - `True` during validation after calling `validateFields`.
+  - **Type** - `Ref<boolean>`
+  - **Description** </br>
+    `True` during validation after calling `validateFields`.
 - `errors`
-  - Type - `ComputedRef<string[]>`
-  - Description - Array of all current validation errors messages.
+  - **Type** - `ComputedRef<string[]>`
+  - **Description** </br>
+    Array of all current validation errors messages.
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
 
@@ -122,13 +126,27 @@ const form: {
 ```
 
 As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts.
-Key | Value | Description
----|:-:|---
-uid | `number` | Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
-value | `T` | The `modelValue` of the Form Field which is meant to be used together with `v-model`.
-errors | `string[]` | Array of validation error messages.
-validating | `boolean` | `True` while at least one rule is validating.
-onBlur | `function` | Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
+
+- **$uid**
+  - **Type** - `number`
+  - **Description** </br>
+    Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
+- **$value**
+  - **Type** - `T`
+  - **Description** </br>
+    The `modelValue` of the Form Field which is meant to be used together with `v-model`.
+- **$errors**
+  - **Type** - `string[]`
+  - **Description** </br>
+    Array of validation error messages.
+- **$validating**
+  - **Type** - `boolean`
+  - **Description** </br>
+    `True` while at least one rule is validating.
+- **$onBlur**
+  - **Type** - `function`
+  - **Description** </br>
+    Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
 ### `useValidation` exposes the following methods
 
