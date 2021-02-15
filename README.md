@@ -37,8 +37,7 @@ const {
 - `formData`
   - **Type** - `object`
   - **Required** - `true`
-  - **Description** </br>
-    The structure of your `formData`.
+  - **Description** - The structure of your `formData`.
 
 The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
 
@@ -93,16 +92,13 @@ type FormData = {
 
 - `form`
   - **Type** - `object`
-  - **Description** </br>
-    Transformed `formData` object.
+  - **Description** - Transformed `formData` object.
 - `submitting`
   - **Type** - `Ref<boolean>`
-  - **Description** </br>
-    `True` during validation after calling `validateFields`.
+  - **Description** - `True` during validation after calling `validateFields`.
 - `errors`
   - **Type** - `ComputedRef<string[]>`
-  - **Description** </br>
-    Array of all current validation errors messages.
+  - **Description** - Array of all current validation errors messages.
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field:
 
@@ -127,44 +123,34 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
 
 - `$uid`
   - **Type** - `number`
-  - **Description** </br>
-    Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
+  - **Description** - Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
 - `$value`
   - **Type** - `T`
-  - **Description** </br>
-    The `modelValue` of the Form Field which is meant to be used together with `v-model`.
+  - **Description** - The `modelValue` of the Form Field which is meant to be used together with `v-model`.
 - `$errors`
   - **Type** - `string[]`
-  - **Description** </br>
-    Array of validation error messages.
+  - **Description** - Array of validation error messages.
 - `$validating`
   - **Type** - `boolean`
-  - **Description** </br>
-    `True` while at least one rule is validating.
+  - **Description** - `True` while at least one rule is validating.
 - `$onBlur`
   - **Type** - `function`
-  - **Description** </br>
-    Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
+  - **Description** - Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
 #### `useValidation` exposes the following methods:
 
 - `validateFields() -> Promise`
-  - **Description** </br>
-    Validate all Form Fields.
-  - **Returns** </br>
-    A `Promise` which will reject if there are validation errors, and resolve with the `formData` otherwise.
+  - **Description** - Validate all Form Fields.
+  - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the `formData` otherwise.
 - `resetFields() -> void`
-  - **Description** </br>
-    Reset all Form Fields to their original values.
+  - **Description** - Reset all Form Fields to their original values.
 - `add(pathToArray: (string | number)[], value: any) -> void`
-  - **Description** <br/>
-    Utility function for writing dynamic Forms.
+  - **Description** - Utility function for writing dynamic Forms.
   - **Parameters**
     - `pathToArray` - Tuple representing the path to an array in the `formData`.
     - `value` - The value that will be pushed to the array at the given path.
 - `remove(pathToArray: (string | number)[], index: number) -> void`
-  - **Description** <br/>
-    Utility function for writing dynamic Forms.
+  - **Description** - Utility function for writing dynamic Forms.
   - **Parameters**
     - `pathToArray` - Tuple representing the path to an array in the `formData`.
     - `index` - Array index that will be remove.
