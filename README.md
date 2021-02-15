@@ -18,13 +18,21 @@ Validation is async and is utilising `Promise.allSettled`, [which](https://devel
 
 This package exports one function `useValidation`, plus some type definitions for when using TypeScript.
 
-### useValidation
+### `useValidation`
 
 ```ts
-const { form, onSubmit, add, remove } = useValidation<T>(formData);
+const {
+  form,
+  errors,
+  submitting,
+  validateFields,
+  resetFields,
+  add,
+  remove
+} = useValidation<T>(formData);
 ```
 
-- `useValidation` takes the following parameters:
+### `useValidation` takes the following parameters
 
 | Parameters |   Type   | Required | Description                      |
 | ---------- | :------: | :------: | -------------------------------- |
@@ -60,7 +68,7 @@ const formDataWithRules = {
 };
 ```
 
-The `formData` object can contain arrays and can be deeply nested. At the leaf level, the object should contain Form Fields whose type definition looks like the following:
+The `formData` object can contain arrays and can be deeply nested. At the leaf level, the object should contain Form Fields whose simplified type definition looks like the following:
 
 ```ts
 type Field<T> = {
@@ -69,7 +77,7 @@ type Field<T> = {
 };
 ```
 
-To get the best IntelliSense while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic parameter `T`. The type for the example above is pretty straightforward:
+To get better type inference while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic parameter `T`. The type for the example above is pretty straightforward:
 
 ```ts
 type FormData = {
@@ -79,11 +87,11 @@ type FormData = {
 };
 ```
 
-- `useValidation` exposes the following state:
+### `useValidation` exposes the following state
 
 | State |   Type   | Description                                                            |
 | ----- | :------: | ---------------------------------------------------------------------- |
-| form  | `object` | Transformed `formData` object with added metadata to every Form Field. |
+| form  | `object` | Transformed `formData` object. |
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
 
@@ -115,17 +123,7 @@ errors | `string[]` | Array of validation error messages.
 validating | `boolean` | `True` while at least one rule is validating.
 onBlur | `function` | Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
-- `useValidation` exposes the following methods:
-
-| Signature                    |  Parameters   | Description                                                                                                                        |
-| ---------------------------- | :-----------: | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `onSubmit(success, error?)`  |               | Function that will validate all Form Fields. It takes two parameters, a `success` callback and an optional `error` callback.       |
-|                              |   `success`   | Will be called if there are no validation errors. Receives the `formData` as it's first argument.                                  |
-|                              |   `error?`    | Will be called if there are validation errors. Receives no arguments.                                                              |
-| `add(pathToArray, value)`    |               | Utility function for writing dynamic Forms. It takes two parameters, a `pathToArray` of type `(string \| number)[]` and a `value`. |
-|                              | `pathToArray` | Tuple of `string` and `numbers` representing the path to an array in the `formData`.                                               |
-|                              |    `value`    | The `value` that will be pushed to the array at the given path.                                                                    |
-| `remove(pathToArray, index)` |               | Identical to `add` but instead of providing a `value` you provide an `index` that will be removed.                                 |
+### `useValidation` exposes the following methods
 
 ## Writing Rules
 
