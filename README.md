@@ -92,7 +92,7 @@ type FormData = {
 | State | Type | Description |
 | --- | :-: | --- |
 | form | `object`| Transformed `formData` object. |
-| submitting | `Ref<boolean>`| `True` while validating rules after calling `validateFields`. |
+| submitting | `Ref<boolean>`| `True` during validation after calling `validateFields`. |
 | errors | `ComputedRef<string[]>` | Array of all current validation errors. |
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
@@ -127,6 +127,26 @@ onBlur | `function` | Function which will mark this Form Field as touched. When 
 
 ### `useValidation` exposes the following methods
 
+- **`validateFields`**
+  - **Description** - Validate all Form Fields.
+  - **Parameters** - none
+  - **Returns** - A `Promise` which will reject if there are validation erros, and resolve with the `formData` otherwise.
+- **`resetFields`**
+  - **Description** - Reset all Form Fields to theire original values.
+  - **Parameters** - none
+  - **Returns** - `void`
+- **`add`**
+  - **Description** - Utility function for writing dynamic Forms.
+  - **Parameters**
+    - **`pathToArray: (string | number)[]`** - Tuple representing the path to an array in the `formData`.
+    - **`value`** - The value that will be pushed to the array at the given path.
+  - **Returns** - `void`
+- **`remove`**
+  - **Description** - Utility function for writing dynamic Forms.
+  - **Parameters**
+    - **`pathToArray: (string | number)[]`** - Tuple representing the path to an array in the `formData`.
+    - **`index: number`** - Array index that will be remove.
+  - **Returns** - `void`
 ## Writing Rules
 
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
