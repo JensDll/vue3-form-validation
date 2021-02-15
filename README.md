@@ -1,4 +1,4 @@
-# Form validation for Vue 3
+# Form Validation for Vue 3
 
 [![npm](https://img.shields.io/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
 
@@ -34,9 +34,9 @@ const {
 
 ### `useValidation` takes the following parameters
 
-| Parameters |   Type   | Required | Description                      |
-| ---------- | :------: | :------: | -------------------------------- |
-| formData   | `object` |  `true`  | The structure of your Form data. |
+| Parameters | Type | Required | Description |
+| --- | :-: | :-: | --- |
+| formData | `object` | `true` | The structure of your Form data.|
 
 The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
 
@@ -89,9 +89,11 @@ type FormData = {
 
 ### `useValidation` exposes the following state
 
-| State |   Type   | Description                                                            |
-| ----- | :------: | ---------------------------------------------------------------------- |
-| form  | `object` | Transformed `formData` object. |
+| State | Type | Description |
+| --- | :-: | --- |
+| form | `object`| Transformed `formData` object. |
+| submitting | `Ref<boolean>`| `True` while validating rules after calling `validateFields`. |
+| errors | `ComputedRef<string[]>` | Array of all current validation errors. |
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
 
@@ -138,32 +140,14 @@ type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
 
-Keyed rules that share the same `key` will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat password` fields in a Login Form.
+Keyed rules that share the same `key` will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat Password` fields in a Login Form.
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
-
-`main/Form.ts`
-
-```ts
-// Somewhere at the bottom of the file
-
-let error: unknown;
-// ...
-error = await rule(formField.modelValue);
-// ...
-if (typeof error === 'string') {
-  // report validation error
-}
-// ...
-```
-
 This allows you to write many rules in one line:
 
 ```ts
 const required = value => !value && 'This field is required';
-const min = value =>
-  value.length > 3 || 'This field has to be longer than 3 characters';
-const max = value =>
-  value.length < 7 || 'This field is too long (maximum is 6 characters)';
+const min = value => value.length > 3 || 'This field has to be longer than 3 characters';
+const max = value => value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
 Async rules allow you to perform network requests, for example checking if a username already exists in the database:
