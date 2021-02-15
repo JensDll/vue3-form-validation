@@ -18,8 +18,6 @@ Validation is async and is utilising `Promise.allSettled`, [which](https://devel
 
 This package exports one function `useValidation`, plus some type definitions for when using TypeScript.
 
-### `useValidation`
-
 ```ts
 const {
   form,
