@@ -96,9 +96,9 @@ type FormData = {
   - **Description** - `True` during validation after calling `validateFields`.
 - `errors`
   - **Type** - `ComputedRef<string[]>`
-  - **Description** - Array of all current validation errors messages.
+  - **Description** - Array of all current validation error messages.
 
-`Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field:
+`Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
 
 ```ts
 type TransformedField<T> = {
@@ -117,7 +117,7 @@ const form: {
 };
 ```
 
-As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts:
+As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts.
 
 - `$uid`
   - **Type** - `number`
@@ -178,7 +178,7 @@ const max = value =>
   value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
-Async rules allow you to perform network requests, for example checking if a username already exists in the database:
+Async rules allow you to perform network requests, for example checking if a username exists in the database:
 
 ```ts
 const isNameTaken = name =>
