@@ -3,52 +3,62 @@
   <form class="form my-8" @submit.prevent="handleSubmit()">
     <BaseInput
       v-model="form.test.a.b.c.d.$value"
-      label="Nested A"
+      label="Nested d"
       :errors="form.test.a.b.c.d.$errors"
       @blur="form.test.a.b.c.d.$onBlur()"
     />
     <BaseInput
       v-model.number="form.test.a.b.e.$value"
-      label="Nested E"
+      label="Nested e"
       type="number"
       :errors="form.test.a.b.e.$errors"
       @blur="form.test.a.b.e.$onBlur()"
     />
     <BaseInput
       v-model="form.test.f.$value.foo.a.c"
-      label="Nested F"
+      label="Nested f"
       :errors="form.test.f.$errors"
       @blur="form.test.f.$onBlur()"
     />
-    <BaseButton class="mt-8" type="primary" html-type="submit">
-      Submit
-    </BaseButton>
+    <div class="flex gap-4 mt-8">
+      <BaseButton
+        class="w-full"
+        type="primary"
+        html-type="submit"
+        :disabled="submitting"
+      >
+        Submit
+      </BaseButton>
+      <BaseButton class="w-full" @click="resetFields">Reset</BaseButton>
+    </div>
   </form>
   <pre>{{ form }}</pre>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import BaseInput from '../components/form/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
-import { useValidation } from '../../main/composable/useValidation';
+import { useValidation } from '../../../main';
 
 export default defineComponent({
   components: { BaseInput, BaseButton },
   setup() {
-    const { form, onSubmit } = useValidation({
+    const { form, submitting, resetFields, validateFields } = useValidation({
+      x: '',
       test: {
         a: {
           b: {
+            y: '',
             c: {
               d: {
-                $value: '',
-                $rules: [(d: string) => !d && 'a is required']
+                $value: ref(''),
+                $rules: [(d: string) => !d && 'd is required']
               }
             },
             e: {
-              $value: (null as unknown) as number,
-              $rules: [(e: number) => !e && 'e is required']
+              $value: null,
+              $rules: [(e: null) => !e && 'e is required']
             }
           }
         },
@@ -56,7 +66,7 @@ export default defineComponent({
           $value: {
             foo: {
               a: {
-                c: ''
+                c: ref('')
               }
             }
           },
@@ -84,14 +94,20 @@ export default defineComponent({
     });
 
     const handleSubmit = () => {
-      onSubmit(formData => {
-        console.log(JSON.stringify(formData, null, 2));
-      });
+      validateFields()
+        .then(formData => {
+          console.log(JSON.stringify(formData, null, 2));
+        })
+        .catch(() => {
+          //
+        });
     };
 
     return {
       form,
-      handleSubmit
+      submitting,
+      handleSubmit,
+      resetFields
     };
   }
 });

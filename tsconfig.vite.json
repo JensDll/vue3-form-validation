@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
-    "isolatedModules": true
-  },
-  "extends": "./tsconfig.json",
-  "include": ["src"]
-}

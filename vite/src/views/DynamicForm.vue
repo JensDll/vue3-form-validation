@@ -1,6 +1,10 @@
 <template>
   <h1 class="font-semibold text-2xl">Dynamic Form</h1>
-  <form class="form my-8 w-3/4" @submit.prevent="handleSubmit()">
+  <form
+    class="form my-8 w-3/4"
+    @submit.prevent="handleSubmit"
+    @reset="resetFields"
+  >
     <BaseInput
       v-model="form.profile.$value"
       class="col-span-3"
@@ -48,23 +52,34 @@
         </BaseButton>
       </template>
     </template>
-    <BaseButton
-      class="col-span-3 mt-8"
-      type="primary"
-      html-type="submit"
-      :disabled="submitting"
-    >
-      Submit
-    </BaseButton>
+    <div class="flex gap-4 mt-8 col-span-3">
+      <BaseButton
+        class="w-full"
+        type="primary"
+        html-type="submit"
+        :disabled="submitting"
+      >
+        Submit
+      </BaseButton>
+      <BaseButton
+        class="w-full"
+        type="primary"
+        html-type="reset"
+        :disabled="submitting"
+      >
+        Reset
+      </BaseButton>
+    </div>
   </form>
+  <pre>{{ errors }}</pre>
   <pre>{{ formJSON }}</pre>
 </template>
 
 <script lang="ts">
 import BaseButton from '../components/BaseButton.vue';
 import BaseInput from '../components/form/BaseInput.vue';
-import { defineComponent, ref } from 'vue';
-import { useValidation, Field } from '../../main';
+import { defineComponent } from 'vue';
+import { useValidation, Field } from '../../../main';
 
 type Input = {
   profile: Field<string>;
@@ -83,7 +98,15 @@ export default defineComponent({
     BaseInput
   },
   setup() {
-    const { form, add, remove, onSubmit } = useValidation<Input>({
+    const {
+      form,
+      errors,
+      validateFields,
+      add,
+      remove,
+      submitting,
+      resetFields
+    } = useValidation<Input>({
       profile: {
         $value: '',
         $rules: [profile => !profile && 'Profile name is required']
@@ -109,11 +132,17 @@ export default defineComponent({
       add(['groups', groupIndex, 'details'], {
         name: {
           $value: '',
-          $rules: [(name: string) => !name && 'Detail name is required']
+          $rules: [
+            name => !name && 'Detail name is required',
+            { key: 'detail', rule: name => !name && 'Keyed Name' }
+          ]
         },
         short: {
           $value: '',
-          $rules: [(short: string) => !short && 'Detail short is required']
+          $rules: [
+            short => !short && 'Detail short is required',
+            { key: 'detail', rule: name => !name && 'Keyed Short' }
+          ]
         }
       });
     };
@@ -122,19 +151,14 @@ export default defineComponent({
       remove(['groups', groupIndex, 'details'], detailIndex);
     };
 
-    const submitting = ref(false);
-
     const handleSubmit = () => {
-      submitting.value = true;
-      onSubmit(
-        formData => {
+      validateFields()
+        .then(formData => {
           console.log(JSON.stringify(formData, null, 2));
-          submitting.value = false;
-        },
-        () => {
-          submitting.value = false;
-        }
-      );
+        })
+        .catch(() => {
+          //
+        });
     };
 
     return {
@@ -144,7 +168,9 @@ export default defineComponent({
       addDetail,
       removeDetail,
       handleSubmit,
-      submitting
+      submitting,
+      errors,
+      resetFields
     };
   },
   computed: {

@@ -1,7 +1,7 @@
-name: jest
+name: Testing
 on: [push]
 jobs:
-  run-jest:
+  run-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -10,7 +10,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '14.x'
-      - name: Install dependencies
-        run: npm ci
-      - name: Run tests
+      - name: Install dependencies and build
+        run: |
+          npm ci
+          npm run build
+      - name: Run jest
         run: npm run test
+      - name: Run tsd
+        run: npm run test-dts

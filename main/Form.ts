@@ -1,10 +1,13 @@
+import { computed, reactive, unref } from 'vue';
 import { SimpleRule, Rule } from './composable/useValidation';
 import FormField from './FormField';
 import { tryGet, trySet } from './utils';
 
+type ValidateResult = void | string;
+
 type Validator = (
   formField: FormField
-) => (index: number, rule: SimpleRule) => () => Promise<void | string>;
+) => (index: number, rule: SimpleRule) => () => Promise<ValidateResult>;
 
 type Validate = ReturnType<ReturnType<Validator>>;
 
@@ -27,32 +30,36 @@ export default class Form {
   private simpleValidators: Map<number, Simple> = new Map();
   private keyedValidators: Map<string, Keyed> = new Map();
 
-  registerField(uid: number, rules: Rule[]) {
-    const formField = new FormField(rules);
+  private reactiveFormFields: Map<number, FormField> = reactive(new Map());
+
+  private trySetKeyed = trySet(this.keyedValidators);
+  private tryGetSimple = tryGet(this.simpleValidators);
+  private tryGetKeyed = tryGet(this.keyedValidators);
+
+  registerField(uid: number, rules: Rule[], modelValue?: unknown) {
+    const formField = new FormField(rules, modelValue);
 
     const simple = rules.reduce<Simple>(
-      (acc, rule, index) => {
+      (simple, rule, index) => {
         const validate = this.makeValidate(formField, rule, index);
 
         if (isSimpleRule(rule)) {
-          acc.validators.push(validate);
+          simple.validators.push(validate);
         } else {
           const entry = { formField, validator: validate };
 
-          acc.keys.push(rule.key);
+          simple.keys.push(rule.key);
 
-          trySet(this.keyedValidators)({
-            failure: validators => {
-              validators.add(entry);
-            }
+          this.trySetKeyed({
+            failure: keyed => keyed.add(entry)
           })(rule.key, new Set([entry]));
 
-          acc.rollback.push(() => {
-            tryGet(this.keyedValidators)({
-              success: validators => {
-                validators.delete(entry);
+          simple.rollback.push(() => {
+            this.tryGetKeyed({
+              success: keyed => {
+                keyed.delete(entry);
 
-                if (!validators.size) {
+                if (!keyed.size) {
                   this.keyedValidators.delete(rule.key);
                 }
               }
@@ -60,7 +67,7 @@ export default class Form {
           });
         }
 
-        return acc;
+        return simple;
       },
       {
         formField,
@@ -71,8 +78,27 @@ export default class Form {
     );
 
     this.simpleValidators.set(uid, simple);
+    this.reactiveFormFields.set(uid, formField);
 
     return formField;
+  }
+
+  getErrors() {
+    return computed(() => {
+      const errors: string[] = [];
+
+      for (const formField of this.reactiveFormFields.values()) {
+        errors.push(...formField.getErrors().value);
+      }
+
+      return errors;
+    });
+  }
+
+  resetFields() {
+    for (const { formField } of this.simpleValidators.values()) {
+      formField.reset();
+    }
   }
 
   async validateAll() {
@@ -87,11 +113,11 @@ export default class Form {
       }
     );
 
-    const errors = await Promise.all(promises);
+    const allSettledResults = await Promise.all(promises);
 
-    for (const promiseResults of errors) {
-      for (const result of promiseResults) {
-        if (result.status === 'rejected') {
+    for (const settledResults of allSettledResults) {
+      for (const settledResult of settledResults) {
+        if (settledResult.status === 'rejected') {
           return true;
         }
       }
@@ -102,15 +128,15 @@ export default class Form {
 
   validate(uid: number) {
     let promise: Promise<
-      PromiseSettledResult<string | void>[]
+      PromiseSettledResult<ValidateResult>[]
     > = Promise.allSettled([] as void[]);
 
-    tryGet(this.simpleValidators)({
+    this.tryGetSimple({
       success: ({ formField, keys, validators }) => {
         if (formField.touched) {
           promise = Promise.allSettled([
             ...validators.map(v => v()),
-            ...this.getValidatorsFor(keys).map(v => v())
+            ...this.getValidateResultsFor(keys)
           ]);
         }
       }
@@ -120,37 +146,47 @@ export default class Form {
   }
 
   onDelete(uid: number) {
-    tryGet(this.simpleValidators)({
+    this.tryGetSimple({
       success({ rollback }) {
         rollback.forEach(r => r());
       }
     })(uid);
 
     this.simpleValidators.delete(uid);
+    this.reactiveFormFields.delete(uid);
   }
 
-  private getValidatorsFor(keys: string[]) {
+  private getValidateResultsFor(keys: string[]) {
     return keys.reduce((promises, key) => {
-      tryGet(this.keyedValidators)({
-        success(validators) {
-          let everyFormFieldIsTouched = true;
-
-          validators.forEach(({ formField }) => {
-            if (!formField.touched) {
-              everyFormFieldIsTouched = false;
-            }
-          });
-
-          if (everyFormFieldIsTouched) {
+      this.tryGetKeyed({
+        success: keyed => {
+          if (this.isEveryFormFieldTouchedWith(key)) {
             promises.push(
-              ...[...validators.values()].map(({ validator }) => validator)
+              ...[...keyed.values()].map(({ validator }) => validator())
             );
           }
         }
       })(key);
 
       return promises;
-    }, [] as Validate[]);
+    }, [] as Promise<ValidateResult>[]);
+  }
+
+  private isEveryFormFieldTouchedWith(key: string) {
+    let everyFormFieldIsTouched = true;
+
+    this.tryGetKeyed({
+      success: keyed => {
+        for (const { formField } of keyed) {
+          if (!formField.touched) {
+            everyFormFieldIsTouched = false;
+            break;
+          }
+        }
+      }
+    })(key);
+
+    return everyFormFieldIsTouched;
   }
 
   private makeValidate(
@@ -163,14 +199,14 @@ export default class Form {
 
       try {
         formField.incrementWaiting(index);
-        error = await rule(formField.modelValue);
+        error = await rule(unref(formField.modelValue));
       } catch (err) {
         error = err;
       } finally {
         formField.decrementWaiting(index);
       }
 
-      if (formField.nooneIsWaiting(index)) {
+      if (formField.nooneIsWaiting(index) && formField.touched) {
         if (typeof error === 'string') {
           formField.setError(index, error);
           throw error;

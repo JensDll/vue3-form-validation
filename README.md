@@ -1,15 +1,15 @@
-# Form validation for Vue 3
+# Form Validation for Vue 3
 
 [![npm](https://img.shields.io/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
 
-Easy to use opinionated Form validation for Vue 3.
+Opinionated Vue composition function for Form Validation.
 
 - :milky_way: **Written in TypeScript**
 - :ocean: **Dynamic Form support**
 - :fallen_leaf: **Light weight**
 
 ```bash
-npm i vue3-form-validation
+npm install vue3-form-validation
 ```
 
 Validation is async and is utilising `Promise.allSettled`, [which](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) has not yet reached cross-browser stability. Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-busd9?file=/src/LoginForm.vue).
@@ -17,8 +17,6 @@ Validation is async and is utilising `Promise.allSettled`, [which](https://devel
 ## API
 
 This package exports one function `useValidation`, plus some type definitions for when using TypeScript.
-
-### `useValidation`
 
 ```ts
 const {
@@ -32,11 +30,12 @@ const {
 } = useValidation<T>(formData);
 ```
 
-### `useValidation` takes the following parameters
+### `useValidation` takes the following parameters:
 
-| Parameters |   Type   | Required | Description                      |
-| ---------- | :------: | :------: | -------------------------------- |
-| formData   | `object` |  `true`  | The structure of your Form data. |
+- `formData`
+  - **Type** - `object`
+  - **Required** - `true`
+  - **Description** - The structure of your `formData`.
 
 The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
 
@@ -87,15 +86,19 @@ type FormData = {
 };
 ```
 
-### `useValidation` exposes the following state
+### `useValidation` exposes the following state:
 
-| State |   Type   | Description                                                            |
-| ----- | :------: | ---------------------------------------------------------------------- |
-| form  | `object` | Transformed `formData` object. |
+- `form`
+  - **Type** - `object`
+  - **Description** - Transformed `formData` object.
+- `submitting`
+  - **Type** - `Ref<boolean>`
+  - **Description** - `True` during validation after calling `validateFields`.
+- `errors`
+  - **Type** - `ComputedRef<string[]>`
+  - **Description** - Array of all current validation error messages.
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
-
-**Typing:**
 
 ```ts
 type TransformedField<T> = {
@@ -115,15 +118,40 @@ const form: {
 ```
 
 As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts.
-Key | Value | Description
----|:-:|---
-uid | `number` | Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
-value | `T` | The `modelValue` of the Form Field which is meant to be used together with `v-model`.
-errors | `string[]` | Array of validation error messages.
-validating | `boolean` | `True` while at least one rule is validating.
-onBlur | `function` | Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
-### `useValidation` exposes the following methods
+- `$uid`
+  - **Type** - `number`
+  - **Description** - Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
+- `$value`
+  - **Type** - `T`
+  - **Description** - The `modelValue` of the Form Field which is meant to be used together with `v-model`.
+- `$errors`
+  - **Type** - `string[]`
+  - **Description** - Array of validation error messages.
+- `$validating`
+  - **Type** - `boolean`
+  - **Description** - `True` while at least one rule is validating.
+- `$onBlur`
+  - **Type** - `function`
+  - **Description** - Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
+
+### `useValidation` exposes the following methods:
+
+- `validateFields() -> Promise`
+  - **Description** - Validate all Form Fields.
+  - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the `formData` otherwise.
+- `resetFields() -> void`
+  - **Description** - Reset all Form Fields to their original values.
+- `add(pathToArray: (string | number)[], value: any) -> void`
+  - **Description** - Utility function for writing dynamic Forms.
+  - **Parameters**
+    - `pathToArray` - Tuple representing the path to an array in the `formData`.
+    - `value` - The value that will be pushed to the array at the given path.
+- `remove(pathToArray: (string | number)[], index: number) -> void`
+  - **Description** - Utility function for writing dynamic Forms.
+  - **Parameters**
+    - `pathToArray` - Tuple representing the path to an array in the `formData`.
+    - `index` - Array index that will be remove.
 
 ## Writing Rules
 
@@ -138,24 +166,8 @@ type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
 
-Keyed rules that share the same `key` will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat password` fields in a Login Form.
+Keyed rules that share the same `key` will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat Password` fields in a Login Form.
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
-
-`main/Form.ts`
-
-```ts
-// Somewhere at the bottom of the file
-
-let error: unknown;
-// ...
-error = await rule(formField.modelValue);
-// ...
-if (typeof error === 'string') {
-  // report validation error
-}
-// ...
-```
-
 This allows you to write many rules in one line:
 
 ```ts
@@ -166,7 +178,7 @@ const max = value =>
   value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
-Async rules allow you to perform network requests, for example checking if a username already exists in the database:
+Async rules allow you to perform network requests, for example checking if a username exists in the database:
 
 ```ts
 const isNameTaken = name =>

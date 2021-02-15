@@ -1,5 +1,6 @@
 import FormField from '../FormField';
 import Form from '../Form';
+import { ref } from 'vue';
 
 let form: Form;
 
@@ -28,11 +29,11 @@ describe('validate simple rules', () => {
   it('should call all rules once with correct values', async () => {
     const field = form.registerField(1, [rule1, rule2]);
     field.touched = true;
-    field.modelValue = 'foo';
+    field.modelValue = ref('foo');
 
     await form.validate(1);
 
-    field.modelValue = 'bar';
+    field.modelValue = ref('bar');
 
     await form.validate(1);
 
@@ -77,9 +78,9 @@ describe('validate keyed rules', () => {
   });
 
   it("shouldn't call any rule when atleast one field is not touched", async () => {
-    formField1.modelValue = 'ff1';
+    formField1.modelValue = ref('ff1');
     formField1.touched = true;
-    formField2.modelValue = 'ff2';
+    formField2.modelValue = ref('ff2');
 
     await form.validate(1);
 
@@ -244,7 +245,7 @@ describe('complex examples', () => {
     expect(keyedRule3).toHaveBeenCalledTimes(1);
     expect(keyedRule4).toHaveBeenCalledTimes(1);
 
-    formField1.modelValue = 'foo';
+    formField1.modelValue = ref('foo');
 
     hasError = await form.validateAll();
 
@@ -259,7 +260,7 @@ describe('complex examples', () => {
     expect(keyedRule3).toHaveBeenCalledTimes(2);
     expect(keyedRule4).toHaveBeenCalledTimes(2);
 
-    formField1.modelValue = null;
+    formField1.modelValue = ref(null);
 
     hasError = await form.validateAll();
 
@@ -332,6 +333,9 @@ describe('async validation', () => {
         })
     );
 
+    // 1 -> S1, S2
+    // 2 -> (a,K1)
+    // 3 -> S3, (a,K2)
     formField1 = form.registerField(1, [simpleRule1, simpleRule2]);
     formField2 = form.registerField(2, [{ key: 'a', rule: keyedRule1 }]);
     formField3 = form.registerField(3, [
@@ -341,9 +345,9 @@ describe('async validation', () => {
   });
 
   it('validate all should wait for all rules to resolve', async () => {
-    formField1.modelValue = 'ff1';
-    formField2.modelValue = 'ff2';
-    formField3.modelValue = 'ff3';
+    formField1.modelValue = ref('ff1');
+    formField2.modelValue = ref('ff2');
+    formField3.modelValue = ref('ff3');
 
     await form.validateAll();
 
@@ -366,5 +370,17 @@ describe('async validation', () => {
 
     expect(formField3.getErrors().value).toContain('S3');
     expect(formField3.getErrors().value).toContain('K2');
+
+    expect(form.getErrors().value.sort()).toEqual(
+      ['S1', 'S2', 'S3', 'K1', 'K2'].sort()
+    );
+  });
+
+  it('should not set errors after resetting form', done => {
+    form.validateAll().then(() => {
+      expect(form.getErrors().value).toEqual([]);
+      done();
+    });
+    form.resetFields();
   });
 });
