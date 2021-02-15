@@ -117,7 +117,7 @@ const form: {
 };
 ```
 
-As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts.
+As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts:
 
 - `$uid`
   - **Type** - `number`
