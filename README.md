@@ -127,25 +127,30 @@ onBlur | `function` | Function which will mark this Form Field as touched. When 
 
 ### `useValidation` exposes the following methods
 
-- **`validateFields() -> Promise`**
+- `validateFields() -> Promise`
   - **Description** </br>
     Validate all Form Fields.
-  - **Returns** - A `Promise` which will reject if there are validation erros, and resolve with the `formData` otherwise.
-- **`resetFields() -> void`**
+  - **Returns** </br>
+    A `Promise` which will reject if there are validation erros, and resolve with the `formData` otherwise.
+    
+- `resetFields() -> void`
   - **Description** </br>
     Reset all Form Fields to their original values.
-- **`add(pathToArray: (string | number)[], value) -> void`**
+    
+- `add(pathToArray: (string | number)[], value: any) -> void`
   - **Description** <br/>
     Utility function for writing dynamic Forms.
   - **Parameters**
-    - **`pathToArray`** - Tuple representing the path to an array in the `formData`.
-    - **`value`** - The value that will be pushed to the array at the given path.
+    - `pathToArray` - Tuple representing the path to an array in the `formData`.
+    - `value` - The value that will be pushed to the array at the given path.
+    
 - **`remove(pathToArray: (string | number)[], index: number) -> void`**
   - **Description** <br/>
     Utility function for writing dynamic Forms.
   - **Parameters**
-    - **`pathToArray`** - Tuple representing the path to an array in the `formData`.
-    - **`index`** - Array index that will be remove.
+    - `pathToArray` - Tuple representing the path to an array in the `formData`.
+    - `index` - Array index that will be remove.
+
 ## Writing Rules
 
 Rules are functions that should return a `string` when the validation fails. They can be written purely as a function or together with a `key` property in an object.
