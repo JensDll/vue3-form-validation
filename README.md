@@ -132,19 +132,16 @@ onBlur | `function` | Function which will mark this Form Field as touched. When 
     Validate all Form Fields.
   - **Returns** </br>
     A `Promise` which will reject if there are validation erros, and resolve with the `formData` otherwise.
-    
 - `resetFields() -> void`
   - **Description** </br>
     Reset all Form Fields to their original values.
-    
 - `add(pathToArray: (string | number)[], value: any) -> void`
   - **Description** <br/>
     Utility function for writing dynamic Forms.
   - **Parameters**
     - `pathToArray` - Tuple representing the path to an array in the `formData`.
-    - `value` - The value that will be pushed to the array at the given path.
-    
-- **`remove(pathToArray: (string | number)[], index: number) -> void`**
+    - `value` - The value that will be pushed to the array at the given path.   
+- `remove(pathToArray: (string | number)[], index: number) -> void`
   - **Description** <br/>
     Utility function for writing dynamic Forms.
   - **Parameters**
