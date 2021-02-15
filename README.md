@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
 
-Slightly opinionated Vue composition function for Form Validation.
+Opinionated Vue composition function for Form Validation.
 
 - :milky_way: **Written in TypeScript**
 - :ocean: **Dynamic Form support**
@@ -18,7 +18,7 @@ Validation is async and is utilising `Promise.allSettled`, [which](https://devel
 
 This package exports one function `useValidation`, plus some type definitions for when using TypeScript.
 
-#### `useValidation`:
+#### `useValidation`
 
 ```ts
 const {
@@ -152,7 +152,7 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
   - **Description** </br>
     Validate all Form Fields.
   - **Returns** </br>
-    A `Promise` which will reject if there are validation erros, and resolve with the `formData` otherwise.
+    A `Promise` which will reject if there are validation errors, and resolve with the `formData` otherwise.
 - `resetFields() -> void`
   - **Description** </br>
     Reset all Form Fields to their original values.
