@@ -77,12 +77,12 @@ export default defineComponent({
           name => !name && 'Name is required',
           name => name.length > 2 || 'Name has to be longer than 2 characters',
           name =>
-            new Promise<void | string>(resolve => {
+            new Promise<void | string>((resolve, reject) => {
               setTimeout(() => {
                 if (['Jens', 'foo', 'bar'].includes(name)) {
                   resolve();
                 } else {
-                  resolve('This name is already taken');
+                  reject('This name is already taken');
                 }
               }, 2000);
             })
@@ -123,9 +123,7 @@ export default defineComponent({
         .then(formData => {
           console.log(JSON.stringify(formData, null, 2));
         })
-        .catch(() => {
-          //
-        });
+        .catch(() => null);
     };
 
     return {

@@ -1,6 +1,6 @@
 <template>
   <h1 class="font-semibold text-2xl">Nested Form</h1>
-  <form class="form my-8" @submit.prevent="handleSubmit()" @reset="handleReset">
+  <form class="form my-8" @submit.prevent="handleSubmit()">
     <BaseInput
       v-model="form.test.a.b.c.d.$value"
       label="Nested d"
@@ -29,9 +29,7 @@
       >
         Submit
       </BaseButton>
-      <BaseButton class="w-full" html-type="reset" :disabled="submitting">
-        Reset
-      </BaseButton>
+      <BaseButton class="w-full" @click="resetFields">Reset</BaseButton>
     </div>
   </form>
   <pre>{{ form }}</pre>
@@ -105,15 +103,11 @@ export default defineComponent({
         });
     };
 
-    const handleReset = () => {
-      resetFields();
-    };
-
     return {
       form,
       submitting,
       handleSubmit,
-      handleReset
+      resetFields
     };
   }
 });

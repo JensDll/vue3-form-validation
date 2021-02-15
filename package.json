@@ -26,7 +26,7 @@
     "vue-use"
   ],
   "scripts": {
-    "build": "npx tsc --project ./main",
+    "build": "npx eslint --rule=\"no-console:error\" --fix-dry-run main && npx tsc --project ./main",
     "lint": "npx prettier --write .",
     "test": "jest --config ./main/jest.config.ts",
     "test-dts": "npx tsd",

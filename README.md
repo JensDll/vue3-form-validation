@@ -34,9 +34,10 @@ const {
 
 ### `useValidation` takes the following parameters
 
-| Parameters | Type | Required | Description |
-| --- | :-: | :-: | --- |
-| formData | `object` | `true` | The structure of your Form data.|
+- `formData`
+  - Type - `object`
+  - Required - `true`
+  - Description - The structure of your `formData`.
 
 The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
 
@@ -89,11 +90,15 @@ type FormData = {
 
 ### `useValidation` exposes the following state
 
-| State | Type | Description |
-| --- | :-: | --- |
-| form | `object`| Transformed `formData` object. |
-| submitting | `Ref<boolean>`| `True` during validation after calling `validateFields`. |
-| errors | `ComputedRef<string[]>` | Array of all current validation errors. |
+- `form`
+  - Type - `object`
+  - Description - Transformed `formData` object.
+- `submitting`
+  - Type - `Ref<boolean>`
+  - Description - `True` during validation after calling `validateFields`.
+- `errors`
+  - Type - `ComputedRef<string[]>`
+  - Description - Array of all current validation errors messages.
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
 
@@ -132,18 +137,15 @@ onBlur | `function` | Function which will mark this Form Field as touched. When 
     Validate all Form Fields.
   - **Returns** </br>
     A `Promise` which will reject if there are validation erros, and resolve with the `formData` otherwise.
-    
 - `resetFields() -> void`
   - **Description** </br>
     Reset all Form Fields to their original values.
-    
 - `add(pathToArray: (string | number)[], value: any) -> void`
   - **Description** <br/>
     Utility function for writing dynamic Forms.
   - **Parameters**
     - `pathToArray` - Tuple representing the path to an array in the `formData`.
-    - `value` - The value that will be pushed to the array at the given path.   
-    
+    - `value` - The value that will be pushed to the array at the given path.
 - `remove(pathToArray: (string | number)[], index: number) -> void`
   - **Description** <br/>
     Utility function for writing dynamic Forms.
@@ -170,8 +172,10 @@ This allows you to write many rules in one line:
 
 ```ts
 const required = value => !value && 'This field is required';
-const min = value => value.length > 3 || 'This field has to be longer than 3 characters';
-const max = value => value.length < 7 || 'This field is too long (maximum is 6 characters)';
+const min = value =>
+  value.length > 3 || 'This field has to be longer than 3 characters';
+const max = value =>
+  value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
 Async rules allow you to perform network requests, for example checking if a username already exists in the database:
