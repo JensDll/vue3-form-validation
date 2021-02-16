@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx eslint --rule="no-console:error" --fix-dry-run main
+npx eslint --rule="no-console:error" --max-warnings 0 --fix-dry-run main
