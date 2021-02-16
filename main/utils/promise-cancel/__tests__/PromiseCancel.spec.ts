@@ -32,7 +32,7 @@ it('should resolve normal when not cancelled', done => {
       done();
     })
     .catch(() => {
-      fail("Should'nt be reached!");
+      fail("Shouldn't be reached!");
     });
 });
 
@@ -47,7 +47,7 @@ it('should resolve directly after cancelResolve', done => {
       done();
     })
     .catch(() => {
-      fail("Should'nt be reached!");
+      fail("Shouldn't be reached!");
     });
 
   promiseCancel.cancelResolve('cancel');
@@ -60,7 +60,7 @@ it('should reject directly after cancelReject', done => {
   promiseCancel
     .race(p1, p2)
     .then(() => {
-      fail("Should'nt be reached!");
+      fail("Shouldn't be reached!");
     })
     .catch(a => {
       expect(a).toBe('cancel');

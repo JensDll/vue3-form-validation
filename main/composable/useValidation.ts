@@ -190,7 +190,7 @@ type UseValidation<T extends object> = {
  * @docs
  * https://github.com/JensDll/vue3-form-validation
  * @typescript
- * For best type inference, consider defining the structure
+ * For better type inference, consider defining the structure
  * of your `formData` upfront and pass it as the generic parameter `T`. For example:
  * ```
  * type FormData = {
