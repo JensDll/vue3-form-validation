@@ -7,7 +7,7 @@ Hi! :wave: I'm exited that you are interested in contributing to this project. B
 ## Setup
 After cloning the repository, run:
 ```bash
-npm ci # install the dependencies of the project
+npm install # install the dependencies of the project
 ```
 Overview of tools used:
 * [TypeScript](https://www.typescriptlang.org/) as the programming language.
