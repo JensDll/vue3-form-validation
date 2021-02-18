@@ -23,6 +23,7 @@ Run all [jest](https://jestjs.io/) test suits, see [Jest CLI Options](https://je
 
 ### `npm run test-dts`
 Run tests for type definitions using [tsd](https://github.com/SamVerschueren/tsd). The project has to be built first before running this.
+Type tests are located in the directory `<root>/test-dts`.
 
 ### `npm run test-all`
 Run both [jest](https://jestjs.io/) and [tsd](https://github.com/SamVerschueren/tsd) tests.
