@@ -19,7 +19,7 @@ Overview of tools used:
 Compiles the package code under `<root>/main` into a folder called `dist`.
 
 ### `npm run test`
-Run all jest test suits, see [Jest CLI Options](https://jestjs.io/docs/en/cli) for more options.
+Run all [jest](https://jestjs.io/) test suits, see [Jest CLI Options](https://jestjs.io/docs/en/cli) for more options.
 
 ### `npm run test-dts`
 Run tests for type definitions using [tsd](https://github.com/SamVerschueren/tsd). The project has to be built first before running this.
