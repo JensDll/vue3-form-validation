@@ -4,7 +4,6 @@ import {
   RefUnref,
   Field,
   Rule,
-  ValidateInput,
   TransformedField,
   useValidation
 } from '../main/composable/useValidation';
@@ -15,8 +14,8 @@ type RU1_Expected = { a: Ref<string> | string };
 
 expectType<RU1_Expected>({} as RU1);
 
-type RU2 = RefUnref<{ a: string }[]>;
-type RU2_Expected = { a: Ref<string> | string }[];
+type RU2 = RefUnref<{ a: string[] }>;
+type RU2_Expected = { a: string[] };
 
 expectType<RU2_Expected>({} as RU2);
 
@@ -62,68 +61,29 @@ type FL4_Expected = {
 
 expectType<FL4_Expected>({} as FL4);
 
-// ========== ValidateInput (VI) ==========
-type VI1 = ValidateInput<{ a: Field<string> }>;
-type VI1_Expected = { a: Field<string | Ref<string>> };
+type FL5 = Field<string[]>;
+type FL5_Expected = { $value: string[]; $rules?: Rule<string[]>[] };
 
-expectType<VI1_Expected>({} as VI1);
+expectType<FL5_Expected>({} as FL5);
 
-type VI2 = ValidateInput<{ a: Field<Ref<string>> }>;
-type VI2_Expected = { a: Field<string | Ref<string>> };
-
-expectType<VI2_Expected>({} as VI2);
-
-// more complex nested type
-type VI3 = ValidateInput<{
-  a: Field<string>;
-  b: { c: Field<string> };
-  ds: { e: { f: Field<{ g: { h: number } }> } }[];
+type FL6 = Field<{
+  as: string[];
+  b: Ref<string>;
 }>;
-type VI3_Expected = {
-  a: Field<string | Ref<string>>;
-  b: { c: Field<string | Ref<string>> };
-  ds: { e: { f: Field<{ g: { h: number | Ref<number> } }> } }[];
+type FL6_Expected = {
+  $value: {
+    as: string[];
+    b: string | Ref<string>;
+  };
+  $rules?: Rule<{
+    as: string[];
+    b: string;
+  }>[];
 };
 
-expectType<VI3_Expected>({} as VI3);
-
-// more complex nested type with refs (expected type should be the same!)
-type VI4 = ValidateInput<{
-  a: Field<Ref<string>>;
-  b: { c: Field<Ref<string>> };
-  ds: { e: { f: Field<{ g: { h: Ref<number> } }> } }[];
-}>;
-type VI4_Expected = {
-  a: Field<string | Ref<string>>;
-  b: { c: Field<string | Ref<string>> };
-  ds: { e: { f: Field<{ g: { h: number | Ref<number> } }> } }[];
-};
-
-expectType<VI4_Expected>({} as VI4);
+expectType<FL6_Expected>({} as FL6);
 
 // ========== useValidation (UV) ==========
-expectError(
-  useValidation({
-    a: {
-      $value: '',
-      // make sure you can not assign a wrong type
-      $rules: [(a: number) => a]
-    }
-  })
-);
-
-useValidation({
-  a: {
-    $value: {
-      b: {
-        c: ''
-      }
-    },
-    // make sure you can assign a correct type
-    $rules: [(a: { b: { c: string } }) => expectType<{ b: { c: string } }>(a)]
-  }
-});
-
 useValidation<{ a: Field<string> }>({
   a: {
     $value: '',
@@ -186,9 +146,22 @@ void function () {
     b: Field<string>;
     cs: { d: Field<number> }[];
   }>({
-    a: { $value: '' },
-    b: { $value: '' },
-    cs: [{ d: { $value: 10 } }]
+    a: {
+      $value: '',
+      $rules: [a => expectType<string>(a)]
+    },
+    b: {
+      $value: '',
+      $rules: [b => expectType<string>(b)]
+    },
+    cs: [
+      {
+        d: {
+          $value: 10,
+          $rules: [d => expectType<number>(d)]
+        }
+      }
+    ]
   });
 
   expectType<{
@@ -208,4 +181,43 @@ void function () {
   remove(['cs'], 0);
   expectError(remove(['cs'], ''));
   expectError(remove(['cs!'], 0));
+};
+
+void function () {
+  const { form, validateFields } = useValidation<{
+    a: Field<{
+      xs: string[];
+      y: Ref<number>;
+    }>;
+  }>({
+    a: {
+      $value: {
+        xs: [],
+        y: 10
+      },
+      $rules: [
+        as =>
+          expectType<{
+            xs: string[];
+            y: number;
+          }>(as)
+      ]
+    }
+  });
+
+  expectType<{
+    a: TransformedField<{
+      xs: string[];
+      y: number;
+    }>;
+  }>(form);
+
+  expectType<
+    Promise<{
+      a: {
+        xs: string[];
+        y: number;
+      };
+    }>
+  >(validateFields());
 };

@@ -4,7 +4,7 @@
       {{ label }}
       <input
         v-model="value"
-        class="w-full border outline-none px-2 py-1 mt-2 input"
+        class="input w-full block border outline-none px-2 py-1 mt-2"
         :class="{ error: errors.length > 0 }"
         v-bind="attrsRest"
       />

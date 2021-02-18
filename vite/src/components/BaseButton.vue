@@ -30,7 +30,7 @@ export default defineComponent({
 
 <style scoped>
 .button {
-  @apply block px-8 py-2 border outline-none shadow-none transition-colors duration-100;
+  @apply block border outline-none shadow-none transition-colors duration-100;
   min-width: 6rem;
 }
 

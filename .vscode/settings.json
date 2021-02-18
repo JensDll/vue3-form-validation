@@ -1,6 +1,11 @@
 {
+  "editor.tabSize": 2,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
+  "vetur.experimental.templateInterpolationService": true,
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "spellright.language": ["en"],
   "spellright.documentTypes": ["markdown", "latex", "plaintext", "git-commit"]
