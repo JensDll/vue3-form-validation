@@ -10,7 +10,9 @@ export type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 export type Field<TValue> = {
   $value: TValue extends Ref
     ? TValue | UnwrapRef<TValue>
-    : TValue extends Record<string, unknown> | any[]
+    : TValue extends any[]
+    ? TValue
+    : TValue extends Record<string, unknown>
     ? RefUnref<TValue>
     : Ref<TValue> | TValue;
   $rules?: Rule<UnwrapRef<TValue>>[];
@@ -24,33 +26,21 @@ export type TransformedField<T> = {
   $onBlur(): void;
 };
 
-export type RefUnref<T extends Record<string, unknown> | any[]> = {
+export type RefUnref<T extends Record<string, unknown>> = {
   [K in keyof T]: T[K] extends Ref
     ? T[K] | UnwrapRef<T[K]>
-    : T[K] extends Array<infer TArray>
-    ? RefUnref<TArray[]>
+    : T[K] extends any[]
+    ? T[K]
     : T[K] extends Record<string, unknown>
     ? RefUnref<T[K]>
     : Ref<T[K]> | T[K];
-};
-
-export type ValidateInput<T extends object | any[]> = {
-  [K in keyof T]: T[K] extends { $value: infer TValue }
-    ? Field<TValue>
-    : T[K] extends Array<infer TArray>
-    ? ValidateInput<TArray[]>
-    : T[K] extends Record<string, unknown>
-    ? ValidateInput<T[K]>
-    : unknown;
 };
 
 export type TransformedFormData<T extends object> = T extends any
   ? {
       [K in keyof T]: T[K] extends { $value: infer TValue }
         ? TransformedField<UnwrapRef<TValue>>
-        : T[K] extends Array<infer TArray>
-        ? TransformedFormData<TArray[]>
-        : T[K] extends Record<string, unknown>
+        : T[K] extends Record<string, unknown> | any[]
         ? TransformedFormData<T[K]>
         : T[K];
     }
@@ -60,9 +50,7 @@ export type FormData<T extends object> = T extends any
   ? {
       [K in keyof T]: T[K] extends { $value: infer TValue }
         ? UnwrapRef<TValue>
-        : T[K] extends Array<infer TArray>
-        ? FormData<TArray[]>
-        : T[K] extends Record<string, unknown>
+        : T[K] extends Record<string, unknown> | any[]
         ? FormData<T[K]>
         : T[K];
     }
@@ -114,9 +102,9 @@ export function transformFormData(form: Form, formData: any) {
         }
       });
 
-      watch(formField.modelValue, () => {
+      watch(formField.modelValue, async () => {
         if (formField.touched) {
-          form.validate(uid);
+          await form.validate(uid);
         }
       });
 
@@ -172,13 +160,11 @@ type UseValidation<T extends object> = {
   resetFields(): void;
   add<Ks extends Keys>(
     pathToArray: readonly [...Ks],
-    value: DeepIndex<ValidateInput<T>, Ks> extends Array<infer TArray>
-      ? TArray
-      : never
+    value: DeepIndex<T, Ks> extends Array<infer TArray> ? TArray : never
   ): void;
   remove<Ks extends Keys>(
     pathToArray: readonly [...Ks],
-    index: DeepIndex<ValidateInput<T>, Ks> extends any[] ? number : never
+    index: DeepIndex<T, Ks> extends any[] ? number : never
   ): void;
 };
 
@@ -191,7 +177,7 @@ type UseValidation<T extends object> = {
  * https://github.com/JensDll/vue3-form-validation
  * @typescript
  * For better type inference, consider defining the structure
- * of your `formData` upfront and pass it as the generic parameter `T`. For example:
+ * of your `formData` upfront and pass it as the generic parameter `T`:
  * ```
  * type FormData = {
  *   name: Field<string>,
@@ -202,9 +188,7 @@ type UseValidation<T extends object> = {
  * const { ... } = useValidation<FormData>({ ... })
  * ```
  */
-export function useValidation<T extends object>(
-  formData: T & ValidateInput<T>
-): UseValidation<T> {
+export function useValidation<T extends object>(formData: T): UseValidation<T> {
   const form = new Form();
   const submitting = ref(false);
   const promiseCancel = new PromiseCancel<true>();

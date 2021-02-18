@@ -1,5 +1,5 @@
 <template>
-  <h1 class="font-semibold text-2xl">Login</h1>
+  <h1>Login Form</h1>
   <form class="form my-8" @submit.prevent="handleSubmit()">
     <BaseInput
       v-model="form.name.$value"
@@ -32,22 +32,23 @@
       @blur="form.repeatPassword.$onBlur()"
     />
     <BaseButton
-      class="mt-8"
+      class="mt-8 py-3"
       type="primary"
       html-type="submit"
       :disabled="submitting"
     >
       Login
     </BaseButton>
-    <BaseButton class="mt-8" @click="resetFields">Reset</BaseButton>
+    <BaseButton class="mt-8 py-3" @click="resetFields">Reset</BaseButton>
   </form>
-  <pre>{{ errors }}</pre>
-  <pre>{{ formJSON }}</pre>
+  <PreFormData :form="form" :errors="errors" />
 </template>
 
 <script lang="ts">
-import BaseInput from '../components/form/BaseInput.vue';
+import BaseInput from '../components/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
+import PreFormData from '../components/PreFormData.vue';
+
 import { defineComponent, ref } from 'vue';
 import { useValidation, Field } from '../../../main';
 
@@ -59,7 +60,7 @@ interface FormData {
 }
 
 export default defineComponent({
-  components: { BaseButton, BaseInput },
+  components: { BaseButton, BaseInput, PreFormData },
   setup() {
     const password = ref('');
     const repeatPassword = ref('');
@@ -123,7 +124,9 @@ export default defineComponent({
         .then(formData => {
           console.log(JSON.stringify(formData, null, 2));
         })
-        .catch(() => null);
+        .catch(() => {
+          // validation error
+        });
     };
 
     return {
@@ -148,7 +151,6 @@ export default defineComponent({
 
 <style scoped>
 .form {
-  max-width: 900px;
   display: grid;
   column-gap: 25px;
   row-gap: 10px;

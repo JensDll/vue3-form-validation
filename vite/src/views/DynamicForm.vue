@@ -1,147 +1,153 @@
 <template>
-  <h1 class="font-semibold text-2xl">Dynamic Form</h1>
-  <form
-    class="form my-8 w-3/4"
-    @submit.prevent="handleSubmit"
-    @reset="resetFields"
-  >
+  <h1>Dynamic Form</h1>
+  <form class="form gap-y-4 gap-x-6 items-start" @submit.prevent="handleSubmit">
     <BaseInput
-      v-model="form.profile.$value"
-      class="col-span-3"
-      label="Profile"
-      :errors="form.profile.$errors"
-      @blur="form.profile.$onBlur()"
+      v-model="form.a.$value"
+      label="A"
+      :errors="form.a.$errors"
+      class="col-span-10"
+      @blur="form.a.$onBlur()"
     />
-    <BaseButton class="mt-4 col-span-3" @click="addGroup()">
-      Add group
+    <BaseButton class="col-span-3 mb-2 form-button" @click="addX">
+      Add X
     </BaseButton>
-    <template v-for="(group, groupIndex) in form.groups" :key="group.name.$uid">
+    <template v-for="(x, indexX) in form.xs" :key="x.b.$uid">
       <BaseInput
-        v-model="group.name.$value"
-        label="Group"
-        :errors="group.name.$errors"
-        @blur="group.name.$onBlur()"
+        v-model="x.b.$value"
+        label="B"
+        :errors="x.b.$errors"
+        class="col-span-7"
+        @blur="x.b.$onBlur()"
       />
-      <BaseButton class="mt-8 self-start" @click="addDetail(groupIndex)">
-        Add detail
+      <BaseButton class="col-span-3 form-button" @click="addY(indexX)">
+        Add Y
       </BaseButton>
-      <BaseButton class="mt-8 self-start" @click="removeGroup(groupIndex)">
-        Remove group
+      <BaseButton class="col-span-3 form-button" @click="removeX(indexX)">
+        Remove X
       </BaseButton>
-      <template
-        v-for="(detail, detailIndex) in group.details"
-        :key="detail.name.$uid"
-      >
+      <template v-for="(y, indexY) in x.ys" :key="y.c.$uid">
         <BaseInput
-          v-model="detail.name.$value"
-          label="Name"
-          :errors="detail.name.$errors"
-          @blur="detail.name.$onBlur()"
+          v-model="y.c.$value"
+          label="C"
+          :errors="y.c.$errors"
+          class="col-span-5"
+          @blur="y.c.$onBlur()"
         />
         <BaseInput
-          v-model="detail.short.$value"
-          label="Short"
-          :errors="detail.short.$errors"
-          @blur="detail.short.$onBlur()"
+          v-model="y.d.$value"
+          label="D"
+          :errors="y.d.$errors"
+          class="col-span-5"
+          @blur="y.d.$onBlur()"
         />
         <BaseButton
-          class="mt-8 self-start"
-          @click="removeDetail(groupIndex, detailIndex)"
+          class="col-span-3 form-button"
+          @click="removeY(indexX, indexY)"
         >
-          Remove detail
+          Remove Y
         </BaseButton>
       </template>
     </template>
-    <div class="flex gap-4 mt-8 col-span-3">
+    <div class="col-span-full flex gap-x-6 mt-8">
       <BaseButton
-        class="w-full"
+        class="w-full py-3"
         type="primary"
         html-type="submit"
         :disabled="submitting"
       >
         Submit
       </BaseButton>
-      <BaseButton class="w-full" @click="resetFields">Reset</BaseButton>
+      <BaseButton class="w-full py-3" @click="resetFields">Reset</BaseButton>
     </div>
   </form>
-  <pre>{{ errors }}</pre>
-  <pre>{{ formJSON }}</pre>
+  <PreFormData :form="form" :errors="errors" />
 </template>
 
 <script lang="ts">
+import { Field, useValidation } from '../../../main';
+import PreFormData from '../components/PreFormData.vue';
+import BaseInput from '../components/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
-import BaseInput from '../components/form/BaseInput.vue';
-import { defineComponent } from 'vue';
-import { useValidation, Field } from '../../../main';
 
-type Input = {
-  profile: Field<string>;
-  groups: {
-    name: Field<string>;
-    details: {
-      name: Field<string>;
-      short: Field<string>;
+type FormData = {
+  a: Field<string>;
+  xs: {
+    b: Field<string>;
+    ys: {
+      c: Field<string>;
+      d: Field<string>;
     }[];
   }[];
 };
 
-export default defineComponent({
-  components: {
-    BaseButton,
-    BaseInput
-  },
+export default {
+  components: { BaseInput, BaseButton, PreFormData },
   setup() {
-    const {
-      form,
-      errors,
-      validateFields,
-      add,
-      remove,
-      submitting,
-      resetFields
-    } = useValidation<Input>({
-      profile: {
-        $value: '',
-        $rules: [profile => !profile && 'Profile name is required']
-      },
-      groups: []
-    });
+    const randomInt = (min: number, max: number) => {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
 
-    const addGroup = () => {
-      add(['groups'], {
-        name: {
-          $value: '',
-          $rules: [group => !group && 'Group name is required']
-        },
-        details: []
+    const randomPromise = (x: string) => {
+      const ms = randomInt(100, 2000);
+
+      return new Promise<void | string>(resolve => {
+        setTimeout(() => {
+          if (x) {
+            resolve();
+          } else {
+            resolve(`Promise ${ms} ms`);
+          }
+        }, ms);
       });
     };
 
-    const removeGroup = (index: number) => {
-      remove(['groups'], index);
+    const {
+      form,
+      submitting,
+      errors,
+      validateFields,
+      resetFields,
+      add,
+      remove
+    } = useValidation<FormData>({
+      a: {
+        $value: '',
+        $rules: [a => !a && 'A is required', randomPromise]
+      },
+      xs: []
+    });
+
+    const addX = () => {
+      add(['xs'], {
+        b: {
+          $value: '',
+          $rules: [b => !b && 'B is required', randomPromise]
+        },
+        ys: []
+      });
     };
 
-    const addDetail = (groupIndex: number) => {
-      add(['groups', groupIndex, 'details'], {
-        name: {
+    const removeX = (indexX: number) => {
+      remove(['xs'], indexX);
+    };
+
+    const addY = (indexX: number) => {
+      add(['xs', indexX, 'ys'], {
+        c: {
           $value: '',
-          $rules: [
-            name => !name && 'Detail name is required',
-            { key: 'detail', rule: name => !name && 'Keyed Name' }
-          ]
+          $rules: [c => !c && 'C is required', randomPromise]
         },
-        short: {
+        d: {
           $value: '',
-          $rules: [
-            short => !short && 'Detail short is required',
-            { key: 'detail', rule: name => !name && 'Keyed Short' }
-          ]
+          $rules: [d => !d && 'D is required', randomPromise]
         }
       });
     };
 
-    const removeDetail = (groupIndex: number, detailIndex: number) => {
-      remove(['groups', groupIndex, 'details'], detailIndex);
+    const removeY = (indexX: number, indexY: number) => {
+      remove(['xs', indexX, 'ys'], indexY);
     };
 
     const handleSubmit = () => {
@@ -150,40 +156,35 @@ export default defineComponent({
           console.log(JSON.stringify(formData, null, 2));
         })
         .catch(() => {
-          //
+          // validation error
         });
     };
 
     return {
       form,
-      addGroup,
-      removeGroup,
-      addDetail,
-      removeDetail,
-      handleSubmit,
-      submitting,
       errors,
-      resetFields
+      submitting,
+      validateFields,
+      resetFields,
+      handleSubmit,
+      addX,
+      removeX,
+      addY,
+      removeY
     };
-  },
-  computed: {
-    formJSON(): string {
-      return JSON.stringify(
-        this.form,
-        (k, v) => (typeof v === 'function' ? 'function' : v),
-        2
-      );
-    }
   }
-});
+};
 </script>
 
 <style scoped>
 .form {
-  max-width: 900px;
+  margin: 30px 0 50px 0;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  row-gap: 10px;
-  column-gap: 20px;
+  grid-template-columns: repeat(13, 1fr);
+}
+
+.form-button {
+  @apply py-1;
+  margin-top: 32px;
 }
 </style>

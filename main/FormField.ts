@@ -20,7 +20,11 @@ export default class FormField {
     if (isRef(modelValue)) {
       this.modelValue = modelValue;
       this.initialModelValue = modelValue.value;
-    } else if (typeof modelValue === 'object' && modelValue !== null) {
+    } else if (
+      typeof modelValue === 'object' &&
+      !Array.isArray(modelValue) &&
+      modelValue !== null
+    ) {
       this.modelValue = reactive(modelValue);
       this.initialModelValue = JSON.parse(JSON.stringify(this.modelValue));
     } else {
