@@ -12,7 +12,7 @@ Opinionated Vue composition function for Form Validation.
 npm install vue3-form-validation
 ```
 
-Validation is async and is utilising `Promise.allSettled`, [which](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) has not yet reached cross-browser stability. Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-busd9?file=/src/views/LoginForm.vue).
+Validation is async and is utilising `Promise.allSettled`, [which](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) has not yet reached cross-browser stability. Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
 
 ## API
 
@@ -166,7 +166,7 @@ type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
 
-Keyed rules that share the same `key` will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat Password` fields in a [Login Form](https://codesandbox.io/s/vue-3-form-validation-demo-busd9?file=/src/views/LoginForm.vue).
+Keyed rules that share the same `key` will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat Password` fields in a [Login Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 This allows you to write many rules in one line:
 
