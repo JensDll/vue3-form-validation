@@ -1,16 +1,19 @@
 <template>
-  <h1>Array Binding</h1>
+  <h1>Nested Object Binding</h1>
   <form class="my-8" @submit.prevent="handleSubmit">
-    <div>What is your favorite color?</div>
-    <div v-for="color in colors" :key="color" class="color">
-      <label>
-        <input v-model="form.colors.$value" type="checkbox" :value="color" />
-        {{ color }}
-      </label>
-    </div>
-    <div v-if="errors.length" class="text-sm text-red-500">
-      {{ errors[0] }}
-    </div>
+    <label>
+      <div>Nested Object</div>
+      <input
+        v-model="form.nested.$value.a"
+        class="border py-1 px-2"
+        type="text"
+        @blur="form.nested.$onBlur"
+      />
+    </label>
+    <label>
+      <div>Nested Array</div>
+      <input v-model="form.nested.$value.b.c.ds" type="checkbox" value="Test" />
+    </label>
     <div class="flex mt-4">
       <BaseButton
         class="mr-2 py-1"
@@ -27,19 +30,13 @@
 </template>
 
 <script lang="ts">
-import { Field, useValidation } from '../../../main';
+import { defineComponent, ref } from 'vue';
+import { useValidation } from '../../../main';
 import BaseButton from '../components/BaseButton.vue';
 import PreFormData from '../components/PreFormData.vue';
 
-type FormData = {
-  colors: Field<string[]>;
-};
-
-export default {
-  components: {
-    PreFormData,
-    BaseButton
-  },
+export default defineComponent({
+  components: { BaseButton, PreFormData },
   setup() {
     const {
       form,
@@ -47,16 +44,22 @@ export default {
       submitting,
       validateFields,
       resetFields
-    } = useValidation<FormData>({
-      colors: {
-        $value: [],
+    } = useValidation({
+      nested: {
+        $value: {
+          a: ref(''),
+          b: {
+            c: {
+              ds: []
+            }
+          }
+        },
         $rules: [
-          colors => colors.length < 2 && 'Select at least 2 colors',
           () =>
             new Promise<void>(resolve => {
               setTimeout(() => {
                 resolve();
-              }, 1000);
+              }, 1500);
             })
         ]
       }
@@ -79,13 +82,8 @@ export default {
       handleSubmit,
       resetFields
     };
-  },
-  data() {
-    return {
-      colors: ['Red', 'Green', 'Blue', 'Yellow', 'Black']
-    };
   }
-};
+});
 </script>
 
-<style scoped></style>
+<style></style>

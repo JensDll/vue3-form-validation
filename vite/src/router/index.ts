@@ -3,6 +3,7 @@ import LoginForm from '../views/LoginForm.vue';
 import DynamicForm from '../views/DynamicForm.vue';
 import ArrayBinding from '../views/ArrayBinding.vue';
 import DynamicRules from '../views/DynamicRules.vue';
+import NestedObjectBinding from '../views/NestedObjectBinding.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -20,6 +21,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/dynamic-rules',
     component: DynamicRules
+  },
+  {
+    path: '/nested-object-binding',
+    component: NestedObjectBinding
   }
 ];
 

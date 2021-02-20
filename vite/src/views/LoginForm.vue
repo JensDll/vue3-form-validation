@@ -100,8 +100,7 @@ export default defineComponent({
           {
             key: 'pw',
             rule: () =>
-              password.value === repeatPassword.value ||
-              "Passwords dont't match"
+              password.value === repeatPassword.value || "Passwords don't match"
           }
         ]
       },
@@ -112,8 +111,7 @@ export default defineComponent({
           {
             key: 'pw',
             rule: () =>
-              password.value === repeatPassword.value ||
-              "Passwords dont't match"
+              password.value === repeatPassword.value || "Passwords don't match"
           }
         ]
       }

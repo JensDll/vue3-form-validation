@@ -68,6 +68,7 @@ import { Field, useValidation } from '../../../main';
 import PreFormData from '../components/PreFormData.vue';
 import BaseInput from '../components/BaseInput.vue';
 import BaseButton from '../components/BaseButton.vue';
+import { ref } from 'vue';
 
 type FormData = {
   a: Field<string>;
@@ -90,7 +91,7 @@ export default {
     };
 
     const randomPromise = (x: string) => {
-      const ms = randomInt(100, 2000);
+      const ms = randomInt(300, 2000);
 
       return new Promise<void | string>(resolve => {
         setTimeout(() => {
@@ -113,7 +114,7 @@ export default {
       remove
     } = useValidation<FormData>({
       a: {
-        $value: '',
+        $value: ref(''),
         $rules: [a => !a && 'A is required', randomPromise]
       },
       xs: []

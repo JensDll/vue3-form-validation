@@ -5,7 +5,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
-  "vetur.experimental.templateInterpolationService": true,
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "spellright.language": ["en"],
   "spellright.documentTypes": ["markdown", "latex", "plaintext", "git-commit"]
