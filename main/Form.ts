@@ -1,13 +1,17 @@
-import { computed, reactive, unref } from 'vue';
+import { computed, reactive, ref, unref } from 'vue';
 import { SimpleRule, Rule } from './composable/useValidation';
 import FormField from './FormField';
-import { tryGet, trySet } from './utils';
+import { PromiseCancel, tryGet, trySet } from './utils';
 
 type ValidateResult = void | string;
 
 type Validator = (
   formField: FormField
-) => (index: number, rule: SimpleRule) => () => Promise<ValidateResult>;
+) => (
+  rule: SimpleRule,
+  ruleNumber: number,
+  promiseCancel: PromiseCancel
+) => () => Promise<ValidateResult>;
 
 type Validate = ReturnType<ReturnType<Validator>>;
 
@@ -36,12 +40,14 @@ export default class Form {
   private tryGetSimple = tryGet(this.simpleValidators);
   private tryGetKeyed = tryGet(this.keyedValidators);
 
+  submitting = ref(false);
+
   registerField(uid: number, rules: Rule[], modelValue?: unknown) {
     const formField = new FormField(rules, modelValue);
 
     const simple = rules.reduce<Simple>(
-      (simple, rule, index) => {
-        const validate = this.makeValidate(formField, rule, index);
+      (simple, rule, ruleNumber) => {
+        const validate = this.makeValidate(formField, rule, ruleNumber);
 
         if (isSimpleRule(rule)) {
           simple.validators.push(validate);
@@ -102,24 +108,24 @@ export default class Form {
   }
 
   async validateAll() {
-    for (const { formField } of this.simpleValidators.values()) {
-      formField.touched = false;
+    const promises = [];
+
+    for (const { formField, validators } of this.simpleValidators.values()) {
+      formField.touched = true;
+      promises.push(...validators.map(v => v()));
     }
 
-    const promises = [...this.simpleValidators.entries()].map(
-      ([uid, { formField }]) => {
-        formField.touched = true;
-        return this.validate(uid);
+    for (const keyed of this.keyedValidators.values()) {
+      for (const { validator } of keyed) {
+        promises.push(validator());
       }
-    );
+    }
 
-    const allSettledResults = await Promise.all(promises);
+    const settledResult = await Promise.allSettled(promises);
 
-    for (const settledResults of allSettledResults) {
-      for (const settledResult of settledResults) {
-        if (settledResult.status === 'rejected') {
-          return true;
-        }
+    for (const result of settledResult) {
+      if (result.status === 'rejected') {
+        return true;
       }
     }
 
@@ -136,7 +142,7 @@ export default class Form {
         if (formField.touched) {
           promise = Promise.allSettled([
             ...validators.map(v => v()),
-            ...this.getValidateResultsFor(keys)
+            ...this.getPromisesFor(keys)
           ]);
         }
       }
@@ -156,7 +162,7 @@ export default class Form {
     this.reactiveFormFields.delete(uid);
   }
 
-  private getValidateResultsFor(keys: string[]) {
+  private getPromisesFor(keys: string[]) {
     return keys.reduce((promises, key) => {
       this.tryGetKeyed({
         success: keyed => {
@@ -192,30 +198,47 @@ export default class Form {
   private makeValidate(
     formField: FormField,
     rule: Rule,
-    index: number
+    ruleNumber: number
   ): Validate {
-    const validator: Validator = formField => (index, rule) => async () => {
+    const validator: Validator = formField => (
+      rule,
+      ruleNumber: number,
+      promiseCancel
+    ) => async () => {
       let error: unknown;
 
-      try {
-        formField.incrementWaiting(index);
-        error = await rule(unref(formField.modelValue));
-      } catch (err) {
-        error = err;
-      } finally {
-        formField.decrementWaiting(index);
+      const ruleResult = rule(unref(formField.modelValue));
+
+      if (typeof ruleResult?.then === 'function') {
+        try {
+          formField.rulesValidating.value++;
+
+          if (!this.submitting.value) {
+            promiseCancel.cancelResolve(null);
+          }
+
+          error = await promiseCancel.race(ruleResult);
+        } catch (err) {
+          error = err;
+        } finally {
+          formField.rulesValidating.value--;
+        }
+      } else {
+        error = ruleResult;
       }
 
-      if (formField.nooneIsWaiting(index) && formField.touched) {
-        if (typeof error === 'string') {
-          formField.setError(index, error);
-          throw error;
-        } else {
-          formField.setError(index, null);
-        }
+      if (typeof error === 'string' && formField.touched) {
+        formField.setError(ruleNumber, error);
+        throw error;
+      } else {
+        formField.setError(ruleNumber, null);
       }
     };
 
-    return validator(formField)(index, isSimpleRule(rule) ? rule : rule.rule);
+    return validator(formField)(
+      isSimpleRule(rule) ? rule : rule.rule,
+      ruleNumber,
+      new PromiseCancel()
+    );
   }
 }
