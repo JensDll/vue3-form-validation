@@ -9,34 +9,6 @@ beforeEach(() => {
   );
 });
 
-describe('has error', () => {
-  it('should be false at the beginning', () => {
-    expect(formField.hasError()).toBe(false);
-  });
-
-  it('should be true after setting errors', () => {
-    formField.setError(0, '');
-    expect(formField.hasError()).toBe(true);
-  });
-
-  it('should be false after removing errors', () => {
-    formField.setError(0, '');
-    formField.setError(1, 'a');
-    formField.setError(5, '');
-
-    expect(formField.hasError()).toBe(true);
-
-    formField.setError(0, null);
-    formField.setError(1, null);
-
-    expect(formField.hasError()).toBe(true);
-
-    formField.setError(5, null);
-
-    expect(formField.hasError()).toBe(false);
-  });
-});
-
 describe('get errors', () => {
   it('should filter out null values', () => {
     formField.setError(0, 'a');

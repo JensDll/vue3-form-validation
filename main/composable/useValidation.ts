@@ -1,9 +1,9 @@
-import { reactive, Ref, watch, ref, ComputedRef, UnwrapRef } from 'vue';
+import { reactive, Ref, watch, ComputedRef, UnwrapRef } from 'vue';
 import useUid from './useUid';
 import Form from '../Form';
 import { path, PromiseCancel } from '../utils';
 
-export type SimpleRule<T = any> = (value: T) => Promise<unknown> | unknown;
+export type SimpleRule<T = any> = (value: T) => any;
 export type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 export type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 
@@ -102,9 +102,9 @@ export function transformFormData(form: Form, formData: any) {
         }
       });
 
-      watch(formField.modelValue, async () => {
+      watch(formField.modelValue, () => {
         if (formField.touched) {
-          await form.validate(uid);
+          form.validate(uid);
         }
       });
 
@@ -133,7 +133,10 @@ export function cleanupForm(form: Form, formData: any) {
 export function getResultFormData(formData: any, resultFormData: any) {
   Object.entries(formData).forEach(([key, value]) => {
     if (isTransformedField(value)) {
-      resultFormData[key] = value.$value;
+      resultFormData[key] =
+        typeof value.$value === 'object'
+          ? JSON.parse(JSON.stringify(value.$value))
+          : value.$value;
       return;
     }
 
@@ -190,7 +193,6 @@ type UseValidation<T extends object> = {
  */
 export function useValidation<T extends object>(formData: T): UseValidation<T> {
   const form = new Form();
-  const submitting = ref(false);
   const promiseCancel = new PromiseCancel<true>();
 
   transformFormData(form, formData);
@@ -200,30 +202,29 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
   return {
     form: transformedFormData,
 
-    submitting,
+    submitting: form.submitting,
 
     errors: form.getErrors(),
 
     async validateFields() {
-      submitting.value = true;
-
-      const hasError = await promiseCancel.race(form.validateAll());
-
-      if (hasError) {
-        submitting.value = false;
-        throw undefined;
-      }
+      form.submitting.value = true;
 
       const resultFormData = {};
       getResultFormData(transformedFormData, resultFormData);
 
-      submitting.value = false;
+      const hasError = await promiseCancel.race(form.validateAll());
+
+      form.submitting.value = false;
+
+      if (hasError) {
+        throw undefined;
+      }
 
       return resultFormData as FormData<T>;
     },
 
     async resetFields() {
-      if (submitting.value) {
+      if (form.submitting.value) {
         promiseCancel.cancelResolve(true);
       }
       form.resetFields();

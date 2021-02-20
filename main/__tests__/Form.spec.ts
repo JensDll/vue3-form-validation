@@ -383,4 +383,48 @@ describe('async validation', () => {
     });
     form.resetFields();
   });
+
+  it('should prioritize last rule call', async () => {
+    const testFactory = () =>
+      new Promise<void>(resolve => {
+        const form = new Form();
+        const ms = {
+          value: 1000
+        };
+        let timeoutCalledTimes = 0;
+
+        const rule = jest.fn(
+          () =>
+            new Promise(resovle => {
+              const result = ms.value.toString();
+              setTimeout(() => {
+                resovle(result);
+                timeoutCalledTimes++;
+              }, ms.value);
+            })
+        );
+
+        const formField = form.registerField(1, [rule]);
+        formField.touched = true;
+
+        form.validate(1);
+        ms.value = 100;
+        form.validate(1);
+
+        setTimeout(() => {
+          expect(rule).toHaveBeenCalledTimes(2);
+          expect(formField.getErrors().value).toEqual(['100']);
+          expect(timeoutCalledTimes).toBe(2);
+          resolve();
+        }, 1000);
+      });
+
+    const tests = [];
+
+    for (let i = 0; i < 100; i++) {
+      tests.push(testFactory());
+    }
+
+    await Promise.all(tests);
+  });
 });

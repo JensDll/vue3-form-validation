@@ -1,30 +1,36 @@
-export class PromiseCancel<T> {
+export class PromiseCancel<T = unknown> {
   private promise!: Promise<T>;
-  private _resolve!: (value: T | PromiseLike<T>) => void;
-  private _reject!: (reason?: any) => void;
+  private resolve!: (value: T | PromiseLike<T>) => void;
+  private reject!: (reason?: any) => void;
+  private raceHasBeenCalled = false;
 
   constructor() {
     this.assign();
   }
 
   cancelResolve(value: T | PromiseLike<T>) {
-    this._resolve(value);
-    this.assign();
+    if (this.raceHasBeenCalled) {
+      this.resolve(value);
+      this.assign();
+    }
   }
 
   cancelReject(reason?: any) {
-    this._reject(reason);
-    this.assign();
+    if (this.raceHasBeenCalled) {
+      this.reject(reason);
+      this.assign();
+    }
   }
 
   race<TRace extends Promise<any>[]>(...promises: readonly [...TRace]) {
+    this.raceHasBeenCalled = true;
     return Promise.race([this.promise, ...promises]);
   }
 
   private assign() {
     this.promise = new Promise<T>((resolve, reject) => {
-      this._resolve = resolve;
-      this._reject = reject;
+      this.resolve = resolve;
+      this.reject = reject;
     });
   }
 }

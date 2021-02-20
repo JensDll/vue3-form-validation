@@ -5,17 +5,14 @@ const notNull = <T>(value: T | null): value is T => value !== null;
 
 export default class FormField {
   private errors: (string | null)[];
-  private waiting: number[];
-  private totalWaiting = ref(0);
-  private errorCount = 0;
 
+  rulesValidating = ref(0);
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>;
   private initialModelValue: unknown;
   touched = false;
 
   constructor(rules: Rule[], modelValue: unknown) {
     this.errors = reactive(rules.map(() => null));
-    this.waiting = rules.map(() => 0);
 
     if (isRef(modelValue)) {
       this.modelValue = modelValue;
@@ -33,36 +30,8 @@ export default class FormField {
     }
   }
 
-  setError(index: number, error: string | null) {
-    const willBeSet = this.errors[index];
-
-    if (willBeSet === null && typeof error === 'string') {
-      this.errorCount++;
-    }
-
-    if (typeof willBeSet === 'string' && error === null) {
-      this.errorCount--;
-    }
-
-    this.errors[index] = error;
-  }
-
-  incrementWaiting(index: number) {
-    this.totalWaiting.value++;
-    this.waiting[index]++;
-  }
-
-  decrementWaiting(index: number) {
-    this.totalWaiting.value--;
-    this.waiting[index]--;
-  }
-
-  nooneIsWaiting(index: number) {
-    return this.waiting[index] === 0;
-  }
-
-  hasError() {
-    return this.errorCount > 0;
+  setError(ruleNumber: number, error: string | null) {
+    this.errors[ruleNumber] = error;
   }
 
   getErrors() {
@@ -70,7 +39,7 @@ export default class FormField {
   }
 
   validating() {
-    return computed(() => this.totalWaiting.value > 0);
+    return computed(() => this.rulesValidating.value > 0);
   }
 
   reset() {
@@ -89,7 +58,5 @@ export default class FormField {
       this.errors,
       this.errors.map(() => null)
     );
-
-    this.errorCount = 0;
   }
 }
