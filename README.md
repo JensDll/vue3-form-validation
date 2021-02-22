@@ -196,7 +196,7 @@ const isNameTaken = name =>
 ## Contributing
 
 If you find problems or if you have use cases that you think are not easy to achieve with the current API, please let me know :+1:
-Feel free to file an issue or open a pull request, for more information checkout the
+Feel free to write an issue or open a pull request, for more information about the project checkout the
 [contributing guideline](https://github.com/JensD98/vue3-form-validation/blob/master/.github/contributing.md).
 
 ## License
