@@ -206,7 +206,7 @@ const isNameTaken = name =>
 
 ## Troubleshooting
 
-- If you encounter errors while building, you may have to install a TypeScript **version > 4.1**.
+- If you encounter errors while building, you may have to install a TypeScript **version >= 4.1**
 
 ## Contributing
 
