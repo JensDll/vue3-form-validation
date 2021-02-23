@@ -177,7 +177,7 @@ Keyed rules that share the same `key` will be executed together. This can be use
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 
 > To prevent overly aggressive error messages, keyed rules will only be called,
-> after every other Field with a matching rule has been touched.
+> when every Field with connected rules has been touched.
 
 Because of the way the [logical operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#logical_operators) work in JavaScript, many basic rules can be written in one line:
 
