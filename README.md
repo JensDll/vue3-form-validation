@@ -179,7 +179,7 @@ Rules will always be called with the latest `modelValue`, to determine if a call
 > To prevent overly aggressive error messages, keyed rules will only be called
 > after all Fields with connected rules have been touched.
 
-Because of the way the [logical operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#logical_operators) work in JavaScript, many basic rules can be written in one line:
+Because of the way the [logical operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#logical_operators) works in JavaScript, many basic rules can be written in one line:
 
 ```ts
 const required = value => !value && 'This field is required';
