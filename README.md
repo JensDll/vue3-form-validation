@@ -176,8 +176,8 @@ type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, e.g. the `Password` and `Repeat Password` fields in a [Login Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 
-> To prevent overly aggressive error messages, keyed rules will only be called,
-> when every Field with connected rules has been touched.
+> To prevent overly aggressive error messages, keyed rules will only be called
+> after every Field with connected rules has been touched.
 
 Because of the way the [logical operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#logical_operators) work in JavaScript, many basic rules can be written in one line:
 
