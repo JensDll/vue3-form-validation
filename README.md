@@ -84,6 +84,8 @@ type FormData = {
   email: Field<string>;
   password: Field<string>;
 };
+
+const { ... } = useValidation<FormData>({ ... });
 ```
 
 ### `useValidation` exposes the following state:
@@ -99,7 +101,7 @@ type FormData = {
   - **Description** - Array of all current validation error messages.
 
 `Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
-
+Every object with a `$value` property will be converted to an object of the following form:
 ```ts
 type TransformedField<T> = {
   $uid: number;
@@ -108,16 +110,16 @@ type TransformedField<T> = {
   $validating: boolean;
   $onBlur(): void;
 };
-
-// The type of form in the example above would therefore be
-const form: {
+```
+Given the structure of the previous example this will result in the following type:
+```ts
+type Form = {
   name: TransformedField<string>;
   email: TransformedField<string>;
   password: TransformedField<string>;
 };
 ```
-
-As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts.
+As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts:
 
 - `$uid`
   - **Type** - `number`
