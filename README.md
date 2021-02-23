@@ -100,8 +100,9 @@ const { ... } = useValidation<FormData>({ ... });
   - **Type** - `ComputedRef<string[]>`
   - **Description** - Array of all current validation error messages.
 
-`Form` is a reactive object with identical structure as the `formData` input, but with added metadata to every Form Field.
+`Form` is a reactive object with identical structure as the `formData` input.
 Every object with a `$value` property will be converted to an object of the following form:
+
 ```ts
 type TransformedField<T> = {
   $uid: number;
@@ -111,7 +112,9 @@ type TransformedField<T> = {
   $onBlur(): void;
 };
 ```
-Given the structure of the previous example this will result in the following type:
+
+Given the structure of the previous example, this will result in the following type:
+
 ```ts
 type Form = {
   name: TransformedField<string>;
@@ -119,7 +122,9 @@ type Form = {
   password: TransformedField<string>;
 };
 ```
-As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts:
+
+As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts. Below is a
+description of all the fields an their use case:
 
 - `$uid`
   - **Type** - `number`
@@ -135,15 +140,15 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
   - **Description** - `True` while at least one rule is validating.
 - `$onBlur`
   - **Type** - `function`
-  - **Description** - Function which will mark this Form Field as touched. When a Form Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
+  - **Description** - Function which will mark this Form Field as touched. When a Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
 
 ### `useValidation` exposes the following methods:
 
 - `validateFields() -> Promise`
-  - **Description** - Validate all Form Fields.
+  - **Description** - Validate all Fields.
   - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the `formData` otherwise.
 - `resetFields() -> void`
-  - **Description** - Reset all Form Fields to their original values.
+  - **Description** - Reset all Fields to their original values.
 - `add(pathToArray: (string | number)[], value: any) -> void`
   - **Description** - Utility function for writing dynamic Forms.
   - **Parameters**
@@ -168,9 +173,13 @@ type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
 
-Keyed rules that share the same `key` will be executed together, this can be useful in a situation where rules are dependent on another. For example the `Password` and `Repeat Password` fields in a [Login Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
+Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, e.g. the `Password` and `Repeat Password` fields in a [Login Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
-This allows you to write many rules in one line:
+
+> To prevent overly aggressive error messages, keyed rules will only be called,
+> after every other Field with a matching rule has been touched.
+
+Because of the way the [logical operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#logical_operators) work in JavaScript, many basic rules can be written in one line:
 
 ```ts
 const required = value => !value && 'This field is required';
@@ -180,7 +189,7 @@ const max = value =>
   value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
-Async rules allow you to perform network requests, for example checking if a username exists in the database:
+Async rules allow you to perform network requests, e.g. checking if a username exists in the database. Same rules apply as for simple rules, `resolve` or `reject` with a string if the validation fails:
 
 ```ts
 const isNameTaken = name =>
