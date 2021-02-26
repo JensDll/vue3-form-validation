@@ -173,7 +173,7 @@ type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
 
-Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, e.g. the `Password` and `Repeat Password` fields in a [Login Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
+Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Repeat Password` fields in a [Login Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 
 > To prevent overly aggressive error messages, keyed rules will only be called
@@ -189,7 +189,7 @@ const max = value =>
   value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
-Async rules allow you to perform network requests, e.g. checking if a username exists in the database. Same rules apply as for simple rules, `resolve` or `reject` with a string if the validation fails:
+Async rules allow you to perform network requests, for instance checking if a username exists in the database. Same rules apply as for simple rules, `resolve` or `reject` with a string if the validation fails:
 
 ```ts
 const isNameTaken = name =>
@@ -206,7 +206,7 @@ const isNameTaken = name =>
 
 ## Troubleshooting
 
-- If you encounter errors while building, you may have to install a TypeScript **version > 4.1**.
+- If you encounter errors while building, you may have to install a TypeScript **version >= 4.1**
 
 ## Contributing
 
