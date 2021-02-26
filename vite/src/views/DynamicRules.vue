@@ -1,6 +1,6 @@
 <template>
   <h1>Dynamic Rules</h1>
-  <form class="my-8 grid gap-y-4" @submit.prevent="handleSubmit">
+  <form class="mb-8 mt-10 grid gap-y-4" @submit.prevent="handleSubmit">
     <BaseInput
       v-model="form.name.$value"
       :errors="form.name.$errors"

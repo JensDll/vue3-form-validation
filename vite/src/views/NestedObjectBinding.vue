@@ -1,6 +1,6 @@
 <template>
   <h1>Nested Object Binding</h1>
-  <form class="my-8" @submit.prevent="handleSubmit">
+  <form class="mb-8 mt-10" @submit.prevent="handleSubmit">
     <label>
       <div>Nested Object</div>
       <input
@@ -54,14 +54,7 @@ export default defineComponent({
             }
           }
         },
-        $rules: [
-          () =>
-            new Promise<void>(resolve => {
-              setTimeout(() => {
-                resolve();
-              }, 1500);
-            })
-        ]
+        $rules: []
       }
     });
 

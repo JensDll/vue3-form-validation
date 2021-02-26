@@ -16,6 +16,7 @@ export default {};
 .nav {
   position: sticky;
   top: 40px;
+  z-index: 20;
   display: flex;
 }
 

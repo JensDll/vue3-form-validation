@@ -1,11 +1,12 @@
 <template>
   <h1>Login Form</h1>
-  <form class="form my-8" @submit.prevent="handleSubmit()">
+  <form class="form mb-8 mt-10" @submit.prevent="handleSubmit()">
     <BaseInput
       v-model="form.name.$value"
-      class="name input-error"
+      class="name"
       label="Name"
       :errors="form.name.$errors"
+      :validating="form.name.$validating"
       @blur="form.name.$onBlur()"
     />
     <BaseInput
@@ -78,12 +79,13 @@ export default defineComponent({
           name => !name && 'Name is required',
           name => name.length > 2 || 'Name has to be longer than 2 characters',
           name =>
-            new Promise<void | string>((resolve, reject) => {
+            new Promise<string | void>(resolve => {
               setTimeout(() => {
-                if (['Jens', 'foo', 'bar'].includes(name)) {
+                if (['alice', 'bob', 'oscar'].includes(name.toLowerCase())) {
                   resolve();
                 } else {
-                  reject('This name is already taken');
+                  // Resolve or reject with string
+                  resolve('This name is already taken');
                 }
               }, 2000);
             })
@@ -91,7 +93,14 @@ export default defineComponent({
       },
       email: {
         $value: '',
-        $rules: [email => !email && 'E-Mail is required']
+        $rules: [
+          email => {
+            const regex = /\S+@\S+\.\S+/;
+            if (!regex.test(email)) {
+              return 'Please enter a valid email address';
+            }
+          }
+        ]
       },
       password: {
         $value: password,

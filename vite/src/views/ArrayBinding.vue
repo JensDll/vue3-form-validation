@@ -1,6 +1,6 @@
 <template>
   <h1>Array Binding</h1>
-  <form class="my-8" @submit.prevent="handleSubmit">
+  <form class="mb-8 mt-10" @submit.prevent="handleSubmit">
     <div>What is your favorite color?</div>
     <div v-for="color in colors" :key="color" class="color">
       <label>

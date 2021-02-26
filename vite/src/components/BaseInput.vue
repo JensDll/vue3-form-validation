@@ -2,12 +2,30 @@
   <div :class="attrsClassName">
     <label>
       {{ label }}
-      <input
-        v-model="value"
-        class="input w-full block border outline-none px-2 py-1 mt-2"
-        :class="{ error: errors.length > 0 }"
-        v-bind="attrsRest"
-      />
+      <div class="relative mt-1">
+        <input
+          v-model="value"
+          class="input w-full block border outline-none px-2 py-1"
+          :class="{ error: errors.length > 0 }"
+          v-bind="attrsRest"
+        />
+        <span v-if="validating" class="ping-container">
+          <div
+            :class="[
+              'animate-ping absolute inset-0 rounded-full opacity-75',
+              errors.length > 0 ? 'bg-red-500' : 'bg-green-500'
+            ]"
+          ></div>
+          <div
+            :class="[
+              'relative rounded-full w-full h-full border',
+              errors.length > 0
+                ? 'bg-red-50 border-red-500'
+                : 'bg-green-50 border-green-500'
+            ]"
+          ></div>
+        </span>
+      </div>
     </label>
     <div v-if="errors.length" class="mt-2">
       <div
@@ -38,6 +56,9 @@ export default defineComponent({
     errors: {
       type: Array as PropType<string[]>,
       default: () => []
+    },
+    validating: {
+      type: Boolean
     }
   },
   emits: ['update:modelValue'],
@@ -75,5 +96,14 @@ export default defineComponent({
 .error:focus {
   @apply border-red-500;
   box-shadow: 0 0 3px theme('colors.red.500');
+}
+
+.ping-container {
+  position: absolute;
+  top: 50%;
+  margin-top: -5px;
+  right: 12px;
+  width: 10px;
+  height: 10px;
 }
 </style>

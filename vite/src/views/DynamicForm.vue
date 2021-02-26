@@ -1,10 +1,14 @@
 <template>
   <h1>Dynamic Form</h1>
-  <form class="form gap-y-4 gap-x-6 items-start" @submit.prevent="handleSubmit">
+  <form
+    class="form mb-8 mt-10 gap-y-4 gap-x-6 items-start"
+    @submit.prevent="handleSubmit"
+  >
     <BaseInput
       v-model="form.a.$value"
       label="A"
       :errors="form.a.$errors"
+      :validating="form.a.$validating"
       class="col-span-10"
       @blur="form.a.$onBlur()"
     />
@@ -16,6 +20,7 @@
         v-model="x.b.$value"
         label="B"
         :errors="x.b.$errors"
+        :validating="x.b.$validating"
         class="col-span-7"
         @blur="x.b.$onBlur()"
       />
@@ -30,6 +35,7 @@
           v-model="y.c.$value"
           label="C"
           :errors="y.c.$errors"
+          :validating="y.d.$validating"
           class="col-span-5"
           @blur="y.c.$onBlur()"
         />
@@ -37,6 +43,7 @@
           v-model="y.d.$value"
           label="D"
           :errors="y.d.$errors"
+          :validating="y.d.$validating"
           class="col-span-5"
           @blur="y.d.$onBlur()"
         />
@@ -179,13 +186,12 @@ export default {
 
 <style scoped>
 .form {
-  margin: 30px 0 50px 0;
   display: grid;
   grid-template-columns: repeat(13, 1fr);
 }
 
 .form-button {
   @apply py-1;
-  margin-top: 32px;
+  margin-top: 28px;
 }
 </style>
