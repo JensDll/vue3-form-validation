@@ -6,7 +6,7 @@ import {
   Rule,
   TransformedField,
   useValidation
-} from '../main/composable/useValidation';
+} from '../main/composition/useValidation';
 
 // ========== RefUnref (RU) ==========
 type RU1 = RefUnref<{ a: string }>;
