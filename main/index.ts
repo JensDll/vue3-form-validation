@@ -1,7 +1,7 @@
-export { useValidation } from './composable/useValidation';
+export { useValidation } from './composition/useValidation';
 export type {
   Field,
   Rule,
   KeyedRule,
   SimpleRule
-} from './composable/useValidation';
+} from './composition/useValidation';

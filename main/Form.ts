@@ -1,5 +1,5 @@
 import { computed, reactive, ref, unref } from 'vue';
-import { SimpleRule, Rule } from './composable/useValidation';
+import { SimpleRule, Rule } from './composition/useValidation';
 import FormField from './FormField';
 import { PromiseCancel, tryGet, trySet } from './utils';
 
@@ -101,9 +101,9 @@ export default class Form {
     });
   }
 
-  resetFields() {
+  resetFields(toDefaultValues = true) {
     for (const { formField } of this.simpleValidators.values()) {
-      formField.reset();
+      formField.reset(toDefaultValues);
     }
   }
 
@@ -121,9 +121,9 @@ export default class Form {
       }
     }
 
-    const settledResult = await Promise.allSettled(promises);
+    const settledResults = await Promise.allSettled(promises);
 
-    for (const result of settledResult) {
+    for (const result of settledResults) {
       if (result.status === 'rejected') {
         return true;
       }
