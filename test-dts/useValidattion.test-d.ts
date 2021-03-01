@@ -113,7 +113,7 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 });
 
 // Complete example (without generic)
-void function () {
+{
   const { form, validateFields, add, remove } = useValidation({
     a: { $value: '' },
     b: { $value: '' },
@@ -137,7 +137,7 @@ void function () {
   remove(['cs'], 0);
   expectError(remove(['cs'], ''));
   expectError(remove(['cs!'], 0));
-};
+}
 
 // Complete example (with generic)
 {
