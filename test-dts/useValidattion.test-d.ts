@@ -140,7 +140,7 @@ void function () {
 };
 
 // Complete example (with generic)
-void function () {
+{
   const { form, validateFields, add, remove } = useValidation<{
     a: Field<string>;
     b: Field<string>;
@@ -181,9 +181,9 @@ void function () {
   remove(['cs'], 0);
   expectError(remove(['cs'], ''));
   expectError(remove(['cs!'], 0));
-};
+}
 
-void function () {
+{
   const { form, validateFields } = useValidation<{
     a: Field<{
       xs: string[];
@@ -220,4 +220,4 @@ void function () {
       };
     }>
   >(validateFields());
-};
+}

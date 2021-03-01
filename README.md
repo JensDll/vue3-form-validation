@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
 
-Opinionated Vue composition function for Form Validation.
+Vue composition function for Form Validation.
 
 - :milky_way: **Written in TypeScript**
 - :ocean: **Dynamic Form support**
@@ -34,12 +34,11 @@ const {
 
 - `formData`
   - **Type** - `object`
-  - **Required** - `true`
-  - **Description** - The structure of your `formData`.
+  - **Description** - The structure of your form data.
 
-The `formData` object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
+The form data object has a structure that is similar to any other object you would write for `v-model` data binding. The only difference being that together with every value you can provide rules to display validation errors.
 
-Let's look at an example how the structure of some `formData` object can be converted to an object with the addition of rules:
+Let's look at an example how the structure of some form data object can be converted to an object with the addition of rules:
 
 ```ts
 const formData = {
@@ -67,7 +66,7 @@ const formDataWithRules = {
 };
 ```
 
-The `formData` object can contain arrays and can be deeply nested. At the leaf level, the object should contain Form Fields whose simplified type definition looks like the following:
+The form data object can contain arrays and can be deeply nested. At the leaf level, the object should contain fields whose simplified type definition looks like the following:
 
 ```ts
 type Field<T> = {
@@ -76,7 +75,7 @@ type Field<T> = {
 };
 ```
 
-To get better type inference while writing the `useValidation` function, it's recommended to define the structure of your `formData` upfront and pass it as the generic parameter `T`. The type for the example above is pretty straightforward:
+To get better type inference while writing the `useValidation` function, it's recommended to define the structure of your data upfront and pass it as the generic parameter `T`. The type for the example above is pretty straightforward:
 
 ```ts
 type FormData = {
@@ -92,7 +91,7 @@ const { ... } = useValidation<FormData>({ ... });
 
 - `form`
   - **Type** - `object`
-  - **Description** - Transformed `formData` object.
+  - **Description** - Transformed form data object.
 - `submitting`
   - **Type** - `Ref<boolean>`
   - **Description** - `True` during validation after calling `validateFields`.
@@ -100,7 +99,7 @@ const { ... } = useValidation<FormData>({ ... });
   - **Type** - `ComputedRef<string[]>`
   - **Description** - Array of all current validation error messages.
 
-`Form` is a reactive object with identical structure as the `formData` input.
+`Form` is a reactive object with identical structure as the form data input.
 Every object with a `$value` property will be converted to an object of the following form:
 
 ```ts
@@ -124,14 +123,14 @@ type Form = {
 ```
 
 As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts. Below is a
-description of all the fields an their use case:
+description of all the properties and their use case:
 
 - `$uid`
   - **Type** - `number`
-  - **Description** - Unique identifier of the Form Field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
+  - **Description** - Unique identifier of the field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
 - `$value`
   - **Type** - `T`
-  - **Description** - The `modelValue` of the Form Field which is meant to be used together with `v-model`.
+  - **Description** - The `modelValue` of the field, which is meant to be used together with `v-model`.
 - `$errors`
   - **Type** - `string[]`
   - **Description** - Array of validation error messages.
@@ -140,25 +139,27 @@ description of all the fields an their use case:
   - **Description** - `True` while at least one rule is validating.
 - `$onBlur`
   - **Type** - `function`
-  - **Description** - Function which will mark this Form Field as touched. When a Field has been touched it will validate all it's rules after every input. Before it will not do any validation.
+  - **Description** - Function which will mark this field as touched. When a field has been touched, it will validate all it's rules after every input. Before it will not do any validation.
 
 ### `useValidation` exposes the following methods:
 
 - `validateFields() -> Promise`
-  - **Description** - Validate all Fields.
-  - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the `formData` otherwise.
-- `resetFields() -> void`
-  - **Description** - Reset all Fields to their original values.
-- `add(pathToArray: (string | number)[], value: any) -> void`
-  - **Description** - Utility function for writing dynamic Forms.
+  - **Description** - Validate all fields.
+  - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the form data otherwise.
+- `resetFields(formData?: object) -> void`
+  - **Description** - Reset all fields to their original value, or pass an object to set specific values.
   - **Parameters**
-    - `pathToArray` - Tuple representing the path to an array in the `formData`.
+    - `formData?` - Values to use.
+- `add(pathToArray: (string | number)[], value: any) -> void`
+  - **Description** - Utility function for writing dynamic forms.
+  - **Parameters**
+    - `pathToArray` - Tuple representing the path to an array in the form data.
     - `value` - The value that will be pushed to the array at the given path.
 - `remove(pathToArray: (string | number)[], index: number) -> void`
-  - **Description** - Utility function for writing dynamic Forms.
+  - **Description** - Utility function for writing dynamic forms.
   - **Parameters**
-    - `pathToArray` - Tuple representing the path to an array in the `formData`.
-    - `index` - Array index that will be remove.
+    - `pathToArray` - Tuple representing the path to an array in the form data.
+    - `index` - Array index which will be remove.
 
 ## Writing Rules
 
