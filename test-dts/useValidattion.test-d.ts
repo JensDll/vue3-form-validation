@@ -6,7 +6,7 @@ import {
   Rule,
   TransformedField,
   useValidation
-} from '../main/composable/useValidation';
+} from '../main/composition/useValidation';
 
 // ========== RefUnref (RU) ==========
 type RU1 = RefUnref<{ a: string }>;
@@ -113,7 +113,7 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 });
 
 // Complete example (without generic)
-void function () {
+{
   const { form, validateFields, add, remove } = useValidation({
     a: { $value: '' },
     b: { $value: '' },
@@ -137,10 +137,10 @@ void function () {
   remove(['cs'], 0);
   expectError(remove(['cs'], ''));
   expectError(remove(['cs!'], 0));
-};
+}
 
 // Complete example (with generic)
-void function () {
+{
   const { form, validateFields, add, remove } = useValidation<{
     a: Field<string>;
     b: Field<string>;
@@ -181,9 +181,9 @@ void function () {
   remove(['cs'], 0);
   expectError(remove(['cs'], ''));
   expectError(remove(['cs!'], 0));
-};
+}
 
-void function () {
+{
   const { form, validateFields } = useValidation<{
     a: Field<{
       xs: string[];
@@ -220,4 +220,4 @@ void function () {
       };
     }>
   >(validateFields());
-};
+}
