@@ -40,7 +40,7 @@
     >
       Login
     </BaseButton>
-    <BaseButton class="mt-8 py-3" @click="resetFields">Reset</BaseButton>
+    <BaseButton class="mt-8 py-3" @click="handleReset()">Reset</BaseButton>
   </form>
   <PreFormData :form="form" :errors="errors" />
 </template>
@@ -136,12 +136,21 @@ export default defineComponent({
         });
     };
 
+    const handleReset = () => {
+      resetFields({
+        name: '',
+        email: '',
+        password: '',
+        repeatPassword: ''
+      });
+    };
+
     return {
       form,
       handleSubmit,
       submitting,
       errors,
-      resetFields
+      handleReset
     };
   },
   computed: {

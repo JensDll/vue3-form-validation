@@ -7,6 +7,7 @@
           v-model="value"
           class="input w-full block border outline-none px-2 py-1"
           :class="{ error: errors.length > 0 }"
+          :disabled="disabled"
           v-bind="attrsRest"
         />
         <span v-if="validating" class="ping-container">
@@ -58,6 +59,9 @@ export default defineComponent({
       default: () => []
     },
     validating: {
+      type: Boolean
+    },
+    disabled: {
       type: Boolean
     }
   },

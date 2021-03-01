@@ -2,7 +2,7 @@
   <h1>Dynamic Form</h1>
   <form
     class="form mb-8 mt-10 gap-y-4 gap-x-6 items-start"
-    @submit.prevent="handleSubmit"
+    @submit.prevent="handleSubmit()"
   >
     <BaseInput
       v-model="form.a.$value"
@@ -64,7 +64,7 @@
       >
         Submit
       </BaseButton>
-      <BaseButton class="w-full py-3" @click="resetFields">Reset</BaseButton>
+      <BaseButton class="w-full py-3" @click="resetFields()">Reset</BaseButton>
     </div>
   </form>
   <PreFormData :form="form" :errors="errors" />

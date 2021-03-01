@@ -5,6 +5,7 @@
     <router-link class="router-link" to="/array-binding"></router-link>
     <router-link class="router-link" to="/dynamic-rules"></router-link>
     <router-link class="router-link" to="/nested-object-binding"></router-link>
+    <router-link class="router-link" to="/async-form-loading"></router-link>
   </nav>
 </template>
 

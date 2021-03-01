@@ -1,6 +1,6 @@
 <template>
   <h1>Nested Object Binding</h1>
-  <form class="mb-8 mt-10" @submit.prevent="handleSubmit">
+  <form class="mb-8 mt-10" @submit.prevent="handleSubmit()">
     <label>
       <div>Nested Object</div>
       <input
@@ -23,7 +23,7 @@
       >
         Submit
       </BaseButton>
-      <BaseButton class="py-1" @click="resetFields">Reset</BaseButton>
+      <BaseButton class="py-1" @click="handleReset()">Reset</BaseButton>
     </div>
   </form>
   <PreFormData :form="form" :errors="errors" />
@@ -54,7 +54,14 @@ export default defineComponent({
             }
           }
         },
-        $rules: []
+        $rules: [
+          () =>
+            new Promise(resolve => {
+              setTimeout(() => {
+                resolve(true);
+              }, 2000);
+            })
+        ]
       }
     });
 
@@ -68,12 +75,25 @@ export default defineComponent({
         });
     };
 
+    const handleReset = () => {
+      resetFields({
+        nested: {
+          a: 'abc',
+          b: {
+            c: {
+              ds: []
+            }
+          }
+        }
+      });
+    };
+
     return {
       form,
       errors,
       submitting,
       handleSubmit,
-      resetFields
+      handleReset
     };
   }
 });

@@ -4,6 +4,7 @@ import DynamicForm from '../views/DynamicForm.vue';
 import ArrayBinding from '../views/ArrayBinding.vue';
 import DynamicRules from '../views/DynamicRules.vue';
 import NestedObjectBinding from '../views/NestedObjectBinding.vue';
+import AsyncFormLoading from '../views/AsyncFormLoading.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -25,6 +26,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/nested-object-binding',
     component: NestedObjectBinding
+  },
+  {
+    path: '/async-form-loading',
+    component: AsyncFormLoading
   }
 ];
 
