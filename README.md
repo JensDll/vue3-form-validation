@@ -127,7 +127,7 @@ description of all the properties and their use case:
 
 - `$uid`
   - **Type** - `number`
-  - **Description** - Unique identifier of the field. For dynamic Forms this can be used as the `key` attribute in `v-for`.
+  - **Description** - Unique identifier of the field. For dynamic forms this can be used as the `key` attribute in `v-for`.
 - `$value`
   - **Type** - `T`
   - **Description** - The `modelValue` of the field, which is meant to be used together with `v-model`.
@@ -147,7 +147,7 @@ description of all the properties and their use case:
   - **Description** - Validate all fields.
   - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the form data otherwise.
 - `resetFields(formData?: object) -> void`
-  - **Description** - Reset all fields to their original value, or pass an object to set specific values.
+  - **Description** - Reset all fields to their original value, or pass an object to set specific values. Check out the [Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue) for usage examples.
   - **Parameters**
     - `formData?` - Values to use.
 - `add(pathToArray: (string | number)[], value: any) -> void`
@@ -212,7 +212,7 @@ const isNameTaken = name =>
 ## Contributing
 
 If you find problems or if you have use cases that you think are not easy to achieve with the current API, please let me know :+1:
-Feel free to write an issue or open a pull request, for more information about the project checkout the
+Feel free to write an issue or open a pull request, for more information about the project check out the
 [contributing guideline](https://github.com/JensD98/vue3-form-validation/blob/master/.github/contributing.md).
 
 ## License
