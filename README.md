@@ -12,7 +12,7 @@ Vue composition function for Form Validation.
 npm install vue3-form-validation
 ```
 
-Validation is async and is utilising `Promise.allSettled`, [which](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) has not yet reached cross-browser stability. Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
+Validation is async and is utilising `Promise.allSettled`, [which](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/allSettled) has not yet reached cross-browser stability. Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
 
 ## API
 
@@ -149,7 +149,7 @@ description of all the properties and their use case:
 - `resetFields(formData?: object) -> void`
   - **Description** - Reset all fields to their original value, or pass an object to set specific values.
   - **Parameters**
-    - `formData?` - Values to use when resetting ([Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue)).
+    - `formData?` - Values to use when resetting ([Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)).
 - `add(pathToArray: (string | number)[], value: any) -> void`
   - **Description** - Utility function for writing dynamic forms.
   - **Parameters**
@@ -174,7 +174,7 @@ type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
 
-Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Repeat Password` fields in a [Signup Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
+Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Repeat Password` fields in a [Signup Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 
 > To prevent overly aggressive error messages, keyed rules will only be called
@@ -190,7 +190,7 @@ const max = value =>
   value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
-Async rules allow you to perform network requests, for instance checking if a username exists in the database. Same rules apply as for simple rules, `resolve` or `reject` with a string if the validation fails:
+Async rules allow you to perform network requests, for instance checking if a username exists in the database. Same criteria apply as for simple rules, `resolve` or `reject` with a string if the validation fails:
 
 ```ts
 const isNameTaken = name =>
