@@ -147,9 +147,9 @@ description of all the properties and their use case:
   - **Description** - Validate all fields.
   - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the form data otherwise.
 - `resetFields(formData?: object) -> void`
-  - **Description** - Reset all fields to their original value, or pass an object to set specific values. Check out the [Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue) for usage examples.
+  - **Description** - Reset all fields to their original value, or pass an object to set specific values.
   - **Parameters**
-    - `formData?` - Values to use.
+    - `formData?` - Values to use when resetting ([Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue)).
 - `add(pathToArray: (string | number)[], value: any) -> void`
   - **Description** - Utility function for writing dynamic forms.
   - **Parameters**
@@ -174,7 +174,7 @@ type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
 
-Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Repeat Password` fields in a [Login Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
+Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Repeat Password` fields in a [Signup Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/LoginForm.vue).
 Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
 
 > To prevent overly aggressive error messages, keyed rules will only be called
