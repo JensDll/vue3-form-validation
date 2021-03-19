@@ -1,5 +1,5 @@
 import { ref } from 'vue';
-import Form from '../../Form';
+import { Form } from '../../common/Form';
 import { cleanupForm } from '../../utils';
 import { Field, useValidation } from '../useValidation';
 

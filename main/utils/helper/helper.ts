@@ -1,7 +1,7 @@
 import { isReactive, watch } from 'vue';
 import { Field, TransformedField } from '../../composition/useValidation';
-import useUid from '../../composition/useUid';
-import Form from '../../Form';
+import { useUid } from '../../composition/useUid';
+import { Form } from '../../common/Form';
 
 const isField = <T>(field: any): field is Field<T> =>
   typeof field === 'object' ? '$value' in field : false;
@@ -34,6 +34,7 @@ export function transformFormData(form: Form, formData: any) {
         $uid: uid,
         $value: formField.modelValue,
         $errors: formField.getErrors(),
+        $hasError: formField.hasError(),
         $validating: formField.validating(),
         async $onBlur() {
           if (!formField.touched) {
@@ -41,7 +42,7 @@ export function transformFormData(form: Form, formData: any) {
             await form.validate(uid);
           }
         }
-      };
+      } as { [K in keyof TransformedField<any>]: unknown };
 
       return;
     }
@@ -52,20 +53,25 @@ export function transformFormData(form: Form, formData: any) {
   });
 }
 
-export function resetFields(transformedFormData: any, formData: any) {
-  Object.entries(transformedFormData).forEach(([key, value]) => {
-    if (isTransformedField(value)) {
-      if (isReactive(value.$value) && !Array.isArray(value.$value)) {
-        Object.assign(value.$value, formData[key]);
+export function resetFields(formData: any, transformedFormData: any) {
+  Object.entries(formData).forEach(([key, value]) => {
+    const transformedValue = transformedFormData[key];
+
+    if (isTransformedField(transformedValue)) {
+      if (
+        isReactive(transformedValue.$value) &&
+        !Array.isArray(transformedValue.$value)
+      ) {
+        Object.assign(transformedValue.$value, value);
       } else {
-        value.$value = formData[key];
+        transformedValue.$value = value;
       }
 
       return;
     }
 
     if (typeof value === 'object') {
-      resetFields(value, formData[key]);
+      resetFields(value, transformedFormData[key]);
     }
   });
 }

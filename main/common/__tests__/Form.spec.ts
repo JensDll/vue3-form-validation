@@ -1,5 +1,5 @@
-import FormField from '../FormField';
-import Form from '../Form';
+import { FormField } from '../FormField';
+import { Form } from '../Form';
 import { ref } from 'vue';
 
 let form: Form;

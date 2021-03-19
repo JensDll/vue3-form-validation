@@ -1,12 +1,12 @@
 import { expectType, expectError } from 'tsd';
 import { ref, Ref } from 'vue';
 import {
-  RefUnref,
   Field,
   Rule,
   TransformedField,
   useValidation
 } from '../main/composition/useValidation';
+import { RefUnref } from '../main/utils';
 
 // ========== RefUnref (RU) ==========
 type RU1 = RefUnref<{ a: string }>;
