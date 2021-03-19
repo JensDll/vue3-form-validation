@@ -51,7 +51,7 @@ import BaseButton from '../components/BaseButton.vue';
 import PreFormData from '../components/PreFormData.vue';
 
 import { defineComponent, ref } from 'vue';
-import { useValidation, Field } from '../../../main';
+import { useValidation, Field, ValidationError } from '../../../main';
 
 interface FormData {
   name: Field<string>;
@@ -126,20 +126,17 @@ export default defineComponent({
       }
     });
 
-    const handleSubmit = () => {
-      validateFields()
-        .then(formData => {
-          console.log(JSON.stringify(formData, null, 2));
-        })
-        .catch(() => {
-          // validation error
-        });
+    const handleSubmit = async () => {
+      try {
+        const formData = await validateFields();
+        console.log(JSON.stringify(formData, null, 2));
+      } catch (e) {
+        console.log(e instanceof ValidationError);
+      }
     };
 
     const handleReset = () => {
       resetFields({
-        name: '',
-        email: '',
         password: '',
         repeatPassword: ''
       });

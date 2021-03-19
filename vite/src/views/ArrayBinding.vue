@@ -26,66 +26,48 @@
   <PreFormData :form="form" :errors="errors" />
 </template>
 
-<script lang="ts">
-import { Field, useValidation } from '../../../main';
+<script setup lang="ts">
+import { ref } from '@vue/reactivity';
+import { useValidation } from '../../../main';
+import type { Field } from '../../../main';
 import BaseButton from '../components/BaseButton.vue';
 import PreFormData from '../components/PreFormData.vue';
 
-type FormData = {
+interface FormData {
   colors: Field<string[]>;
-};
-
-export default {
-  components: {
-    PreFormData,
-    BaseButton
-  },
-  setup() {
-    const {
-      form,
-      errors,
-      submitting,
-      validateFields,
-      resetFields
-    } = useValidation<FormData>({
-      colors: {
-        $value: [],
-        $rules: [
-          colors => colors.length < 2 && 'Select at least 2 colors',
-          () =>
-            new Promise<void>(resolve => {
-              setTimeout(() => {
-                resolve();
-              }, 1000);
-            })
-        ]
-      }
-    });
-
-    const handleSubmit = () => {
-      validateFields()
-        .then(formData => {
-          console.log(JSON.stringify(formData, null, 2));
+}
+const {
+  form,
+  errors,
+  submitting,
+  validateFields,
+  resetFields
+} = useValidation<FormData>({
+  colors: {
+    $value: [],
+    $rules: [
+      colors => colors.length < 2 && 'Select at least 2 colors',
+      () =>
+        new Promise<void>(resolve => {
+          setTimeout(() => {
+            resolve();
+          }, 1000);
         })
-        .catch(() => {
-          // validation error
-        });
-    };
-
-    return {
-      form,
-      errors,
-      submitting,
-      handleSubmit,
-      resetFields
-    };
-  },
-  data() {
-    return {
-      colors: ['Red', 'Green', 'Blue', 'Yellow', 'Black']
-    };
+    ]
   }
+});
+
+const handleSubmit = () => {
+  validateFields()
+    .then(formData => {
+      console.log(JSON.stringify(formData, null, 2));
+    })
+    .catch(() => {
+      // validation error
+    });
 };
+
+const colors = ref(['Red', 'Green', 'Blue', 'Yellow', 'Black']);
 </script>
 
 <style scoped></style>

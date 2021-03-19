@@ -5,7 +5,7 @@
   </main>
 </template>
 
-<script>
+<script lang="ts">
 import NavLinks from './components/NavLinks.vue';
 
 export default {
