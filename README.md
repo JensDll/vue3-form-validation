@@ -99,14 +99,16 @@ const { ... } = useValidation<FormData>({ ... });
   - **Type** - `ComputedRef<string[]>`
   - **Description** - Array of all current validation error messages.
 
-`Form` is a reactive object with identical structure as the form data input.
-Every object with a `$value` property will be converted to an object of the following form:
+`Form` is a reactive object with identical structure as the form data input
+but with added metadata to every field.
+Every object with a `$value` property will be converted to an object of the following type:
 
 ```ts
 type TransformedField<T> = {
   $uid: number;
   $value: T;
   $errors: string[];
+  $hasError: boolean;
   $validating: boolean;
   $onBlur(): void;
 };
@@ -134,6 +136,9 @@ description of all the properties and their use case:
 - `$errors`
   - **Type** - `string[]`
   - **Description** - Array of validation error messages.
+- `$hasError`
+  - **Type** - `boolean`
+  - **Description** - `True` while there are validation errors.
 - `$validating`
   - **Type** - `boolean`
   - **Description** - `True` while at least one rule is validating.
