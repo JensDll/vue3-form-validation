@@ -1,9 +1,9 @@
 import { computed, isRef, reactive, ref } from 'vue';
-import { Rule } from './composition/useValidation';
+import { Rule } from '../composition/useValidation';
 
 const notNull = <T>(value: T | null): value is T => value !== null;
 
-export default class FormField {
+export class FormField {
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>;
   touched = false;
   rulesValidating = ref(0);
@@ -36,6 +36,10 @@ export default class FormField {
 
   getErrors() {
     return computed(() => this.errors.filter(notNull));
+  }
+
+  hasError() {
+    return computed(() => this.getErrors().value.length > 0);
   }
 
   validating() {

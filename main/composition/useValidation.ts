@@ -1,12 +1,14 @@
 import { reactive, Ref, ComputedRef, UnwrapRef } from 'vue';
-import Form from '../Form';
+import { Form } from '../common/Form';
+import { ValidationError } from '../common/ValidationError';
 import {
   cleanupForm,
   getResultFormData,
   path,
   PromiseCancel,
   resetFields,
-  transformFormData
+  transformFormData,
+  RefUnref
 } from '../utils';
 
 export type SimpleRule<T = any> = (value: T) => any;
@@ -14,13 +16,7 @@ export type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 export type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 
 export type Field<TValue> = {
-  $value: TValue extends Ref
-    ? TValue | UnwrapRef<TValue>
-    : TValue extends any[]
-    ? TValue
-    : TValue extends Record<string, unknown>
-    ? RefUnref<TValue>
-    : Ref<TValue> | TValue;
+  $value: RefUnref<TValue>;
   $rules?: Rule<UnwrapRef<TValue>>[];
 };
 
@@ -28,18 +24,9 @@ export type TransformedField<T> = {
   $uid: number;
   $value: T;
   $errors: string[];
+  $hasError: boolean;
   $validating: boolean;
   $onBlur(): void;
-};
-
-export type RefUnref<T extends Record<string, unknown>> = {
-  [K in keyof T]: T[K] extends Ref
-    ? T[K] | UnwrapRef<T[K]>
-    : T[K] extends any[]
-    ? T[K]
-    : T[K] extends Record<string, unknown>
-    ? RefUnref<T[K]>
-    : Ref<T[K]> | T[K];
 };
 
 export type TransformedFormData<T extends object> = T extends any
@@ -79,7 +66,7 @@ type UseValidation<T extends object> = {
   submitting: Ref<boolean>;
   errors: ComputedRef<string[]>;
   validateFields(): Promise<FormData<T>>;
-  resetFields(formData?: FormData<T>): void;
+  resetFields(formData?: Partial<FormData<T>>): void;
   add<Ks extends Keys>(
     pathToArray: readonly [...Ks],
     value: DeepIndex<T, Ks> extends Array<infer TArray> ? TArray : never
@@ -136,7 +123,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
       form.submitting.value = false;
 
       if (hasError) {
-        throw void 0;
+        throw new ValidationError();
       }
 
       return resultFormData as FormData<T>;
@@ -149,7 +136,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
 
       if (formData) {
         form.resetFields(false);
-        resetFields(transformedFormData, formData);
+        resetFields(formData, transformedFormData);
       } else {
         form.resetFields();
       }

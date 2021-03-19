@@ -1,7 +1,7 @@
 import { computed, reactive, ref, unref } from 'vue';
-import { SimpleRule, Rule } from './composition/useValidation';
-import FormField from './FormField';
-import { PromiseCancel, tryGet, trySet } from './utils';
+import { SimpleRule, Rule } from '../composition/useValidation';
+import { FormField } from './FormField';
+import { PromiseCancel, tryGet, trySet } from '../utils';
 
 type ValidateResult = void | string;
 
@@ -30,7 +30,7 @@ type Keyed = Set<{
 const isSimpleRule = (rule: Rule): rule is SimpleRule =>
   typeof rule === 'function';
 
-export default class Form {
+export class Form {
   private simpleValidators: Map<number, Simple> = new Map();
   private keyedValidators: Map<string, Keyed> = new Map();
 
