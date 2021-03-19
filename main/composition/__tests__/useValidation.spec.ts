@@ -76,6 +76,7 @@ describe('transform form data', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -83,6 +84,7 @@ describe('transform form data', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -90,6 +92,7 @@ describe('transform form data', () => {
         $uid: expect.any(Number),
         $value: [],
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -97,6 +100,7 @@ describe('transform form data', () => {
         $uid: expect.any(Number),
         $value: { a: '' },
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -106,6 +110,7 @@ describe('transform form data', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -116,6 +121,7 @@ describe('transform form data', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -131,6 +137,7 @@ describe('transform form data', () => {
                   }
                 },
                 $errors: [],
+                $hasError: false,
                 $validating: false,
                 $onBlur: expect.any(Function)
               }
@@ -163,6 +170,7 @@ describe('reset fields', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -170,6 +178,7 @@ describe('reset fields', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -177,6 +186,7 @@ describe('reset fields', () => {
         $uid: expect.any(Number),
         $value: [],
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -184,6 +194,7 @@ describe('reset fields', () => {
         $uid: expect.any(Number),
         $value: { a: '' },
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -193,6 +204,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -203,6 +215,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -218,6 +231,7 @@ describe('reset fields', () => {
                   }
                 },
                 $errors: [],
+                $hasError: false,
                 $validating: false,
                 $onBlur: expect.any(Function)
               }
@@ -262,6 +276,7 @@ describe('reset fields', () => {
         $uid: expect.any(Number),
         $value: 'foo',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -269,6 +284,7 @@ describe('reset fields', () => {
         $uid: expect.any(Number),
         $value: 'foo',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -276,6 +292,7 @@ describe('reset fields', () => {
         $uid: expect.any(Number),
         $value: ['foo'],
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -283,6 +300,7 @@ describe('reset fields', () => {
         $uid: expect.any(Number),
         $value: { a: 'foo' },
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -292,6 +310,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: 'foo',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -302,6 +321,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: 'foo',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -317,6 +337,7 @@ describe('reset fields', () => {
                   }
                 },
                 $errors: [],
+                $hasError: false,
                 $validating: false,
                 $onBlur: expect.any(Function)
               }
@@ -417,6 +438,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -424,6 +446,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -431,6 +454,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: [],
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -438,6 +462,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: { a: '' },
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -447,6 +472,7 @@ describe('add and remove', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -457,6 +483,7 @@ describe('add and remove', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -472,6 +499,7 @@ describe('add and remove', () => {
                   }
                 },
                 $errors: [],
+                $hasError: false,
                 $validating: false,
                 $onBlur: expect.any(Function)
               }
@@ -483,6 +511,7 @@ describe('add and remove', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
@@ -504,6 +533,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -511,6 +541,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -518,6 +549,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: [],
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -525,6 +557,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: { a: '' },
         $errors: [],
+        $hasError: false,
         $validating: false,
         $onBlur: expect.any(Function)
       },
@@ -534,6 +567,7 @@ describe('add and remove', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
+            $hasError: false,
             $validating: false,
             $onBlur: expect.any(Function)
           },
