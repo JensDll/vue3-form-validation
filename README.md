@@ -14,7 +14,7 @@ npm install vue3-form-validation
 
 Validation is async and is utilising `Promise.allSettled`.
 
-## [Example Usage](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)
+## :point_right: [Example Usage](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)
 
 Check out the example usage on [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
 
