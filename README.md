@@ -12,7 +12,11 @@ Vue composition function for Form Validation.
 npm install vue3-form-validation
 ```
 
-Validation is async and is utilising `Promise.allSettled`. Example usage can be found in this [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
+Validation is async and is utilising `Promise.allSettled`.
+
+## :point_right: [Example Usage](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)
+
+Check out the example usage on [Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
 
 ## API
 
