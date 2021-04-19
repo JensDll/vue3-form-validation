@@ -116,7 +116,7 @@ type TransformedField<T> = {
 };
 ```
 
-Given the structure of the previous example, this will result in the following type:
+Given the structure of the previous example, this will result in the following object:
 
 ```ts
 type Form = {
@@ -176,7 +176,7 @@ They can also alternatively return a `Promise` when you have a rule that require
 **Typing:**
 
 ```ts
-type SimpleRule<T = any> = (value: T) => Promise<unknown> | unknown;
+type SimpleRule<T = any> = (value: T) => any;
 type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
 type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 ```
