@@ -6,7 +6,7 @@ const randomInt = (min: number, max: number) => {
 
 export const randomPromise = () => {
   const ms = randomInt(300, 2000);
-  console.log(ms);
+
   return new Promise<string>(resolve => {
     setTimeout(() => {
       resolve(`Promise ${ms} ms`);
