@@ -1,8 +1,3 @@
 export { useValidation } from './composition/useValidation';
 export { ValidationError } from './form/ValidationError';
-export type {
-  Field,
-  Rule,
-  KeyedRule,
-  SimpleRule
-} from './composition/useValidation';
+export type { Field } from './composition/useValidation';
