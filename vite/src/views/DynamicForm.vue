@@ -1,81 +1,127 @@
 <template>
-  <h1>Dynamic Form</h1>
-  <form
-    class="form mb-8 mt-10 gap-y-4 gap-x-6 items-start"
-    @submit.prevent="handleSubmit()"
-  >
-    <BaseInput
-      v-model="form.a.$value"
-      label="A"
-      :errors="form.a.$errors"
-      :validating="form.a.$validating"
-      class="col-span-10"
-      @blur="form.a.$onBlur()"
-    />
-    <BaseButton class="col-span-3 mb-2 form-button" @click="addX">
-      Add X
-    </BaseButton>
-    <template v-for="(x, indexX) in form.xs" :key="x.b.$uid">
-      <BaseInput
-        v-model="x.b.$value"
-        label="B"
-        :errors="x.b.$errors"
-        :validating="x.b.$validating"
-        class="col-span-7"
-        @blur="x.b.$onBlur()"
-      />
-      <BaseButton class="col-span-3 form-button" @click="addY(indexX)">
-        Add Y
-      </BaseButton>
-      <BaseButton class="col-span-3 form-button" @click="removeX(indexX)">
-        Remove X
-      </BaseButton>
-      <template v-for="(y, indexY) in x.ys" :key="y.c.$uid">
-        <BaseInput
-          v-model="y.c.$value"
-          label="C"
-          :errors="y.c.$errors"
-          :validating="y.d.$validating"
-          class="col-span-5"
-          @blur="y.c.$onBlur()"
+  <h1 class="font-bold text-3xl mb-12">Dynamic Form</h1>
+  <form @submit.prevent="handleSubmit()">
+    <div>
+      <label for="A" class="block font-semibold mb-1">A</label>
+      <div class="flex items-center flex-row relative">
+        <input
+          id="A"
+          v-model="form.a.$value"
+          type="text"
+          class="border p-2 w-10/12"
+          @blur="form.a.$onBlur()"
         />
-        <BaseInput
-          v-model="y.d.$value"
-          label="D"
-          :errors="y.d.$errors"
-          :validating="y.d.$validating"
-          class="col-span-5"
-          @blur="y.d.$onBlur()"
+        <IconPlusCircle
+          class="
+            w-6
+            h-6
+            absolute
+            right-0
+            cursor-pointer
+            text-blue-500
+            hover:text-blue-700
+          "
+          @click="addX()"
         />
-        <BaseButton
-          class="col-span-3 form-button"
-          @click="removeY(indexX, indexY)"
+      </div>
+    </div>
+    <div>
+      <template v-for="(x, i) in form.xs" :key="x.b.$uid">
+        <div class="mt-8 first:mt-12">
+          <label :for="`B-${i}`" class="block font-semibold mb-1">B</label>
+          <div class="flex items-center flex-row relative">
+            <input
+              :id="`B-${i}`"
+              v-model="x.b.$value"
+              type="text"
+              class="border p-2 w-10/12"
+              @blur="form.a.$onBlur()"
+            />
+            <IconPlusCircle
+              class="
+                w-6
+                h-6
+                absolute
+                right-8
+                cursor-pointer
+                text-blue-500
+                hover:text-blue-700
+              "
+              @click="addY(i)"
+            />
+            <IconMinusCircle
+              class="
+                w-6
+                h-6
+                absolute
+                right-0
+                cursor-pointer
+                text-red-500
+                hover:text-red-700
+              "
+              @click="removeX(i)"
+            />
+          </div>
+        </div>
+        <div
+          v-for="(y, j) in x.ys"
+          :key="y.c.$uid"
+          class="flex items-center relative mt-4"
         >
-          Remove Y
-        </BaseButton>
+          <div class="grid grid-flow-col gap-x-4 w-10/12">
+            <input
+              v-model="y.c.$value"
+              type="text"
+              class="border p-2 w-full"
+              placeholder="C"
+              @blur="form.a.$onBlur()"
+            />
+            <input
+              v-model="y.d.$value"
+              type="text"
+              class="border p-2 w-full"
+              placeholder="D"
+              @blur="form.a.$onBlur()"
+            />
+          </div>
+          <IconMinusCircle
+            class="
+              w-6
+              h-6
+              absolute
+              right-0
+              cursor-pointer
+              text-red-500
+              hover:text-red-700
+            "
+            @click="removeY(i, j)"
+          />
+        </div>
       </template>
-    </template>
-    <div class="col-span-full flex gap-x-6 mt-8">
-      <BaseButton
-        class="w-full py-3"
-        type="primary"
-        html-type="submit"
-        :disabled="submitting"
+    </div>
+    <div class="grid grid-flow-col grid-cols-4 mt-12 gap-x-4 w-full">
+      <VButton
+        class="primary py-3 px-6 col-span-3"
+        type="submit"
+        :loading="submitting"
       >
         Submit
-      </BaseButton>
-      <BaseButton class="w-full py-3" @click="resetFields()">Reset</BaseButton>
+      </VButton>
+      <VButton class="secondary py-3 px-6" @click="resetFields()">
+        Reset
+      </VButton>
     </div>
   </form>
-  <PreFormData :form="form" :errors="errors" />
+  <VPreFormData class="mt-20" :form="form" :errors="errors" />
 </template>
 
 <script lang="ts">
-import { Field, useValidation } from '../../../main';
-import PreFormData from '../components/PreFormData.vue';
-import BaseInput from '../components/BaseInput.vue';
-import BaseButton from '../components/BaseButton.vue';
-import { ref } from 'vue';
+import { defineComponent } from 'vue';
+import { Field, useValidation, ValidationError } from '../../../main';
+import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
+import VButton from '../components/common/VButton/VButton.vue';
+import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
+import IconMinusCircle from '../components/icons/IconMinusCircle.vue';
 
 type FormData = {
   a: Field<string>;
@@ -88,41 +134,25 @@ type FormData = {
   }[];
 };
 
-export default {
-  components: { BaseInput, BaseButton, PreFormData },
+export default defineComponent({
+  components: {
+    VButton,
+    VPreFormData,
+    IconPlusCircle,
+    IconMinusCircle
+  },
   setup() {
-    const randomInt = (min: number, max: number) => {
-      min = Math.ceil(min);
-      max = Math.floor(max);
-      return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
-
-    const randomPromise = (x: string) => {
-      const ms = randomInt(300, 2000);
-
-      return new Promise<void | string>(resolve => {
-        setTimeout(() => {
-          if (x) {
-            resolve();
-          } else {
-            resolve(`Promise ${ms} ms`);
-          }
-        }, ms);
-      });
-    };
-
     const {
       form,
-      submitting,
       errors,
+      submitting,
       validateFields,
       resetFields,
       add,
       remove
     } = useValidation<FormData>({
       a: {
-        $value: ref(''),
-        $rules: [a => !a && 'A is required', randomPromise]
+        $value: ''
       },
       xs: []
     });
@@ -130,68 +160,55 @@ export default {
     const addX = () => {
       add(['xs'], {
         b: {
-          $value: '',
-          $rules: [b => !b && 'B is required', randomPromise]
+          $value: ''
         },
         ys: []
       });
     };
 
-    const removeX = (indexX: number) => {
-      remove(['xs'], indexX);
+    const removeX = (i: number) => {
+      remove(['xs'], i);
     };
 
-    const addY = (indexX: number) => {
-      add(['xs', indexX, 'ys'], {
+    const addY = (i: number) => {
+      add(['xs', i, 'ys'], {
         c: {
-          $value: '',
-          $rules: [c => !c && 'C is required', randomPromise]
+          $value: ''
         },
         d: {
-          $value: '',
-          $rules: [d => !d && 'D is required', randomPromise]
+          $value: ''
         }
       });
     };
 
-    const removeY = (indexX: number, indexY: number) => {
-      remove(['xs', indexX, 'ys'], indexY);
+    const removeY = (i: number, j: number) => {
+      remove(['xs', i, 'ys'], j);
     };
 
-    const handleSubmit = () => {
-      validateFields()
-        .then(formData => {
-          console.log(JSON.stringify(formData, null, 2));
-        })
-        .catch(() => {
-          // validation error
-        });
+    const handleSubmit = async () => {
+      try {
+        const formData = await validateFields();
+        console.log(JSON.stringify(formData, null, 2));
+      } catch (e) {
+        if (e instanceof ValidationError) {
+          console.log(e);
+        }
+      }
     };
 
     return {
       form,
       errors,
       submitting,
-      validateFields,
-      resetFields,
       handleSubmit,
+      resetFields,
       addX,
       removeX,
       addY,
       removeY
     };
   }
-};
+});
 </script>
 
-<style scoped>
-.form {
-  display: grid;
-  grid-template-columns: repeat(13, 1fr);
-}
-
-.form-button {
-  @apply py-1;
-  margin-top: 28px;
-}
-</style>
+<style lang="postcss" scoped></style>

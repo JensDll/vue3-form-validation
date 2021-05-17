@@ -3,5 +3,10 @@ import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
   plugins: [vue()],
-  root: './vite'
+  root: './vite',
+  server: {
+    fsServe: {
+      root: '../'
+    }
+  }
 });

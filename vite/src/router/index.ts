@@ -1,41 +1,29 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import LoginForm from '../views/LoginForm.vue';
-import DynamicForm from '../views/DynamicForm.vue';
+import TextBinding from '../views/TextBinding.vue';
 import ArrayBinding from '../views/ArrayBinding.vue';
-import DynamicRules from '../views/DynamicRules.vue';
-import NestedObjectBinding from '../views/NestedObjectBinding.vue';
-import AsyncFormLoading from '../views/AsyncFormLoading.vue';
+import DynamicForm from '../views/DynamicForm.vue';
+import InitialValueBinding from '../views/InitialValueBinding.vue';
 
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
-    component: LoginForm
+    component: TextBinding
   },
   {
-    path: '/array-binding',
+    path: '/array',
     component: ArrayBinding
   },
   {
-    path: '/dynamic-form',
+    path: '/dynamic',
     component: DynamicForm
   },
   {
-    path: '/dynamic-rules',
-    component: DynamicRules
-  },
-  {
-    path: '/nested-object-binding',
-    component: NestedObjectBinding
-  },
-  {
-    path: '/async-form-loading',
-    component: AsyncFormLoading
+    path: '/initial-values',
+    component: InitialValueBinding
   }
 ];
 
-const router = createRouter({
+export const router = createRouter({
   history: createWebHistory(),
   routes
 });
-
-export default router;

@@ -12,5 +12,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["**/__tests__", "jest.config.ts"]
+  "exclude": ["**/__tests__", "jest.config.ts", "test-dts"]
 }

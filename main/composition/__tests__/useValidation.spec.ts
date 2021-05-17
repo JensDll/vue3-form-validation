@@ -1,6 +1,6 @@
 import { ref } from 'vue';
-import { Form } from '../../common/Form';
-import { cleanupForm } from '../../utils';
+import { Form } from '../../form/Form';
+import { cleanupForm } from '../helper';
 import { Field, useValidation } from '../useValidation';
 
 type TestObject = {
@@ -248,20 +248,20 @@ describe('reset fields', () => {
     const { form, resetFields } = useValidation(formData);
 
     resetFields({
-      a: 'foo',
-      b: 'foo',
-      cs: ['foo'],
-      d: { a: 'foo' },
+      a: 'a',
+      b: 'b',
+      cs: ['cs'],
+      d: { a: 'a' },
       es: [
-        { f: 'foo', gs: [] },
+        { f: 'f', gs: [] },
         {
-          f: 'foo',
+          f: 'f',
           gs: [
             {
               h: {
                 a: {
                   b: {
-                    c: 'foo'
+                    c: 'c'
                   }
                 }
               }
@@ -274,7 +274,7 @@ describe('reset fields', () => {
     expect(form).toStrictEqual<typeof form>({
       a: {
         $uid: expect.any(Number),
-        $value: 'foo',
+        $value: 'a',
         $errors: [],
         $hasError: false,
         $validating: false,
@@ -282,7 +282,7 @@ describe('reset fields', () => {
       },
       b: {
         $uid: expect.any(Number),
-        $value: 'foo',
+        $value: 'b',
         $errors: [],
         $hasError: false,
         $validating: false,
@@ -290,7 +290,7 @@ describe('reset fields', () => {
       },
       cs: {
         $uid: expect.any(Number),
-        $value: ['foo'],
+        $value: ['cs'],
         $errors: [],
         $hasError: false,
         $validating: false,
@@ -298,7 +298,7 @@ describe('reset fields', () => {
       },
       d: {
         $uid: expect.any(Number),
-        $value: { a: 'foo' },
+        $value: { a: 'a' },
         $errors: [],
         $hasError: false,
         $validating: false,
@@ -308,7 +308,7 @@ describe('reset fields', () => {
         {
           f: {
             $uid: expect.any(Number),
-            $value: 'foo',
+            $value: 'f',
             $errors: [],
             $hasError: false,
             $validating: false,
@@ -319,7 +319,7 @@ describe('reset fields', () => {
         {
           f: {
             $uid: expect.any(Number),
-            $value: 'foo',
+            $value: 'f',
             $errors: [],
             $hasError: false,
             $validating: false,
@@ -332,7 +332,7 @@ describe('reset fields', () => {
                 $value: {
                   a: {
                     b: {
-                      c: 'foo'
+                      c: 'c'
                     }
                   }
                 },
@@ -355,9 +355,9 @@ describe('cleanup form', () => {
 
   beforeEach(() => {
     mockOnDelete = jest.fn();
-    mockForm = ({
+    mockForm = {
       onDelete: mockOnDelete
-    } as any) as Form;
+    } as any as Form;
   });
 
   it('should call onDelete for every field', () => {

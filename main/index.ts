@@ -1,5 +1,5 @@
 export { useValidation } from './composition/useValidation';
-export { ValidationError } from './common/ValidationError';
+export { ValidationError } from './form/ValidationError';
 export type {
   Field,
   Rule,

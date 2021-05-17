@@ -1,23 +1,22 @@
 import { reactive, Ref, ComputedRef, UnwrapRef } from 'vue';
-import { Form } from '../common/Form';
-import { ValidationError } from '../common/ValidationError';
+import { path, PromiseCancel } from '../common';
+import { Form } from '../form/Form';
+import { ValidationError } from '../form/ValidationError';
+import { RefUnref } from '../types';
 import {
   cleanupForm,
   getResultFormData,
-  path,
-  PromiseCancel,
   resetFields,
-  transformFormData,
-  RefUnref
-} from '../utils';
+  transformFormData
+} from './helper';
 
 export type SimpleRule<T = any> = (value: T) => any;
-export type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
+export type KeyedRule<T = any> = { key: string; rule?: SimpleRule<T> };
 export type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 
 export type Field<TValue> = {
   $value: RefUnref<TValue>;
-  $rules?: Rule<UnwrapRef<TValue>>[];
+  $rules?: Rule<TValue extends any[] ? TValue : UnwrapRef<TValue>>[];
 };
 
 export type TransformedField<T> = {
@@ -115,8 +114,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
     async validateFields() {
       form.submitting.value = true;
 
-      const resultFormData = {};
-      getResultFormData(transformedFormData, resultFormData);
+      const resultFormData = getResultFormData(transformedFormData);
 
       const hasError = await promiseCancel.race(form.validateAll());
 
