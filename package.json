@@ -26,9 +26,9 @@
     "vue-use"
   ],
   "scripts": {
-    "build": "npm exec eslint -- --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run main && npm exec tsc -- --project ./main",
+    "build": "npx eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run main && npx tsc --project ./main",
     "test": "jest --config ./main/jest.config.ts",
-    "test-dts": "npm exec tsd",
+    "test-dts": "npx tsd",
     "test-all": "npm run build && npm run test && npm run test-dts",
     "dev": "vite",
     "postinstall": "husky install",
