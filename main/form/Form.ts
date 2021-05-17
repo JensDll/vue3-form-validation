@@ -13,14 +13,14 @@ type Validator = (
 
 type Validate = ReturnType<Validator>;
 
-type SimpleEntry = {
+type Simple = {
   formField: FormField;
   keys: string[];
   validators: Validate[];
   rollback: (() => void)[];
 };
 
-type KeyedEntrys = Set<{
+type Keyed = Set<{
   formField: FormField;
   validator: Validate;
 }>;
@@ -29,20 +29,21 @@ const isSimpleRule = (rule: Rule): rule is SimpleRule =>
   typeof rule === 'function';
 
 export class Form {
-  private simpleValidators: Map<number, SimpleEntry> = new Map();
-  private keyedValidators: Map<string, KeyedEntrys> = new Map();
-  private reactiveFormFields: Map<number, FormField> = reactive(new Map());
+  private simpleMap: Map<number, Simple> = new Map();
+  private keyedMap: Map<string, Keyed> = new Map();
+  private reactiveFormFieldMap: Map<number, FormField> = reactive(new Map());
 
-  private trySetKeyed = trySet(this.keyedValidators);
-  private tryGetSimple = tryGet(this.simpleValidators);
-  private tryGetKeyed = tryGet(this.keyedValidators);
+  private trySetKeyed = trySet(this.keyedMap);
+  private tryGetKeyed = tryGet(this.keyedMap);
+
+  private tryGetSimple = tryGet(this.simpleMap);
 
   submitting = ref(false);
 
   registerField(uid: number, rules: Rule[], modelValue?: unknown) {
     const formField = new FormField(rules, modelValue);
 
-    const simpleEntry = rules.reduce<SimpleEntry>(
+    const simple = rules.reduce<Simple>(
       (simpleEntry, rule, ruleNumber) => {
         const validate = Form.validateFactory(formField, rule, ruleNumber);
 
@@ -50,21 +51,21 @@ export class Form {
           if (isSimpleRule(rule)) {
             simpleEntry.validators.push(validate);
           } else {
-            const keyedEntry = { formField, validator: validate };
+            const entry = { formField, validator: validate };
 
             simpleEntry.keys.push(rule.key);
 
             this.trySetKeyed({
-              failure: keyed => keyed.add(keyedEntry)
-            })(rule.key, new Set([keyedEntry]));
+              failure: keyed => keyed.add(entry)
+            })(rule.key, new Set([entry]));
 
             simpleEntry.rollback.push(() => {
               this.tryGetKeyed({
-                success: keyedEntrys => {
-                  keyedEntrys.delete(keyedEntry);
+                success: keyed => {
+                  keyed.delete(entry);
 
-                  if (!keyedEntrys.size) {
-                    this.keyedValidators.delete(rule.key);
+                  if (!keyed.size) {
+                    this.keyedMap.delete(rule.key);
                   }
                 }
               })(rule.key);
@@ -82,8 +83,8 @@ export class Form {
       }
     );
 
-    this.simpleValidators.set(uid, simpleEntry);
-    this.reactiveFormFields.set(uid, formField);
+    this.simpleMap.set(uid, simple);
+    this.reactiveFormFieldMap.set(uid, formField);
 
     return formField;
   }
@@ -92,7 +93,7 @@ export class Form {
     return computed(() => {
       const errors: string[] = [];
 
-      for (const formField of this.reactiveFormFields.values()) {
+      for (const formField of this.reactiveFormFieldMap.values()) {
         errors.push(...formField.getErrors().value);
       }
 
@@ -101,7 +102,7 @@ export class Form {
   }
 
   resetFields(toDefaultValues = true) {
-    for (const { formField } of this.simpleValidators.values()) {
+    for (const { formField } of this.simpleMap.values()) {
       formField.reset(toDefaultValues);
     }
   }
@@ -109,12 +110,12 @@ export class Form {
   async validateAll() {
     const promises = [];
 
-    for (const { formField, validators } of this.simpleValidators.values()) {
+    for (const { formField, validators } of this.simpleMap.values()) {
       formField.touched = true;
       promises.push(...validators.map(v => v()));
     }
 
-    for (const keyed of this.keyedValidators.values()) {
+    for (const keyed of this.keyedMap.values()) {
       for (const { validator } of keyed) {
         promises.push(validator());
       }
@@ -156,8 +157,8 @@ export class Form {
       }
     })(uid);
 
-    this.simpleValidators.delete(uid);
-    this.reactiveFormFields.delete(uid);
+    this.simpleMap.delete(uid);
+    this.reactiveFormFieldMap.delete(uid);
   }
 
   private getPromisesFor(keys: string[]) {
@@ -234,11 +235,11 @@ export class Form {
 
         buffer.remove(node);
 
+        formField.rulesValidating.value--;
+
         if (!node.value) {
           setError(formField, ruleNumber, error);
         }
-
-        formField.rulesValidating.value--;
       } else {
         error = ruleResult;
         setError(formField, ruleNumber, error);
