@@ -35,7 +35,6 @@ export class Form {
 
   private trySetKeyed = trySet(this.keyedMap);
   private tryGetKeyed = tryGet(this.keyedMap);
-
   private tryGetSimple = tryGet(this.simpleMap);
 
   submitting = ref(false);
@@ -219,7 +218,7 @@ export class Form {
       const ruleResult = rule(unref(formField.modelValue));
 
       if (typeof ruleResult?.then === 'function') {
-        formField.rulesValidating.value++;
+        formField.validating.value = true;
 
         const node = buffer.addLast(false);
 
@@ -235,9 +234,8 @@ export class Form {
 
         buffer.remove(node);
 
-        formField.rulesValidating.value--;
-
         if (!node.value) {
+          formField.validating.value = false;
           setError(formField, ruleNumber, error);
         }
       } else {
