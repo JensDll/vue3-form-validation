@@ -9,6 +9,11 @@
         </option>
       </select>
     </label>
+    <div v-if="form.coloursSelect.$hasError" class="text-sm text-red-500 mt-1">
+      <p v-for="(error, i) in form.coloursSelect.$errors" :key="i">
+        {{ error }}
+      </p>
+    </div>
     <div class="font-semibold mb-1 mt-2">Checkbox Binding</div>
     <div v-for="colour in colours" :key="colour">
       <label>
@@ -19,6 +24,14 @@
         />
         {{ colour }}
       </label>
+    </div>
+    <div
+      v-if="form.coloursCheckbox.$hasError"
+      class="text-sm text-red-500 mt-1"
+    >
+      <p v-for="(error, i) in form.coloursCheckbox.$errors" :key="i">
+        {{ error }}
+      </p>
     </div>
     <div class="flex mt-8">
       <VButton class="primary py-3 px-6" type="submit" :loading="submitting">
@@ -55,14 +68,14 @@ export default defineComponent({
           $value: [],
           $rules: [
             coloursSelect =>
-              coloursSelect.length >= 2 || 'Select atleast two colours'
+              coloursSelect.length >= 2 || 'Select at least two colours'
           ]
         },
         coloursCheckbox: {
           $value: [],
           $rules: [
             coloursCheckbox =>
-              coloursCheckbox.length >= 3 || 'Select atleast three colours'
+              coloursCheckbox.length >= 3 || 'Select at least three colours'
           ]
         }
       });

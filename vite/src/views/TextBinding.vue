@@ -1,24 +1,27 @@
 <template>
   <h1 class="text-3xl font-bold mb-14">Text Binding</h1>
-  <form @submit.prevent="handleSubmit">
-    <div>
+  <form autocomplete="off" @submit.prevent="handleSubmit">
+    <div class="w-1/2">
       <label for="text" class="block mb-1 font-semibold">Text</label>
-      <input
+      <VInput
         id="text"
         v-model="form.text.$value"
-        class="border p-2"
+        class="border p-3 w-full"
         type="text"
+        :validating="form.text.$validating"
+        :errors="form.text.$errors"
         @blur="form.text.$onBlur()"
       />
     </div>
     <div class="flex mt-2">
       <div>
         <label for="password" class="block mb-1 font-semibold">Password</label>
-        <input
+        <VInput
           id="password"
           v-model="form.password.$value"
-          class="border p-2"
+          class="border p-3"
           type="text"
+          :errors="form.password.$errors"
           @blur="form.password.$onBlur()"
         />
       </div>
@@ -26,18 +29,18 @@
         <label for="confirm-password" class="block mb-1 font-semibold">
           Confirm Password
         </label>
-        <input
+        <VInput
           id="confirm-password"
           v-model="form.confirmPassword.$value"
-          class="border p-2"
+          class="border p-3"
           type="text"
+          :errors="form.confirmPassword.$errors"
           @blur="form.confirmPassword.$onBlur()"
         />
       </div>
     </div>
-
     <div class="flex mt-8">
-      <VButton class="primary py-3 px-6" type="submit" :loading="submitting">
+      <VButton class="primary py-3 px-6" type="submit" :disabled="submitting">
         Submit
       </VButton>
       <VButton class="secondary ml-4 py-3 px-6" @click="resetFields()">
@@ -55,6 +58,7 @@ import type { Field } from '../../../main';
 import { randomPromise } from '../utils';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
+import VInput from '../components/common/VInput/VInput.vue';
 
 type FormData = {
   text: Field<string>;
@@ -65,7 +69,8 @@ type FormData = {
 export default defineComponent({
   components: {
     VPreFormData,
-    VButton
+    VButton,
+    VInput
   },
   setup() {
     const password = ref('');
@@ -75,7 +80,7 @@ export default defineComponent({
       useValidation<FormData>({
         text: {
           $value: '',
-          $rules: [randomPromise]
+          $rules: [text => !text && 'Text is required', randomPromise]
         },
         password: {
           $value: password,

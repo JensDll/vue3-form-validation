@@ -9,6 +9,7 @@
       focus:outline-none
       focus:ring focus:ring-offset-2
     "
+    :class="{ 'opacity-40 pointer-events-none': disabled }"
     type="button"
   >
     <slot></slot>
@@ -27,6 +28,9 @@ export default defineComponent({
   },
   props: {
     loading: {
+      type: Boolean
+    },
+    disabled: {
       type: Boolean
     }
   }

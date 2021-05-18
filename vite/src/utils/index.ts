@@ -4,12 +4,16 @@ const randomInt = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-export const randomPromise = () => {
+export const randomPromise = (x: any) => {
   const ms = randomInt(300, 2000);
 
-  return new Promise<string>(resolve => {
+  return new Promise<void | string>(resolve => {
     setTimeout(() => {
-      resolve(`Promise ${ms} ms`);
+      if (!x) {
+        resolve(`Promise ${ms} ms`);
+      } else {
+        resolve();
+      }
     }, ms);
   });
 };

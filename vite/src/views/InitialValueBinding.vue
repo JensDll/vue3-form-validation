@@ -1,25 +1,26 @@
 <template>
   <h1 class="text-3xl font-bold mb-14">Async Initial Values</h1>
-  <form @submit.prevent="handleSubmit">
+  <form autocomplete="off" @submit.prevent="handleSubmit">
     <div class="flex">
       <div>
         <label for="A" class="block mb-1 font-semibold">A</label>
-        <input
+        <VInput
           id="A"
           v-model="form.a.$value"
           :disabled="loading"
-          class="border p-2"
+          class="border p-3"
           type="text"
           @blur="form.a.$onBlur()"
         />
       </div>
       <div class="ml-4">
         <label for="B" class="block mb-1 font-semibold">B</label>
-        <input
+        <VInput
           id="B"
           v-model="form.b.$value"
           :disabled="loading"
-          class="border p-2 w-20"
+          :errors="form.b.$errors"
+          class="border p-3 w-20"
           type="number"
           @blur="form.b.$onBlur()"
         />
@@ -27,18 +28,18 @@
     </div>
     <div class="mt-2">
       <label for="C" class="block mb-1 font-semibold">C</label>
-      <input
+      <VInput
         id="C"
         v-model="form.c.$value.x.y.z"
         :disabled="loading"
-        class="border p-2"
+        class="border p-3"
         type="text"
         @blur="form.c.$onBlur()"
       />
     </div>
     <div class="font-semibold mb-1 mt-4">Car Brands</div>
     <div
-      v-for="brand in [
+      v-for="(brand, i) in [
         'Audi',
         'BMW',
         'Mercedes',
@@ -47,20 +48,20 @@
         'Volkswagen',
         'Ford'
       ]"
-      :key="brand"
+      :key="i"
+      class="flex items-center"
     >
-      <label>
-        <input
-          v-model="form.d.$value"
-          type="checkbox"
-          :value="brand"
-          :disabled="loading"
-        />
-        {{ brand }}
-      </label>
+      <VInput
+        :id="`brand-${i}`"
+        v-model="form.d.$value"
+        type="checkbox"
+        :value="brand"
+        :disabled="loading"
+      />
+      <label :for="`brand-${i}`" class="ml-1">{{ brand }}</label>
     </div>
     <div class="flex mt-8">
-      <VButton class="primary py-3 px-6" type="submit" :loading="submitting">
+      <VButton class="primary py-3 px-6" type="submit" :disabled="submitting">
         Submit
       </VButton>
       <VButton class="secondary ml-4 py-3 px-6" @click="resetFields()">
@@ -72,10 +73,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, Ref, ref } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useValidation, ValidationError, Field } from '../../../main';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
+import VInput from '../components/common/VInput/VInput.vue';
 import { sleep } from '../utils';
 
 type FormData = {
@@ -88,7 +90,8 @@ type FormData = {
 export default defineComponent({
   components: {
     VPreFormData,
-    VButton
+    VButton,
+    VInput
   },
   setup() {
     const loading = ref(false);

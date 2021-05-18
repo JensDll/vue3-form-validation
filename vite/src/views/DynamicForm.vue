@@ -1,16 +1,9 @@
 <template>
   <h1 class="font-bold text-3xl mb-12">Dynamic Form</h1>
-  <form @submit.prevent="handleSubmit()">
+  <form autocomplete="off" @submit.prevent="handleSubmit()">
     <div>
       <label for="A" class="block font-semibold mb-1">A</label>
-      <div class="flex items-center flex-row relative">
-        <input
-          id="A"
-          v-model="form.a.$value"
-          type="text"
-          class="border p-2 w-10/12"
-          @blur="form.a.$onBlur()"
-        />
+      <div class="relative flex items-center">
         <IconPlusCircle
           class="
             w-6
@@ -23,20 +16,31 @@
           "
           @click="addX()"
         />
+        <div class="w-10/12">
+          <VInput
+            id="A"
+            v-model="form.a.$value"
+            :validating="form.a.$validating"
+            :has-error="form.a.$hasError"
+            type="text"
+            class="border p-3 w-full rounded"
+            @blur="form.a.$onBlur()"
+          />
+        </div>
+      </div>
+      <div
+        v-for="(error, ia) in form.a.$errors"
+        :key="ia"
+        class="mt-1 text-sm text-red-500"
+      >
+        {{ error }}
       </div>
     </div>
     <div>
       <template v-for="(x, i) in form.xs" :key="x.b.$uid">
         <div class="mt-8 first:mt-12">
           <label :for="`B-${i}`" class="block font-semibold mb-1">B</label>
-          <div class="flex items-center flex-row relative">
-            <input
-              :id="`B-${i}`"
-              v-model="x.b.$value"
-              type="text"
-              class="border p-2 w-10/12"
-              @blur="form.a.$onBlur()"
-            />
+          <div class="relative flex items-center">
             <IconPlusCircle
               class="
                 w-6
@@ -61,49 +65,89 @@
               "
               @click="removeX(i)"
             />
+            <div class="w-10/12">
+              <VInput
+                :id="`B-${i}`"
+                v-model="x.b.$value"
+                :validating="x.b.$validating"
+                :has-error="x.b.$hasError"
+                type="text"
+                class="border p-3 w-full rounded"
+                @blur="x.b.$onBlur()"
+              />
+            </div>
+          </div>
+          <div
+            v-for="(error, ib) in x.b.$errors"
+            :key="ib"
+            class="mt-1 text-sm text-red-500"
+          >
+            {{ error }}
           </div>
         </div>
-        <div
-          v-for="(y, j) in x.ys"
-          :key="y.c.$uid"
-          class="flex items-center relative mt-4"
-        >
-          <div class="grid grid-flow-col gap-x-4 w-10/12">
-            <input
-              v-model="y.c.$value"
-              type="text"
-              class="border p-2 w-full"
-              placeholder="C"
-              @blur="form.a.$onBlur()"
+        <template v-for="(y, j) in x.ys" :key="y.c.$uid">
+          <div class="relative flex items-center mt-4">
+            <IconMinusCircle
+              class="
+                w-6
+                h-6
+                absolute
+                right-0
+                cursor-pointer
+                text-red-500
+                hover:text-red-700
+              "
+              @click="removeY(i, j)"
             />
-            <input
-              v-model="y.d.$value"
-              type="text"
-              class="border p-2 w-full"
-              placeholder="D"
-              @blur="form.a.$onBlur()"
-            />
+            <div class="grid grid-cols-2 w-10/12 gap-x-4">
+              <VInput
+                v-model="y.c.$value"
+                :validating="y.c.$validating"
+                :has-error="y.c.$hasError"
+                type="text"
+                class="border p-3 w-full rounded"
+                placeholder="C"
+                @blur="y.c.$onBlur()"
+              />
+              <VInput
+                v-model="y.d.$value"
+                :validating="y.d.$validating"
+                :has-error="y.d.$hasError"
+                type="text"
+                class="border p-3 w-full rounded"
+                placeholder="D"
+                @blur="y.d.$onBlur()"
+              />
+            </div>
           </div>
-          <IconMinusCircle
-            class="
-              w-6
-              h-6
-              absolute
-              right-0
-              cursor-pointer
-              text-red-500
-              hover:text-red-700
-            "
-            @click="removeY(i, j)"
-          />
-        </div>
+          <div class="grid grid-cols-2 w-10/12 gap-x-4 mt-1">
+            <div>
+              <div
+                v-for="(error, ic) in y.c.$errors"
+                :key="ic"
+                class="text-sm text-red-500"
+              >
+                {{ error }}
+              </div>
+            </div>
+            <div>
+              <div
+                v-for="(error, id) in y.d.$errors"
+                :key="id"
+                class="text-sm text-red-500"
+              >
+                {{ error }}
+              </div>
+            </div>
+          </div>
+        </template>
       </template>
     </div>
     <div class="grid grid-flow-col grid-cols-4 mt-12 gap-x-4 w-full">
       <VButton
         class="primary py-3 px-6 col-span-3"
         type="submit"
-        :loading="submitting"
+        :disabled="submitting"
       >
         Submit
       </VButton>
@@ -122,6 +166,8 @@ import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
 import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
 import IconMinusCircle from '../components/icons/IconMinusCircle.vue';
+import VInput from '../components/common/VInput/VInput.vue';
+import { randomPromise } from '../utils';
 
 type FormData = {
   a: Field<string>;
@@ -139,7 +185,8 @@ export default defineComponent({
     VButton,
     VPreFormData,
     IconPlusCircle,
-    IconMinusCircle
+    IconMinusCircle,
+    VInput
   },
   setup() {
     const {
@@ -152,7 +199,8 @@ export default defineComponent({
       remove
     } = useValidation<FormData>({
       a: {
-        $value: ''
+        $value: '',
+        $rules: [a => !a && 'A is required', randomPromise]
       },
       xs: []
     });
@@ -160,7 +208,8 @@ export default defineComponent({
     const addX = () => {
       add(['xs'], {
         b: {
-          $value: ''
+          $value: '',
+          $rules: [b => !b && 'B is required', randomPromise]
         },
         ys: []
       });
@@ -173,10 +222,12 @@ export default defineComponent({
     const addY = (i: number) => {
       add(['xs', i, 'ys'], {
         c: {
-          $value: ''
+          $value: '',
+          $rules: [d => !d && 'C is required', randomPromise]
         },
         d: {
-          $value: ''
+          $value: '',
+          $rules: [d => !d && 'D is required', randomPromise]
         }
       });
     };
