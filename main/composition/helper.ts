@@ -37,7 +37,7 @@ export function transformFormData(form: Form, formData: any) {
         $value: formField.modelValue,
         $errors: formField.getErrors(),
         $hasError: formField.hasError(),
-        $validating: formField.validating(),
+        $validating: formField.validating,
         async $onBlur() {
           if (!formField.touched) {
             formField.touched = true;
@@ -104,7 +104,7 @@ function getResultFormDataImpl(transformedFormData: any, result: any) {
       return;
     }
 
-    if (typeof value == 'object') {
+    if (typeof value == 'object' && value !== null) {
       result[key] = {};
       if (Array.isArray(value)) {
         result[key] = [];
