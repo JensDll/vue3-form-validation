@@ -16,14 +16,6 @@ it('should create new nested properties', () => {
   expect(obj).toStrictEqual({ a: { b: 1 } });
 });
 
-it('should create new nested properties', () => {
-  const obj: any[] = [];
-
-  set(obj, ['0', 'a'], 1);
-  set(obj, ['1', 'a'], 2);
-  expect(obj).toStrictEqual([{ a: 1 }, { a: 2 }]);
-});
-
 it('should keep existing properties', () => {
   const obj = {
     a: 'a',
@@ -46,6 +38,14 @@ it('should keep existing properties', () => {
 });
 
 describe('Arrays', () => {
+  it('should create new nested properties', () => {
+    const obj: any[] = [];
+
+    set(obj, ['0', 'a'], 1);
+    set(obj, ['1', 'a'], 2);
+    expect(obj).toStrictEqual([{ a: 1 }, { a: 2 }]);
+  });
+
   it('should create array if the path ends with a number', () => {
     const obj = {};
 
