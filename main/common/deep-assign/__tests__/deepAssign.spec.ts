@@ -1,68 +1,115 @@
 import { deepAssign } from '../deepAssign';
 
-it('object: should assign shallow values', () => {
-  const target = {};
-  const source = { a: 'a', b: 'b' };
-  const copy = { a: 'a', b: 'b' };
+function randomizeValues(obj: any) {
+  for (const [key, value] of Object.entries(obj)) {
+    if (typeof value === 'object' && value !== null) {
+      randomizeValues(value);
+    } else {
+      obj[key] = Math.random().toString();
+    }
+  }
+}
 
-  deepAssign(target, source);
+describe('Objects', () => {
+  describe.each([
+    [{}, { a: 'a_s', b: 'b_s' }, { a: 'a_s', b: 'b_s' }],
+    [{}, { a: 'a_s', b: { c: 'c_s' } }, { a: 'a_s', b: { c: 'c_s' } }],
+    [
+      {},
+      { a: 'a_s', b: { c: 'c_s' }, d: { e: 'e_s' } },
+      { a: 'a_s', b: { c: 'c_s' }, d: { e: 'e_s' } }
+    ],
+    [{ a: 'a', b: 'b' }, { a: 'a_s' }, { a: 'a_s', b: 'b' }],
+    [
+      { a: 'a', b: { c: 'c', d: 'd' } },
+      { b: { c: 'c_s' } },
+      { a: 'a', b: { c: 'c_s', d: 'd' } }
+    ]
+  ])('%#: deepAssign(%o,%o) ----> %o', (target, source, expectedResult) => {
+    test('should assign source to target', () => {
+      deepAssign(target, source);
+      expect(target).toStrictEqual(expectedResult);
+    });
 
-  source.a = 'foo';
-  source.b = 'foo';
-
-  expect(target).toStrictEqual(copy);
+    test('should not copy references', () => {
+      deepAssign(target, source);
+      randomizeValues(source);
+      expect(target).toStrictEqual(expectedResult);
+    });
+  });
 });
 
-it('array: should assign shallow values', () => {
-  const target: number[] = [];
-  const source = [1, 2, 3];
-  const copy = [1, 2, 3];
+describe('Arrays', () => {
+  describe.each([
+    [[], [1, 2, 3], [1, 2, 3]],
+    [[], [{ a: 1 }, { a: 2 }, { a: 3 }], [{ a: 1 }, { a: 2 }, { a: 3 }]],
+    [
+      [
+        { a: 'a', b: 'b' },
+        { a: 'a', b: 'b' }
+      ],
+      [{ a: 1 }, { a: 2 }, { a: 3 }],
+      [{ a: 1, b: 'b' }, { a: 2, b: 'b' }, { a: 3 }]
+    ]
+  ])('%#: deepAssign(%o,%o) ----> %o', (target, source, expectedResult) => {
+    test('should assign source to target', () => {
+      deepAssign(target, source);
+      expect(target).toStrictEqual(expectedResult);
+    });
 
-  deepAssign(target, source);
-
-  source[0] = 10;
-
-  expect(target).toStrictEqual(copy);
+    test('should not copy references', () => {
+      deepAssign(target, source);
+      randomizeValues(source);
+      expect(target).toStrictEqual(expectedResult);
+    });
+  });
 });
 
-describe('deep assign', () => {
-  it('object: should not copying references', () => {
-    const target = {};
-    const source = { a: 'a', b: { c: 'c', d: 'd' }, e: { f: 'f' } as any };
-    const copy = { a: 'a', b: { c: 'c', d: 'd' }, e: { f: 'f' } as any };
+describe('Objects and Arrays', () => {
+  describe.each([
+    [{}, { a: 'a_s', bs: [1, 2, 3] }, { a: 'a_s', bs: [1, 2, 3] }],
+    [
+      { a: 'a', bs: [10, 10, 10, 10], c: 'c' },
+      { a: 'a_s', bs: [1, 2, 3] },
+      { a: 'a_s', bs: [1, 2, 3, 10], c: 'c' }
+    ],
+    [
+      {
+        a: 'a',
+        bs: [
+          { a: 'a', bs: [10, 10, 10], c: 'c' },
+          { a: 'a', bs: [10, 10, 10], c: 'c' },
+          { a: 'a', bs: [10, 10, 10], c: 'c' }
+        ],
+        c: 'c'
+      },
+      {
+        a: 'a_s',
+        bs: [
+          { a: 'a_s', bs: [1, 2, 3], c: 'c_s' },
+          { a: 'a_s', bs: [10, 11, 12], c: 'c_s' }
+        ]
+      },
+      {
+        a: 'a_s',
+        bs: [
+          { a: 'a_s', bs: [1, 2, 3], c: 'c_s' },
+          { a: 'a_s', bs: [10, 11, 12], c: 'c_s' },
+          { a: 'a', bs: [10, 10, 10], c: 'c' }
+        ],
+        c: 'c'
+      }
+    ]
+  ])('%#: deepAssign(%o,%o) ----> %o', (target, source, expectedResult) => {
+    test('should assign source to target', () => {
+      deepAssign(target, source);
+      expect(target).toStrictEqual(expectedResult);
+    });
 
-    deepAssign(target, source);
-
-    source.a = 'foo';
-    source.b.c = 'foo';
-    source.b.d = 'foo';
-    delete source.e;
-
-    expect(target).toStrictEqual(copy);
-  });
-
-  it('array: should not copying references', () => {
-    const target = {};
-    const source = { a: 'a', b: [1, 2, 3] as any[] };
-    const copy = { a: 'a', b: [1, 2, 3] as any[] };
-
-    deepAssign(target, source);
-
-    source.a = 'foo';
-    source.b[0] = 'foo';
-
-    expect(target).toStrictEqual(copy);
-  });
-
-  it('should not copy references when target and source share the same properties', () => {
-    const target = { a: { b: 'b' } };
-    const source = { a: { b: 'bb' } };
-    const copy = { a: { b: 'bb' } };
-
-    deepAssign(target, source);
-
-    source.a.b = 'foo';
-
-    expect(target).toStrictEqual(copy);
+    test('should not copy references', () => {
+      deepAssign(target, source);
+      randomizeValues(source);
+      expect(target).toStrictEqual(expectedResult);
+    });
   });
 });

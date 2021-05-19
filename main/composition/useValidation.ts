@@ -1,14 +1,15 @@
 import { reactive, Ref, ComputedRef, UnwrapRef } from 'vue';
-import { path, PromiseCancel } from '../common';
-import { Form } from '../form/Form';
-import { ValidationError } from '../form/ValidationError';
-import { RefUnref } from '../types';
 import {
   cleanupForm,
   getResultFormData,
+  path,
+  PromiseCancel,
   resetFields,
   transformFormData
-} from './helper';
+} from '../common';
+import { Form } from '../form/Form';
+import { ValidationError } from '../form/ValidationError';
+import { RefUnref } from '../types';
 
 export type SimpleRule<T = any> = (value: T) => any;
 export type KeyedRule<T = any> = { key: string; rule?: SimpleRule<T> };

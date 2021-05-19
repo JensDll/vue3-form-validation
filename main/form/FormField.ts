@@ -1,13 +1,6 @@
 import { computed, isReactive, isRef, reactive, ref } from 'vue';
-import { deepAssign } from '../common/deep-assign/deepAssign';
+import { isArray, isObject, deepAssign, isNotNull } from '../common';
 import { Rule } from '../composition/useValidation';
-
-const notNull = <T>(value: T | null): value is T => value !== null;
-
-const isObject = (value: any): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const isArray = (value: any): value is any[] => Array.isArray(value);
 
 export class FormField {
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>;
@@ -51,7 +44,7 @@ export class FormField {
   }
 
   getErrors() {
-    return computed(() => this.errors.filter(notNull));
+    return computed(() => this.errors.filter(isNotNull));
   }
 
   hasError() {
@@ -63,13 +56,20 @@ export class FormField {
 
     if (toDefaultValues) {
       if (isRef(this.modelValue)) {
-        this.modelValue.value = this.initialModelValue;
+        if (isArray(this.modelValue.value)) {
+          this.modelValue.value = deepAssign([], this.initialModelValue);
+        } else {
+          this.modelValue.value = this.initialModelValue;
+        }
       } else {
-        deepAssign(this.modelValue, this.initialModelValue);
+        // console.log('Before ' + JSON.stringify(this.modelValue));
+        const copy = deepAssign({}, this.initialModelValue);
+        Object.assign(this.modelValue, copy);
+        // console.log('After ' + JSON.stringify(this.modelValue));
       }
     }
 
-    deepAssign(
+    Object.assign(
       this.errors,
       this.errors.map(() => null)
     );
