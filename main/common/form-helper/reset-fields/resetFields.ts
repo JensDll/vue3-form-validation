@@ -1,4 +1,3 @@
-import { deepAssign } from '../../deep-assign/deepAssign';
 import {
   isArray,
   isObject,
@@ -11,9 +10,12 @@ export function resetFields(formData: any, transformedFormData: any) {
 
     if (isTransformedField(transformedValue)) {
       if (isArray(transformedValue.$value)) {
-        transformedValue.$value = deepAssign([], value);
+        transformedValue.$value = JSON.parse(JSON.stringify(value));
       } else if (isObject(transformedValue.$value)) {
-        Object.assign(transformedValue.$value, deepAssign({}, value));
+        Object.assign(
+          transformedValue.$value,
+          JSON.parse(JSON.stringify(value))
+        );
       } else {
         transformedValue.$value = value;
       }

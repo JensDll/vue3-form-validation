@@ -18,7 +18,7 @@ describe('validate simple rules', () => {
   });
 
   it("shouln't call rules when form field isn't touched", async () => {
-    form.registerField(1, [rule1, rule2]);
+    form.registerField(1, [rule1, rule2], '');
 
     await form.validate(1);
 
@@ -27,7 +27,7 @@ describe('validate simple rules', () => {
   });
 
   it('should call all rules once with correct values', async () => {
-    const field = form.registerField(1, [rule1, rule2]);
+    const field = form.registerField(1, [rule1, rule2], '');
     field.touched = true;
     field.modelValue = ref('foo');
 
@@ -73,8 +73,8 @@ describe('validate keyed rules', () => {
       rule: rule3
     };
 
-    formField1 = form.registerField(1, [keyedRule1, keyedRule3]);
-    formField2 = form.registerField(2, [keyedRule2]);
+    formField1 = form.registerField(1, [keyedRule1, keyedRule3], '');
+    formField2 = form.registerField(2, [keyedRule2], '');
   });
 
   it("shouldn't call any rule when atleast one field is not touched", async () => {
@@ -140,30 +140,39 @@ describe('complex examples', () => {
     simpleRule2 = jest.fn(x => x);
     simpleRule3 = jest.fn(x => x);
 
-    formField1 = form.registerField(1, [
-      simpleRule1,
-      { key: 'a', rule: keyedRule1 }
-    ]);
+    formField1 = form.registerField(
+      1,
+      [simpleRule1, { key: 'a', rule: keyedRule1 }],
+      null
+    );
 
-    formField2 = form.registerField(2, [
-      {
-        key: 'a',
-        rule: keyedRule2
-      }
-    ]);
+    formField2 = form.registerField(
+      2,
+      [
+        {
+          key: 'a',
+          rule: keyedRule2
+        }
+      ],
+      null
+    );
 
-    formField3 = form.registerField(3, [
-      simpleRule2,
-      simpleRule3,
-      {
-        key: 'a',
-        rule: keyedRule3
-      },
-      {
-        key: 'b',
-        rule: keyedRule4
-      }
-    ]);
+    formField3 = form.registerField(
+      3,
+      [
+        simpleRule2,
+        simpleRule3,
+        {
+          key: 'a',
+          rule: keyedRule3
+        },
+        {
+          key: 'b',
+          rule: keyedRule4
+        }
+      ],
+      null
+    );
   });
 
   it('should always call simple rules but not always keyed rules', async () => {
@@ -336,12 +345,13 @@ describe('async validation', () => {
     // 1 -> S1, S2
     // 2 -> (a,K1)
     // 3 -> S3, (a,K2)
-    formField1 = form.registerField(1, [simpleRule1, simpleRule2]);
-    formField2 = form.registerField(2, [{ key: 'a', rule: keyedRule1 }]);
-    formField3 = form.registerField(3, [
-      simpleRule3,
-      { key: 'a', rule: keyedRule2 }
-    ]);
+    formField1 = form.registerField(1, [simpleRule1, simpleRule2], '');
+    formField2 = form.registerField(2, [{ key: 'a', rule: keyedRule1 }], '');
+    formField3 = form.registerField(
+      3,
+      [simpleRule3, { key: 'a', rule: keyedRule2 }],
+      ''
+    );
   });
 
   it('validate all should wait for all rules to resolve', async () => {
@@ -411,7 +421,7 @@ describe('async validation', () => {
             })
         );
 
-        const formField = form.registerField(1, [rule]);
+        const formField = form.registerField(1, [rule], '');
         formField.touched = true;
 
         ms.value = 1000;

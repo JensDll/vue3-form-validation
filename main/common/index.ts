@@ -3,7 +3,6 @@ export { getResultFormData } from './form-helper/get-result-form-data/getResultF
 export { resetFields } from './form-helper/reset-fields/resetFields';
 export { transformFormData } from './form-helper/transform-form-data/transformFormData';
 
-export { deepAssign } from './deep-assign/deepAssign';
 export { deepIterator } from './deep-iterator/deepIterator';
 export { LinkedList } from './linked-list/LinkedList';
 export { tryGet } from './map/tryGet';
