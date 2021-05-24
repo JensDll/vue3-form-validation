@@ -161,7 +161,7 @@ description of all the properties and their use case:
   - **Description** - Function for writing dynamic forms (similar to [Lodash's set function](https://lodash.com/docs/4.17.15#set)).
   - **Parameters**
     - `path` - The path of the property to add.
-    - `value` - The value to add. Objects with a `$value` property will be transformed.
+    - `value` - The value to add. As usual objects with a `$value` property will be transformed.
 - `remove(path: (string | number)[]) -> void`
   - **Description** - Function for writing dynamic forms.
   - **Parameters**
@@ -202,7 +202,7 @@ Async rules allow you to perform network requests, for instance checking if a us
 const isNameTaken = name =>
   new Promise(resolve => {
     setTimeout(() => {
-      if (['foo', 'bar'].includes(name)) {
+      if (['Alice', 'Bob'].includes(name)) {
         resolve();
       } else {
         resolve('This name is already taken');
