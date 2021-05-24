@@ -44,8 +44,10 @@ export type TransformedFormData<T extends object> = T extends any
 
 export type FormData<T extends object> = T extends any
   ? {
-      [K in keyof T]: T[K] extends { $value: infer TValue }
-        ? UnwrapRef<TValue>
+      [K in keyof T]: T[K] extends Field<infer TValue> | undefined
+        ? T[K] & Field<any> extends Field<any>
+          ? UnwrapRef<TValue>
+          : UnwrapRef<TValue>
         : T[K] extends Record<string, unknown> | any[]
         ? FormData<T[K]>
         : T[K];
