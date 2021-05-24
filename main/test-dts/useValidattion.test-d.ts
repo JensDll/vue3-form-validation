@@ -36,7 +36,7 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 
 // complete example without generic
 {
-  const { form, validateFields, add, remove } = useValidation({
+  const { form, validateFields, add } = useValidation({
     a: { $value: '' },
     b: { $value: '' },
     cs: [{ d: { $value: 10 } }]
@@ -54,16 +54,11 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 
   add(['cs'], { d: { $value: 10 } });
   expectError(add(['cs'], { d: { $value: '' } }));
-  expectError(add(['cs!'], { d: { $value: 10 } }));
-
-  remove(['cs'], 0);
-  expectError(remove(['cs'], ''));
-  expectError(remove(['cs!'], 0));
 }
 
 // complete example with generic
 {
-  const { form, validateFields, add, remove } = useValidation<{
+  const { form, validateFields, add } = useValidation<{
     a: Field<string>;
     b: Field<string>;
     cs: { d: Field<number> }[];
@@ -98,11 +93,6 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 
   add(['cs'], { d: { $value: 10 } });
   expectError(add(['cs'], { d: { $value: '' } }));
-  expectError(add(['cs!'], { d: { $value: 10 } }));
-
-  remove(['cs'], 0);
-  expectError(remove(['cs'], ''));
-  expectError(remove(['cs!'], 0));
 }
 
 {

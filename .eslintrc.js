@@ -20,6 +20,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
     // https://github.com/typescript-eslint/typescript-eslint/pull/2137
     '@typescript-eslint/ban-types': [
       'error',
