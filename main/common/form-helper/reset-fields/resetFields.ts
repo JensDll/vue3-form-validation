@@ -1,3 +1,4 @@
+import { jsonCopy } from '../../json-copy/jsonCopy';
 import {
   isArray,
   isObject,
@@ -10,12 +11,10 @@ export function resetFields(formData: any, transformedFormData: any) {
 
     if (isTransformedField(transformedValue)) {
       if (isArray(transformedValue.$value)) {
-        transformedValue.$value = JSON.parse(JSON.stringify(value));
+        transformedValue.$value = jsonCopy(value);
       } else if (isObject(transformedValue.$value)) {
-        Object.assign(
-          transformedValue.$value,
-          JSON.parse(JSON.stringify(value))
-        );
+        const copy = jsonCopy(value);
+        Object.assign(transformedValue.$value, copy);
       } else {
         transformedValue.$value = value;
       }

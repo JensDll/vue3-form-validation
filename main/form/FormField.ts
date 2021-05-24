@@ -1,5 +1,6 @@
 import { computed, isReactive, isRef, reactive, ref, unref } from 'vue';
 import { isArray, isObject, isNotNull } from '../common';
+import { jsonCopy } from '../common/json-copy/jsonCopy';
 import { Rule } from '../composition/useValidation';
 
 export class FormField {
@@ -13,17 +14,13 @@ export class FormField {
   constructor(rules: Rule[], modelValue: any) {
     this.errors = reactive(rules.map(() => null));
 
-    this.initialModelValue = JSON.parse(JSON.stringify(unref(modelValue)));
+    this.initialModelValue = jsonCopy(unref(modelValue));
 
-    if (isRef(modelValue)) {
-      this.modelValue = modelValue;
-    } else if (isReactive(modelValue)) {
+    if (isRef(modelValue) || isReactive(modelValue)) {
       this.modelValue = modelValue;
     } else if (isObject(modelValue)) {
       this.modelValue = reactive(modelValue);
-      this.initialModelValue = JSON.parse(
-        JSON.stringify(unref(this.modelValue))
-      );
+      this.initialModelValue = jsonCopy(this.modelValue);
     } else {
       this.modelValue = ref(modelValue);
     }
@@ -47,14 +44,12 @@ export class FormField {
     if (toDefaultValues) {
       if (isRef(this.modelValue)) {
         if (isArray(this.modelValue.value)) {
-          this.modelValue.value = JSON.parse(
-            JSON.stringify(this.initialModelValue)
-          );
+          this.modelValue.value = jsonCopy(this.initialModelValue);
         } else {
           this.modelValue.value = this.initialModelValue;
         }
       } else {
-        const copy = JSON.parse(JSON.stringify(this.initialModelValue));
+        const copy = jsonCopy(this.initialModelValue);
         Object.assign(this.modelValue, copy);
       }
     }
