@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 export class LinkedListNode<T> {
   value: T;
   next: LinkedListNode<T> | null = null;
