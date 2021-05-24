@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import TextBinding from '../views/TextBinding.vue';
 import ArrayBinding from '../views/ArrayBinding.vue';
-import DynamicForm from '../views/DynamicForm.vue';
+import DynamicArrayForm from '../views/DynamicArrayForm.vue';
+import DynamicObjectForm from '../views/DynamicObjectForm.vue';
 import InitialValueBinding from '../views/InitialValueBinding.vue';
 
 const routes: RouteRecordRaw[] = [
@@ -14,8 +15,12 @@ const routes: RouteRecordRaw[] = [
     component: ArrayBinding
   },
   {
-    path: '/dynamic',
-    component: DynamicForm
+    path: '/dynamic-array',
+    component: DynamicArrayForm
+  },
+  {
+    path: '/dynamic-object',
+    component: DynamicObjectForm
   },
   {
     path: '/initial-values',

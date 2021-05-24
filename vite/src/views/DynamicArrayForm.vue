@@ -160,7 +160,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { Field, useValidation, ValidationError } from '../../../main';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
@@ -216,24 +216,41 @@ export default defineComponent({
     };
 
     const removeX = (i: number) => {
-      remove(['xs'], i);
+      remove(['xs', i]);
     };
 
     const addY = (i: number) => {
+      const c = ref('');
+      const d = ref('');
+
       add(['xs', i, 'ys'], {
         c: {
-          $value: '',
-          $rules: [d => !d && 'C is required', randomPromise]
+          $value: c,
+          $rules: [
+            d => !d && 'C is required',
+            randomPromise,
+            {
+              key: `key-${i}`,
+              rule: () => c.value === d.value || 'C and D do not match'
+            }
+          ]
         },
         d: {
-          $value: '',
-          $rules: [d => !d && 'D is required', randomPromise]
+          $value: d,
+          $rules: [
+            d => !d && 'D is required',
+            randomPromise,
+            {
+              key: `key-${i}`,
+              rule: () => c.value === d.value || 'C and D do not match'
+            }
+          ]
         }
       });
     };
 
     const removeY = (i: number, j: number) => {
-      remove(['xs', i, 'ys'], j);
+      remove(['xs', i, 'ys', j]);
     };
 
     const handleSubmit = async () => {

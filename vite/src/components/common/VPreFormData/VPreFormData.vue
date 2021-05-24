@@ -24,7 +24,16 @@ const props = defineProps({
 const formJSON = computed(() => {
   return JSON.stringify(
     props.form,
-    (k, v) => (typeof v === 'function' ? 'function' : v),
+    (k, v) => {
+      switch (typeof v) {
+        case 'function':
+          return 'function';
+        case 'undefined':
+          return 'undefined';
+        default:
+          return v;
+      }
+    },
     2
   );
 });

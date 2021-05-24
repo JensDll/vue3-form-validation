@@ -26,13 +26,14 @@
         />
       </div>
     </div>
-    <div class="mt-2">
+    <div class="mt-2 w-1/2">
       <label for="C" class="block mb-1 font-semibold">C</label>
       <VInput
         id="C"
         v-model="form.c.$value.x.y.z"
         :disabled="loading"
-        class="border p-3"
+        :validating="form.c.$validating"
+        class="border p-3 w-full"
         type="text"
         @blur="form.c.$onBlur()"
       />

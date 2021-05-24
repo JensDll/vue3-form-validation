@@ -2,7 +2,8 @@
   <nav class="nav">
     <router-link class="router-link" to="/"></router-link>
     <router-link class="router-link" to="/array"></router-link>
-    <router-link class="router-link" to="/dynamic"></router-link>
+    <router-link class="router-link" to="/dynamic-array"></router-link>
+    <router-link class="router-link" to="/dynamic-object"></router-link>
     <router-link class="router-link" to="/initial-values"></router-link>
   </nav>
 </template>
