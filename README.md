@@ -157,16 +157,15 @@ description of all the properties and their use case:
   - **Description** - Reset all fields to their original value, or pass an object to set specific values.
   - **Parameters**
     - `formData?` - Values to use when resetting ([Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)).
-- `add(pathToArray: (string | number)[], value: any) -> void`
-  - **Description** - Utility function for writing dynamic forms.
+- `add(path: (string | number)[], value: any) -> void`
+  - **Description** - Function for writing dynamic forms (similar to [Lodash's set function](https://lodash.com/docs/4.17.15#set)).
   - **Parameters**
-    - `pathToArray` - Tuple representing the path to an array in the form data.
-    - `value` - The value that will be pushed to the array at the given path.
-- `remove(pathToArray: (string | number)[], index: number) -> void`
-  - **Description** - Utility function for writing dynamic forms.
+    - `path` - The path of the property to add.
+    - `value` - The value to add. Objects with a `$value` property will be transformed.
+- `remove(path: (string | number)[]) -> void`
+  - **Description** - Function for writing dynamic forms.
   - **Parameters**
-    - `pathToArray` - Tuple representing the path to an array in the form data.
-    - `index` - Array index which will be remove.
+    - `path` - The path of the property to remove. For example `remove(['as', 0])` will remove the first element in an array called `as` at the root level.
 
 ## Writing Rules
 
@@ -197,7 +196,7 @@ const max = value =>
   value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
-Async rules allow you to perform network requests, for instance checking if a username exists in the database. Same criteria apply as for simple rules, `resolve` or `reject` with a string if the validation fails:
+Async rules allow you to perform network requests, for instance checking if a username exists in the database. The same principle applies as for synchronous rules, `resolve` or `reject` with a string if the validation fails:
 
 ```ts
 const isNameTaken = name =>
