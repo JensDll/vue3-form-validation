@@ -1,5 +1,5 @@
 import { isRef } from 'vue';
-import { LinkedList } from '..';
+import { LinkedList } from '../linked-list/LinkedList';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
