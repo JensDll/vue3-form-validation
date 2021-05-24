@@ -1,6 +1,6 @@
 export function jsonCopy(value: any) {
-  if (value === undefined) {
-    return value;
+  if (typeof value === 'object') {
+    return JSON.parse(JSON.stringify(value));
   }
-  return JSON.parse(JSON.stringify(value));
+  return value;
 }
