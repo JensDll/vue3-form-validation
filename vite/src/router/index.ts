@@ -4,6 +4,7 @@ import ArrayBinding from '../views/ArrayBinding.vue';
 import DynamicArrayForm from '../views/DynamicArrayForm.vue';
 import DynamicObjectForm from '../views/DynamicObjectForm.vue';
 import InitialValueBinding from '../views/InitialValueBinding.vue';
+import NestedRef from '../views/NestedRef.vue';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -25,6 +26,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/initial-values',
     component: InitialValueBinding
+  },
+  {
+    path: '/nested-ref',
+    component: NestedRef
   }
 ];
 

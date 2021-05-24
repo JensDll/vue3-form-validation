@@ -5,6 +5,7 @@
     <router-link class="router-link" to="/dynamic-array"></router-link>
     <router-link class="router-link" to="/dynamic-object"></router-link>
     <router-link class="router-link" to="/initial-values"></router-link>
+    <router-link class="router-link" to="/nested-ref"></router-link>
   </nav>
 </template>
 

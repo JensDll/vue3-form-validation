@@ -1,5 +1,5 @@
 <template>
-  <h1 class="font-bold text-3xl mb-12">Dynamic Form</h1>
+  <h1 class="font-bold text-3xl mb-12">Dynamic Array Form</h1>
   <form autocomplete="off" @submit.prevent="handleSubmit()">
     <div>
       <label for="A" class="block font-semibold mb-1">A</label>
