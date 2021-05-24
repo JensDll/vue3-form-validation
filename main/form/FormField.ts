@@ -1,4 +1,4 @@
-import { computed, isReactive, isRef, reactive, Ref, ref, unref } from 'vue';
+import { computed, isReactive, isRef, reactive, ref, unref } from 'vue';
 import { isArray, isObject, isNotNull } from '../common';
 import { jsonCopy } from '../common/json-copy/jsonCopy';
 import { Rule } from '../composition/useValidation';
