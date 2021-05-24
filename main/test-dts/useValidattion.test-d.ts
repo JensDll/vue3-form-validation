@@ -34,9 +34,9 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
   }
 });
 
-// complete example without generic
+// example without generic
 {
-  const { form, validateFields, add, remove } = useValidation({
+  const { form, validateFields, add } = useValidation({
     a: { $value: '' },
     b: { $value: '' },
     cs: [{ d: { $value: 10 } }]
@@ -54,16 +54,11 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 
   add(['cs'], { d: { $value: 10 } });
   expectError(add(['cs'], { d: { $value: '' } }));
-  expectError(add(['cs!'], { d: { $value: 10 } }));
-
-  remove(['cs'], 0);
-  expectError(remove(['cs'], ''));
-  expectError(remove(['cs!'], 0));
 }
 
-// complete example with generic
+// example with generic
 {
-  const { form, validateFields, add, remove } = useValidation<{
+  const { form, validateFields, add } = useValidation<{
     a: Field<string>;
     b: Field<string>;
     cs: { d: Field<number> }[];
@@ -98,11 +93,6 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 
   add(['cs'], { d: { $value: 10 } });
   expectError(add(['cs'], { d: { $value: '' } }));
-  expectError(add(['cs!'], { d: { $value: 10 } }));
-
-  remove(['cs'], 0);
-  expectError(remove(['cs'], ''));
-  expectError(remove(['cs!'], 0));
 }
 
 {
@@ -150,4 +140,53 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
       }[];
     }>
   >(validateFields());
+}
+
+// example with optional fields
+{
+  const { form, validateFields, add } = useValidation<{
+    a: Field<string>;
+    b?: Field<boolean>;
+    c?: Field<number>;
+  }>({
+    a: {
+      $value: '',
+      $rules: [x => expect<string>(x)]
+    },
+    b: {
+      $value: false,
+      $rules: [x => expect<boolean>(x)]
+    },
+    c: {
+      $value: 0,
+      $rules: [x => expect<number>(x)]
+    }
+  });
+
+  expectType<{
+    a: TransformedField<string>;
+    b?: TransformedField<boolean>;
+    c?: TransformedField<number>;
+  }>(form);
+
+  expectType<
+    Promise<{
+      a: string;
+      b?: boolean;
+      c?: number;
+    }>
+  >(validateFields());
+
+  expectType<{
+    a: string;
+    b?: boolean;
+    c?: number;
+  }>(await validateFields());
+
+  add(['a'], { $value: '' });
+  add(['b'], { $value: false });
+  add(['c'], { $value: 0 });
+  expectError(add(['a'], { $value: null }));
+  expectError(add(['b'], { $value: null }));
+  expectError(add(['c'], { $value: null }));
 }

@@ -1,4 +1,4 @@
-import { Ref, ref } from 'vue';
+import { ref } from 'vue';
 import { Field, TransformedFormData, useValidation } from '../useValidation';
 
 type TestData = {
@@ -12,7 +12,7 @@ type TestData = {
       h: Field<{
         a: {
           b: {
-            c: Ref<number[]>;
+            c: number[];
           };
         };
       }>;
@@ -606,7 +606,7 @@ describe('add and remove', () => {
   test('remove field', () => {
     const { form, remove } = useValidation(testData);
 
-    remove(['es'], 1);
+    remove(['es', 1]);
 
     expect(form).toStrictEqual<typeof form>({
       a: {

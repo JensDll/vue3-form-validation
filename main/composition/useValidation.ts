@@ -2,9 +2,10 @@ import { reactive, Ref, ComputedRef, UnwrapRef } from 'vue';
 import {
   cleanupForm,
   getResultFormData,
-  path,
+  path as _path,
   PromiseCancel,
   resetFields,
+  set,
   transformFormData
 } from '../common';
 import { Form } from '../form/Form';
@@ -31,8 +32,10 @@ export type TransformedField<T> = {
 
 export type TransformedFormData<T extends object> = T extends any
   ? {
-      [K in keyof T]: T[K] extends { $value: infer TValue }
-        ? TransformedField<UnwrapRef<TValue>>
+      [K in keyof T]: T[K] extends Field<infer TValue> | undefined
+        ? T[K] & Field<any> extends Field<any>
+          ? TransformedField<UnwrapRef<TValue>>
+          : TransformedField<UnwrapRef<TValue>>
         : T[K] extends Record<string, unknown> | any[]
         ? TransformedFormData<T[K]>
         : T[K];
@@ -41,8 +44,10 @@ export type TransformedFormData<T extends object> = T extends any
 
 export type FormData<T extends object> = T extends any
   ? {
-      [K in keyof T]: T[K] extends { $value: infer TValue }
-        ? UnwrapRef<TValue>
+      [K in keyof T]: T[K] extends Field<infer TValue> | undefined
+        ? T[K] & Field<any> extends Field<any>
+          ? UnwrapRef<TValue>
+          : UnwrapRef<TValue>
         : T[K] extends Record<string, unknown> | any[]
         ? FormData<T[K]>
         : T[K];
@@ -50,15 +55,15 @@ export type FormData<T extends object> = T extends any
   : never;
 
 export type Keys = readonly (string | number)[];
-export type DeepIndex<T, Ks extends Keys> = Ks extends [
+export type DeepIndex<T, Ks extends Keys, R = unknown> = Ks extends [
   infer First,
   ...infer Rest
 ]
   ? First extends keyof T
     ? Rest extends Keys
       ? DeepIndex<T[First], Rest>
-      : undefined
-    : undefined
+      : R
+    : R
   : T;
 
 type UseValidation<T extends object> = {
@@ -68,13 +73,12 @@ type UseValidation<T extends object> = {
   validateFields(): Promise<FormData<T>>;
   resetFields(formData?: Partial<FormData<T>>): void;
   add<Ks extends Keys>(
-    pathToArray: readonly [...Ks],
-    value: DeepIndex<T, Ks> extends Array<infer TArray> ? TArray : never
+    path: readonly [...Ks],
+    value: DeepIndex<T, Ks> extends Array<infer TArray>
+      ? TArray
+      : DeepIndex<T, Ks>
   ): void;
-  remove<Ks extends Keys>(
-    pathToArray: readonly [...Ks],
-    index: DeepIndex<T, Ks> extends any[] ? number : never
-  ): void;
+  remove(path: (string | number)[]): void;
 };
 
 /**
@@ -139,21 +143,35 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
       }
     },
 
-    add(pathToArray, value) {
-      const xs = path(pathToArray, transformedFormData);
+    add(path, value) {
+      const box = { value };
+      transformFormData(form, box);
 
-      if (Array.isArray(xs)) {
-        transformFormData(form, value);
-        xs.push(value);
+      const x = _path(path, transformedFormData);
+
+      if (Array.isArray(x)) {
+        x.push(box.value);
+      } else {
+        set(transformedFormData, path, box.value);
       }
     },
 
-    remove(pathToArray, index) {
-      const xs = path(pathToArray, transformedFormData);
+    remove(path) {
+      const lastKey = (path as unknown as any[]).pop();
 
-      if (Array.isArray(xs)) {
-        const deleted = xs.splice(index, 1);
-        deleted.forEach(deleted => cleanupForm(form, deleted));
+      if (typeof lastKey !== 'undefined' && path.length === 0) {
+        cleanupForm(form, (transformedFormData as any)[lastKey]);
+        delete (transformedFormData as any)[lastKey];
+      } else if (typeof lastKey !== 'undefined') {
+        const value = _path(path, transformedFormData);
+
+        if (Array.isArray(value)) {
+          const deleted = value.splice(+lastKey, 1);
+          cleanupForm(form, deleted);
+        } else {
+          cleanupForm(form, value[lastKey]);
+          delete value[lastKey];
+        }
       }
     }
   };

@@ -1,4 +1,4 @@
-export function set(obj: any, keys: (string | number)[], value: any) {
+export function set(obj: any, keys: readonly (string | number)[], value: any) {
   if (keys.length === 0) {
     return;
   }
