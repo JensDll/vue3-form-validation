@@ -116,7 +116,7 @@ type TransformedField<T> = {
 };
 ```
 
-Given the structure of the previous example, this will result in the following object:
+Given the structure of the previous example, this will result in the following:
 
 ```ts
 type Form = {
@@ -126,8 +126,7 @@ type Form = {
 };
 ```
 
-As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts. Below is a
-description of all the properties and their use case:
+As you may have noticed, all of the properties are prefixed with the `$` symbol, which is to distinguish them from other properties but also to avoid naming conflicts. Below is a description of all the properties and their use case:
 
 - `$uid`
   - **Type** - `number`
@@ -161,7 +160,7 @@ description of all the properties and their use case:
   - **Description** - Function for writing dynamic forms (similar to [Lodash's set function](https://lodash.com/docs/4.17.15#set)).
   - **Parameters**
     - `path` - The path of the property to add.
-    - `value` - The value to add. As usual objects with a `$value` property will be transformed.
+    - `value` - The value to add. Objects with a `$value` property will be transformed.
 - `remove(path: (string | number)[]) -> void`
   - **Description** - Function for writing dynamic forms.
   - **Parameters**
