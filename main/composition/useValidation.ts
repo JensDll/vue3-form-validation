@@ -12,7 +12,7 @@ import { Form } from '../form/Form';
 import { ValidationError } from '../form/ValidationError';
 import { RefUnref } from '../types';
 
-export type SimpleRule<T = any> = (value: T) => any;
+export type SimpleRule<T = any> = (...value: T[]) => any;
 export type KeyedRule<T = any> = { key: string; rule?: SimpleRule<T> };
 export type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
 
