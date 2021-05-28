@@ -4,8 +4,9 @@ let formField: FormField;
 
 beforeEach(() => {
   formField = new FormField(
-    Array.from({ length: 10 }, () => async () => 'Error'),
-    ''
+    'name',
+    'modelValue',
+    Array.from({ length: 10 }, () => async () => 'Error')
   );
 });
 

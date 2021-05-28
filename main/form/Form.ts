@@ -1,91 +1,136 @@
 import { computed, reactive, ref, unref } from 'vue';
 import { LinkedList, tryGet, trySet } from '../common';
-import { SimpleRule, Rule } from '../composition/useValidation';
+import { SimpleRule, Rule, KeyedRule } from '../composition/useValidation';
 import { FormField } from './FormField';
 
 type ValidateResult = void | string;
 
 type Validator = (
   formField: FormField,
-  rule: SimpleRule,
+  rule: Required<KeyedRule>['rule'],
   ruleNumber: number
-) => () => Promise<ValidateResult>;
+) => (modelValues: unknown[]) => Promise<ValidateResult>;
 
 type Validate = ReturnType<Validator>;
 
 type Simple = {
   formField: FormField;
   keys: string[];
-  validators: Validate[];
-  rollback: (() => void)[];
+  vs: Validate[];
+  rollbacks: (() => void)[];
 };
 
-type Keyed = Set<{
+type Keyed = {
   formField: FormField;
-  validator: Validate;
-}>;
+  v: Validate;
+};
 
 const isSimpleRule = (rule: Rule): rule is SimpleRule =>
   typeof rule === 'function';
 
 export class Form {
   private simpleMap: Map<number, Simple> = new Map();
-  private keyedMap: Map<string, Keyed> = new Map();
+  private keyedSetMap: Map<string, Set<Keyed>> = new Map();
   private reactiveFormFieldMap: Map<number, FormField> = reactive(new Map());
 
-  private trySetKeyed = trySet(this.keyedMap);
-  private tryGetKeyed = tryGet(this.keyedMap);
+  private trySetKeyedSet = trySet(this.keyedSetMap);
+  private tryGetKeyedSet = tryGet(this.keyedSetMap);
   private tryGetSimple = tryGet(this.simpleMap);
 
   submitting = ref(false);
 
-  registerField(uid: number, rules: Rule[], modelValue: unknown) {
-    const formField = new FormField(rules, modelValue);
+  registerField(uid: number, name: string, modelValue: unknown, rules: Rule[]) {
+    const formField = new FormField(name, modelValue, rules);
 
-    const simple = rules.reduce<Simple>(
-      (simpleEntry, rule, ruleNumber) => {
-        const validate = Form.validateFactory(formField, rule, ruleNumber);
+    const simple: Simple = {
+      formField,
+      keys: [],
+      vs: [],
+      rollbacks: []
+    };
 
-        if (validate) {
-          if (isSimpleRule(rule)) {
-            simpleEntry.validators.push(validate);
-          } else {
-            const entry = { formField, validator: validate };
+    rules.forEach((rule, ruleNumber) => {
+      const validate = Form.validateFactory(formField, rule, ruleNumber);
 
-            simpleEntry.keys.push(rule.key);
-
-            this.trySetKeyed({
-              failure: keyed => keyed.add(entry)
-            })(rule.key, new Set([entry]));
-
-            simpleEntry.rollback.push(() => {
-              this.tryGetKeyed({
-                success: keyed => {
-                  keyed.delete(entry);
-
-                  if (!keyed.size) {
-                    this.keyedMap.delete(rule.key);
-                  }
-                }
-              })(rule.key);
-            });
-          }
-        }
-
-        return simpleEntry;
-      },
-      {
-        formField,
-        keys: [],
-        validators: [],
-        rollback: []
+      if (!validate) {
+        return;
       }
-    );
+
+      if (isSimpleRule(rule)) {
+        simple.vs.push(validate);
+      } else {
+        const { key } = rule;
+        const keyed: Keyed = {
+          formField,
+          v: validate
+        };
+        const rollback = () => {
+          this.tryGetKeyedSet({
+            success: keyedSet => {
+              keyedSet.delete(keyed);
+              if (keyedSet.size === 0) {
+                this.keyedSetMap.delete(key);
+              }
+            }
+          })(key);
+        };
+
+        simple.keys.push(key);
+        simple.rollbacks.push(rollback);
+
+        this.trySetKeyedSet({
+          failure: keyedSet => keyedSet.add(keyed)
+        })(key, new Set([keyed]));
+      }
+    });
 
     this.simpleMap.set(uid, simple);
     this.reactiveFormFieldMap.set(uid, formField);
 
     return formField;
+  }
+
+  validate(uid: number) {
+    const simple = this.simpleMap.get(uid);
+
+    if (simple && simple.formField.touched) {
+      return Promise.allSettled([
+        ...simple.vs.map(v => v([simple.formField.modelValue])),
+        ...this.getPromisesFor(simple.keys)
+      ]);
+    }
+  }
+
+  async validateAll() {
+    const promises = [];
+
+    for (const { formField, vs } of this.simpleMap.values()) {
+      formField.touched = true;
+      promises.push(...vs.map(v => v([formField.modelValue])));
+    }
+
+    promises.push(...this.getPromisesFor(this.keyedSetMap.keys()));
+
+    const settledResults = await Promise.allSettled(promises);
+
+    for (const result of settledResults) {
+      if (result.status === 'rejected') {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  onDelete(uid: number) {
+    this.tryGetSimple({
+      success({ rollbacks }) {
+        rollbacks.forEach(r => r());
+      }
+    })(uid);
+
+    this.simpleMap.delete(uid);
+    this.reactiveFormFieldMap.delete(uid);
   }
 
   getErrors() {
@@ -106,82 +151,33 @@ export class Form {
     }
   }
 
-  async validateAll() {
-    const promises = [];
+  private getPromisesFor(keys: string[] | IterableIterator<string>) {
+    const promises: Promise<ValidateResult>[] = [];
 
-    for (const { formField, validators } of this.simpleMap.values()) {
-      formField.touched = true;
-      promises.push(...validators.map(v => v()));
-    }
-
-    for (const keyed of this.keyedMap.values()) {
-      for (const { validator } of keyed) {
-        promises.push(validator());
-      }
-    }
-
-    const settledResults = await Promise.allSettled(promises);
-
-    for (const result of settledResults) {
-      if (result.status === 'rejected') {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  validate(uid: number) {
-    let promise: Promise<PromiseSettledResult<ValidateResult>[]> =
-      Promise.allSettled([] as void[]);
-
-    this.tryGetSimple({
-      success: ({ formField, keys, validators }) => {
-        if (formField.touched) {
-          promise = Promise.allSettled([
-            ...validators.map(v => v()),
-            ...this.getPromisesFor(keys)
-          ]);
-        }
-      }
-    })(uid);
-
-    return promise;
-  }
-
-  onDelete(uid: number) {
-    this.tryGetSimple({
-      success({ rollback }) {
-        rollback.forEach(r => r());
-      }
-    })(uid);
-
-    this.simpleMap.delete(uid);
-    this.reactiveFormFieldMap.delete(uid);
-  }
-
-  private getPromisesFor(keys: string[]) {
-    return keys.reduce((promises, key) => {
-      this.tryGetKeyed({
-        success: keyed => {
+    for (const key of keys) {
+      this.tryGetKeyedSet({
+        success: keyedSet => {
           if (this.isEveryFormFieldTouchedWith(key)) {
-            promises.push(
-              ...[...keyed.values()].map(({ validator }) => validator())
+            const values = [...keyedSet.values()];
+            const modelValues = values.map(
+              ({ formField }) => formField.modelValue
             );
+            const vs = values.map(({ v }) => v(modelValues));
+            promises.push(...vs);
           }
         }
       })(key);
+    }
 
-      return promises;
-    }, [] as Promise<ValidateResult>[]);
+    return promises;
   }
 
   private isEveryFormFieldTouchedWith(key: string) {
     let everyFormFieldIsTouched = true;
 
-    this.tryGetKeyed({
-      success: keyed => {
-        for (const { formField } of keyed) {
+    this.tryGetKeyedSet({
+      success: keyedSet => {
+        for (const { formField } of keyedSet) {
           if (!formField.touched) {
             everyFormFieldIsTouched = false;
             break;
@@ -213,36 +209,37 @@ export class Form {
       }
     };
 
-    const validator: Validator = (formField, rule, ruleNumber) => async () => {
-      let error: unknown;
-      const ruleResult = rule(unref(formField.modelValue));
+    const validator: Validator =
+      (formField, rule, ruleNumber) => async modelValues => {
+        let error: unknown;
+        const ruleResult = rule(...modelValues.map(unref));
 
-      if (typeof ruleResult?.then === 'function') {
-        formField.validating.value = true;
+        if (typeof ruleResult?.then === 'function') {
+          formField.validating.value = true;
 
-        const node = buffer.addLast(false);
+          const node = buffer.addLast(false);
 
-        if (node.prev) {
-          node.prev.value = true;
-        }
+          if (node.prev) {
+            node.prev.value = true;
+          }
 
-        try {
-          error = await ruleResult;
-        } catch (err) {
-          error = err;
-        }
+          try {
+            error = await ruleResult;
+          } catch (err) {
+            error = err;
+          }
 
-        buffer.remove(node);
+          buffer.remove(node);
 
-        if (!node.value) {
-          formField.validating.value = false;
+          if (!node.value) {
+            formField.validating.value = false;
+            setError(formField, ruleNumber, error);
+          }
+        } else {
+          error = ruleResult;
           setError(formField, ruleNumber, error);
         }
-      } else {
-        error = ruleResult;
-        setError(formField, ruleNumber, error);
-      }
-    };
+      };
 
     if (isSimpleRule(rule)) {
       return validator(formField, rule, ruleNumber);

@@ -10,10 +10,11 @@ export class FormField {
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>;
   touched = false;
   validating = ref(false);
+  name: string;
 
-  constructor(rules: Rule[], modelValue: any) {
+  constructor(name: string, modelValue: any, rules: Rule[]) {
+    this.name = name;
     this.errors = reactive(rules.map(() => null));
-
     this.initialModelValue = jsonCopy(unref(modelValue));
 
     if (isRef(modelValue) || isReactive(modelValue)) {

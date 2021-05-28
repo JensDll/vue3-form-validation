@@ -7,10 +7,16 @@ import { isField } from '../../type-guards/typeGuards';
 
 function registerField(
   form: Form,
+  name: string,
   field: Field<unknown>
 ): { [K in keyof TransformedField<any>]: any } {
   const uid = useUid();
-  const formField = form.registerField(uid, field.$rules ?? [], field.$value);
+  const formField = form.registerField(
+    uid,
+    name,
+    field.$value,
+    field.$rules ?? []
+  );
 
   watch(formField.modelValue, () => {
     if (formField.touched) {
@@ -36,7 +42,7 @@ function registerField(
 export function transformFormData(form: Form, data: object): void {
   for (const [key, value, parent] of deepIterator(data)) {
     if (isField(value)) {
-      const transformedField = registerField(form, value);
+      const transformedField = registerField(form, key, value);
       parent[key] = transformedField;
     }
   }

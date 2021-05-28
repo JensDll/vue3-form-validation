@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
 
-Vue composition function for Form Validation.
+Vue composition function for Form Validation with async rules.
 
 - :milky_way: **Written in TypeScript**
 - :ocean: **Dynamic Form support**
@@ -12,8 +12,6 @@ Vue composition function for Form Validation.
 npm install vue3-form-validation
 ```
 
-Validation is async and is utilising `Promise.allSettled`.
-
 ### :point_right: [Check out the example usage on Code Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)
 
 ## API
@@ -21,15 +19,8 @@ Validation is async and is utilising `Promise.allSettled`.
 This package exports one function `useValidation`, plus some type definitions for when using TypeScript.
 
 ```ts
-const {
-  form,
-  errors,
-  submitting,
-  validateFields,
-  resetFields,
-  add,
-  remove
-} = useValidation<T>(formData);
+const { form, errors, submitting, validateFields, resetFields, add, remove } =
+  useValidation<T>(formData);
 ```
 
 ### `useValidation` takes the following parameters:
@@ -73,7 +64,7 @@ The form data object can contain arrays and can be deeply nested. At the leaf le
 ```ts
 type Field<T> = {
   $value: Ref<T> | T;
-  $rules?: Rule<T>[];
+  $rules?: Rule[];
 };
 ```
 
@@ -136,7 +127,7 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
   - **Description** - The `modelValue` of the field, which is meant to be used together with `v-model`.
 - `$errors`
   - **Type** - `string[]`
-  - **Description** - Array of validation error messages.
+  - **Description** - Array of validation error messages local to this field.
 - `$hasError`
   - **Type** - `boolean`
   - **Description** - `True` while there are validation errors.
@@ -155,12 +146,12 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
 - `resetFields(formData?: object) -> void`
   - **Description** - Reset all fields to their original value, or pass an object to set specific values.
   - **Parameters**
-    - `formData?` - Values to use when resetting ([Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)).
+    - `formData?` - Values to use when resetting (see [Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)).
 - `add(path: (string | number)[], value: any) -> void`
   - **Description** - Function for writing dynamic forms (similar to [Lodash's set function](https://lodash.com/docs/4.17.15#set)).
   - **Parameters**
     - `path` - The path of the property to add.
-    - `value` - The value to add. Objects with a `$value` property will be transformed.
+    - `value` - The value to add (usually an object or array).
 - `remove(path: (string | number)[]) -> void`
   - **Description** - Function for writing dynamic forms.
   - **Parameters**
@@ -175,17 +166,21 @@ They can also alternatively return a `Promise` when you have a rule that require
 
 ```ts
 type SimpleRule<T = any> = (value: T) => any;
-type KeyedRule<T = any> = { key: string; rule: SimpleRule<T> };
-type Rule<T = any> = SimpleRule<T> | KeyedRule<T>;
+type KeyedRule = {
+  key: string;
+  rule?: (...values: any[]) => any;
+};
+type Rule<T = any> = SimpleRule<T> | KeyedRule;
 ```
 
-Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Repeat Password` fields in a [Signup Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
-Rules will always be called with the latest `modelValue`, to determine if a call should result in an error, it will check if the rule's return value is of type `string`.
+Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Confirm Password` fields in a [Signup Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
+Rules will always be called with the latest `modelValue`.
+Simple rules will only receive their own argument, whereas keyed rules will also receive every other `modelValue` with a matching key.
 
 > To prevent overly aggressive error messages, keyed rules will only be called
-> after all Fields with connected rules have been touched.
+> after all fields with connected rules have been touched.
 
-Because of the way the [logical operators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Expressions_and_Operators#logical_operators) work in JavaScript, many basic rules can be written in one line:
+To determine if a call should result in an error, it will check if the rule's return value is of type `string`. This way, many basic rules can be written in one line:
 
 ```ts
 const required = value => !value && 'This field is required';
@@ -195,7 +190,7 @@ const max = value =>
   value.length < 7 || 'This field is too long (maximum is 6 characters)';
 ```
 
-Async rules allow you to perform network requests, for instance checking if a username exists in the database. The same principle applies as for synchronous rules, `resolve` or `reject` with a string if the validation fails:
+Async rules allow you to perform network requests, for example checking if a username exists in the database. The same principle applies as for synchronous rules, `resolve` or `reject` with a string if the validation fails:
 
 ```ts
 const isNameTaken = name =>
