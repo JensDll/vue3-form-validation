@@ -55,6 +55,14 @@ export type FormData<T extends object> = T extends any
     }
   : never;
 
+export type FieldNames<T> = T extends object
+  ? {
+      [K in keyof T]: T[K] extends Field<any> | undefined
+        ? K
+        : FieldNames<T[K]>;
+    }[keyof T]
+  : never;
+
 export type Keys = readonly (string | number)[];
 export type DeepIndex<T, Ks extends Keys, R = unknown> = Ks extends [
   infer First,
@@ -71,7 +79,7 @@ type UseValidation<T extends object> = {
   form: TransformedFormData<T>;
   submitting: Ref<boolean>;
   errors: ComputedRef<string[]>;
-  validateFields(names?: string[]): Promise<FormData<T>>;
+  validateFields(names?: FieldNames<T>[]): Promise<FormData<T>>;
   resetFields(formData?: Partial<FormData<T>>): void;
   add<Ks extends Keys>(
     path: readonly [...Ks],
