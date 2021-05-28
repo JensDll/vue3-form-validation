@@ -2,15 +2,15 @@
   <h1 class="text-3xl font-bold mb-14">Text Binding</h1>
   <form autocomplete="off" @submit.prevent="handleSubmit">
     <div class="w-1/2">
-      <label for="text" class="block mb-1 font-semibold">Text</label>
+      <label for="text" class="block mb-1 font-semibold">Name</label>
       <VInput
         id="text"
-        v-model="form.text.$value"
+        v-model="form.name.$value"
         class="border p-3 w-full"
         type="text"
-        :validating="form.text.$validating"
-        :errors="form.text.$errors"
-        @blur="form.text.$onBlur()"
+        :validating="form.name.$validating"
+        :errors="form.name.$errors"
+        @blur="form.name.$onBlur()"
       />
     </div>
     <div class="flex mt-2">
@@ -53,15 +53,14 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useValidation, ValidationError } from '../../../main';
-import type { Field } from '../../../main';
-import { randomPromise } from '../utils';
+import { useValidation, ValidationError, Field } from '../../../main';
+import { randomPromise, required, min, equal } from '../utils';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
 import VInput from '../components/common/VInput/VInput.vue';
 
 type FormData = {
-  text: Field<string>;
+  name: Field<string>;
   password: Field<string>;
   confirmPassword: Field<string>;
 };
@@ -75,27 +74,27 @@ export default defineComponent({
   setup() {
     const { form, errors, submitting, validateFields, resetFields } =
       useValidation<FormData>({
-        text: {
+        name: {
           $value: '',
-          $rules: [text => !text && 'Text is required', randomPromise]
+          $rules: [required('Name is required'), randomPromise]
         },
         password: {
           $value: '',
           $rules: [
+            min(7)('Password has to be longer than 7 characters'),
             {
               key: 'pw',
-              rule: (password, confirmPassword) =>
-                password === confirmPassword || "Passwords don't match"
+              rule: equal('Passwords do not match')
             }
           ]
         },
         confirmPassword: {
           $value: '',
           $rules: [
+            min(7)('Password has to be longer than 7 characters'),
             {
               key: 'pw',
-              rule: (password, confirmPassword) =>
-                password === confirmPassword || "Passwords don't match"
+              rule: equal('Passwords do not match')
             }
           ]
         }

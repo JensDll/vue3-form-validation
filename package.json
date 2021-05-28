@@ -1,6 +1,6 @@
 {
   "name": "vue3-form-validation",
-  "version": "3.3.1",
+  "version": "3.3.3",
   "description": "Vue composition function for Form Validation",
   "author": {
     "name": "jens",
@@ -57,7 +57,7 @@
     "tailwindcss": "^2.1.2",
     "ts-jest": "^27.0.1",
     "ts-node": "^10.0.0",
-    "tsd": "^0.15.1",
+    "tsd": "^0.16.0",
     "typescript": "^4.3.2",
     "vite": "^2.3.4",
     "vue": "^3.0.7",

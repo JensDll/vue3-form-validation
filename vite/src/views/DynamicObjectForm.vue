@@ -71,6 +71,7 @@ import VButton from '../components/common/VButton/VButton.vue';
 import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
 import IconMinusCircle from '../components/icons/IconMinusCircle.vue';
 import VInput from '../components/common/VInput/VInput.vue';
+import { min, required } from '../utils';
 
 type FormData = {
   a: Field<string>;
@@ -98,20 +99,20 @@ export default defineComponent({
     } = useValidation<FormData>({
       a: {
         $value: '',
-        $rules: [a => !a && 'A is required']
+        $rules: [required('A is required')]
       }
     });
 
     const addField = (key: 'b' | 'c') => {
       if (key === 'b') {
         add([key], {
-          $value: 'B',
-          $rules: [b => !b && 'B is required']
+          $value: '',
+          $rules: [required('B is required')]
         });
       } else {
         add([key], {
-          $value: 10,
-          $rules: [c => c >= 5 || 'Please select a value greater than 4']
+          $value: 0,
+          $rules: [min(4)('Please select a value greater than 4')]
         });
       }
     };

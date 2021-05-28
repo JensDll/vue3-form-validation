@@ -128,7 +128,9 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
 
       const resultFormData = getResultFormData(transformedFormData);
 
-      const hasError = await promiseCancel.race(form.validateAll(names as any));
+      const hasError = await promiseCancel.race(
+        form.validateAll(names as string[])
+      );
 
       form.submitting.value = false;
 
@@ -153,20 +155,24 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
     },
 
     add(path, value) {
-      const box = { value };
-      transformFormData(form, box);
+      const lastKey = path[path.length - 1];
 
-      const x = _path(path, transformedFormData);
+      if (typeof lastKey !== 'undefined') {
+        const box = { [lastKey]: value };
+        transformFormData(form, box);
 
-      if (Array.isArray(x)) {
-        x.push(box.value);
-      } else {
-        set(transformedFormData, path, box.value);
+        const x = _path(path, transformedFormData);
+
+        if (Array.isArray(x)) {
+          x.push(box[lastKey]);
+        } else {
+          set(transformedFormData, path, box[lastKey]);
+        }
       }
     },
 
     remove(path) {
-      const lastKey = (path as unknown as any[]).pop();
+      const lastKey = path.pop();
 
       if (typeof lastKey !== 'undefined' && path.length === 0) {
         cleanupForm(form, (transformedFormData as any)[lastKey]);
