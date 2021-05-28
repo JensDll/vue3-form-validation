@@ -36,8 +36,8 @@ export type TransformedField<T> = {
 export type TransformedFormData<T extends object> = T extends any
   ? {
       [K in keyof T]: T[K] extends Field<infer TValue> | undefined
-        ? T[K] & Field<any> extends Field<any>
-          ? TransformedField<UnwrapRef<TValue>>
+        ? T[K] extends undefined
+          ? undefined
           : TransformedField<UnwrapRef<TValue>>
         : T[K] extends Record<string, unknown> | any[]
         ? TransformedFormData<T[K]>
@@ -48,10 +48,8 @@ export type TransformedFormData<T extends object> = T extends any
 export type FormData<T extends object> = T extends any
   ? {
       [K in keyof T]: T[K] extends Field<infer TValue> | undefined
-        ? T[K] & Field<any> extends Field<any>
-          ? UnwrapRef<TValue>
-          : UnwrapRef<TValue>
-        : T[K] extends Record<string, unknown> | any[]
+        ? UnwrapRef<TValue>
+        : T[K] extends object
         ? FormData<T[K]>
         : T[K];
     }
@@ -122,7 +120,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
 
       const resultFormData = getResultFormData(transformedFormData);
 
-      const hasError = await promiseCancel.race(form.validateAll(names));
+      const hasError = await promiseCancel.race(form.validateAll(names as any));
 
       form.submitting.value = false;
 
