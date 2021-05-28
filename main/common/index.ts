@@ -12,7 +12,7 @@ export { PromiseCancel } from './promise-cancel/PromiseCancel';
 export { set } from './set/set';
 
 export {
-  isNotNull,
+  isDefined,
   isArray,
   isObject,
   isField,

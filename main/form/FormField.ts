@@ -1,5 +1,5 @@
 import { computed, isReactive, isRef, reactive, ref, unref } from 'vue';
-import { isArray, isObject, isNotNull } from '../common';
+import { isArray, isObject, isDefined } from '../common';
 import { jsonCopy } from '../common/json-copy/jsonCopy';
 import { Rule } from '../composition/useValidation';
 
@@ -32,7 +32,7 @@ export class FormField {
   }
 
   getErrors() {
-    return computed(() => this.errors.filter(isNotNull));
+    return computed(() => this.errors.filter(isDefined));
   }
 
   hasError() {

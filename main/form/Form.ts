@@ -1,5 +1,5 @@
 import { computed, reactive, ref, unref } from 'vue';
-import { LinkedList, tryGet, trySet } from '../common';
+import { isDefined, LinkedList, tryGet, trySet } from '../common';
 import { SimpleRule, Rule, KeyedRule } from '../composition/useValidation';
 import { FormField } from './FormField';
 
@@ -22,7 +22,7 @@ type Simple = {
 
 type Keyed = {
   formField: FormField;
-  v: Validate;
+  v?: Validate;
 };
 
 const isSimpleRule = (rule: Rule): rule is SimpleRule =>
@@ -52,12 +52,10 @@ export class Form {
     rules.forEach((rule, ruleNumber) => {
       const validate = Form.validateFactory(formField, rule, ruleNumber);
 
-      if (!validate) {
-        return;
-      }
-
       if (isSimpleRule(rule)) {
-        simple.vs.push(validate);
+        if (typeof validate !== 'undefined') {
+          simple.vs.push(validate);
+        }
       } else {
         const { key } = rule;
         const keyed: Keyed = {
@@ -155,7 +153,11 @@ export class Form {
             const modelValues = values.map(
               ({ formField }) => formField.modelValue
             );
-            const vs = values.map(({ v }) => v(modelValues));
+            const vs = values
+              .map(({ v }) => v)
+              .filter(isDefined)
+              .map(v => v(modelValues));
+
             promises.push(...vs);
           }
         }

@@ -1,6 +1,7 @@
 import { Field, TransformedField } from '../../composition/useValidation';
 
-export const isNotNull = <T>(x: T | null): x is T => x !== null;
+export const isDefined = <T>(x: T | null | undefined): x is T =>
+  x !== null && typeof x !== 'undefined';
 
 export const isObject = (x: any): x is Record<string, unknown> =>
   typeof x === 'object' && x !== null && !Array.isArray(x);

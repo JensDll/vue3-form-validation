@@ -1,18 +1,22 @@
 import {
   isArray,
   isField,
-  isNotNull,
+  isDefined,
   isObject,
   isTransformedField
 } from '../typeGuards';
 
-describe('isNotNull', () => {
+describe('isDefined', () => {
   it('null -> false', () => {
-    expect(isNotNull(null)).toBe(false);
+    expect(isDefined(null)).toBe(false);
+  });
+
+  it('undefined -> false', () => {
+    expect(isDefined(void 0)).toBe(false);
   });
 
   it('any -> true', () => {
-    expect(isNotNull(0)).toBe(true);
+    expect(isDefined(0)).toBe(true);
   });
 });
 
