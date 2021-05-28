@@ -51,20 +51,13 @@
   <VPreFormData class="mt-24" :form="form" :errors="errors" />
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from 'vue';
 import { useValidation, ValidationError } from '../../../main';
-import type { Field } from '../../../main';
 import { randomPromise } from '../utils';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
 import VInput from '../components/common/VInput/VInput.vue';
-
-type FormData = {
-  text: Field<string>;
-  password: Field<string>;
-  confirmPassword: Field<string>;
-};
 
 export default defineComponent({
   components: {
@@ -74,13 +67,13 @@ export default defineComponent({
   },
   setup() {
     const { form, errors, submitting, validateFields, resetFields } =
-      useValidation<FormData>({
+      useValidation({
         text: {
           $value: '',
           $rules: [text => !text && 'Text is required', randomPromise]
         },
         password: {
-          $value: '',
+          $value: 10,
           $rules: [
             {
               key: 'pw',

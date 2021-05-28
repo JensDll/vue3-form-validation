@@ -230,8 +230,10 @@ export default defineComponent({
             d => !d && 'C is required',
             randomPromise,
             {
-              key: `key-${i}`,
-              rule: () => c.value === d.value || 'C and D do not match'
+              key: 'c',
+              rule: (...cs) => {
+                console.log(cs);
+              }
             }
           ]
         },
