@@ -1,13 +1,13 @@
 import { computed, reactive, ref, unref } from 'vue';
 import { LinkedList, tryGet, trySet } from '../common';
-import { SimpleRule, Rule } from '../composition/useValidation';
+import { SimpleRule, Rule, KeyedRule } from '../composition/useValidation';
 import { FormField } from './FormField';
 
 type ValidateResult = void | string;
 
 type Validator = (
   formField: FormField,
-  rule: SimpleRule,
+  rule: Required<KeyedRule>['rule'],
   ruleNumber: number
 ) => (modelValues: unknown[]) => Promise<ValidateResult>;
 
@@ -212,9 +212,7 @@ export class Form {
     const validator: Validator =
       (formField, rule, ruleNumber) => async modelValues => {
         let error: unknown;
-        const ruleResult = rule(
-          ...modelValues.map(modelValue => unref(modelValue))
-        );
+        const ruleResult = rule(...modelValues.map(unref));
 
         if (typeof ruleResult?.then === 'function') {
           formField.validating.value = true;
