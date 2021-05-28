@@ -160,14 +160,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { Field, useValidation, ValidationError } from '../../../main';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
 import IconPlusCircle from '../components/icons/IconPlusCircle.vue';
 import IconMinusCircle from '../components/icons/IconMinusCircle.vue';
 import VInput from '../components/common/VInput/VInput.vue';
-import { randomPromise } from '../utils';
+import { equal, randomPromise, required } from '../utils';
 
 type FormData = {
   a: Field<string>;
@@ -200,7 +200,7 @@ export default defineComponent({
     } = useValidation<FormData>({
       a: {
         $value: '',
-        $rules: [a => !a && 'A is required', randomPromise]
+        $rules: [required('A is required'), randomPromise]
       },
       xs: []
     });
@@ -209,7 +209,7 @@ export default defineComponent({
       add(['xs'], {
         b: {
           $value: '',
-          $rules: [b => !b && 'B is required', randomPromise]
+          $rules: [required('B is required'), randomPromise]
         },
         ys: []
       });
@@ -219,36 +219,34 @@ export default defineComponent({
       remove(['xs', i]);
     };
 
+    let uid = 0;
     const addY = (i: number) => {
-      const c = ref('');
-      const d = ref('');
-
       add(['xs', i, 'ys'], {
         c: {
-          $value: c,
+          $value: '',
           $rules: [
-            d => !d && 'C is required',
+            required('C is required'),
             randomPromise,
             {
-              key: 'c',
-              rule: (...cs) => {
-                console.log(cs);
-              }
+              key: `key-${i}-${uid}`,
+              rule: equal('C and D do not match')
             }
           ]
         },
         d: {
-          $value: d,
+          $value: '',
           $rules: [
-            d => !d && 'D is required',
+            required('D is required'),
             randomPromise,
             {
-              key: `key-${i}`,
-              rule: () => c.value === d.value || 'C and D do not match'
+              key: `key-${i}-${uid}`,
+              rule: equal('C and D do not match')
             }
           ]
         }
       });
+
+      uid++;
     };
 
     const removeY = (i: number, j: number) => {
@@ -257,7 +255,7 @@ export default defineComponent({
 
     const handleSubmit = async () => {
       try {
-        const formData = await validateFields();
+        const formData = await validateFields(['c', 'd']);
         console.log(JSON.stringify(formData, null, 2));
       } catch (e) {
         if (e instanceof ValidationError) {
