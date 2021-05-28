@@ -120,7 +120,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
 
       const resultFormData = getResultFormData(transformedFormData);
 
-      const hasError = await promiseCancel.race(form.validateAll(names as any));
+      const hasError = await promiseCancel.race(form.validateAll(names));
 
       form.submitting.value = false;
 
