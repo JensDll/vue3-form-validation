@@ -36,8 +36,8 @@ export type TransformedField<T> = {
 export type TransformedFormData<T extends object> = T extends any
   ? {
       [K in keyof T]: T[K] extends Field<infer TValue> | undefined
-        ? T[K] & Field<any> extends Field<any>
-          ? TransformedField<UnwrapRef<TValue>>
+        ? T[K] extends undefined
+          ? undefined
           : TransformedField<UnwrapRef<TValue>>
         : T[K] extends Record<string, unknown> | any[]
         ? TransformedFormData<T[K]>
@@ -48,10 +48,8 @@ export type TransformedFormData<T extends object> = T extends any
 export type FormData<T extends object> = T extends any
   ? {
       [K in keyof T]: T[K] extends Field<infer TValue> | undefined
-        ? T[K] & Field<any> extends Field<any>
-          ? UnwrapRef<TValue>
-          : UnwrapRef<TValue>
-        : T[K] extends Record<string, unknown> | any[]
+        ? UnwrapRef<TValue>
+        : T[K] extends object
         ? FormData<T[K]>
         : T[K];
     }
@@ -73,7 +71,7 @@ type UseValidation<T extends object> = {
   form: TransformedFormData<T>;
   submitting: Ref<boolean>;
   errors: ComputedRef<string[]>;
-  validateFields(): Promise<FormData<T>>;
+  validateFields(names?: string[]): Promise<FormData<T>>;
   resetFields(formData?: Partial<FormData<T>>): void;
   add<Ks extends Keys>(
     path: readonly [...Ks],
@@ -117,12 +115,12 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
     submitting: form.submitting,
     errors: form.getErrors(),
 
-    async validateFields() {
+    async validateFields(names = []) {
       form.submitting.value = true;
 
       const resultFormData = getResultFormData(transformedFormData);
 
-      const hasError = await promiseCancel.race(form.validateAll());
+      const hasError = await promiseCancel.race(form.validateAll(names));
 
       form.submitting.value = false;
 
@@ -147,20 +145,24 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
     },
 
     add(path, value) {
-      const box = { value };
-      transformFormData(form, box);
+      const lastKey = path[path.length - 1];
 
-      const x = _path(path, transformedFormData);
+      if (typeof lastKey !== 'undefined') {
+        const box = { [lastKey]: value };
+        transformFormData(form, box);
 
-      if (Array.isArray(x)) {
-        x.push(box.value);
-      } else {
-        set(transformedFormData, path, box.value);
+        const x = _path(path, transformedFormData);
+
+        if (Array.isArray(x)) {
+          x.push(box[lastKey]);
+        } else {
+          set(transformedFormData, path, box[lastKey]);
+        }
       }
     },
 
     remove(path) {
-      const lastKey = (path as unknown as any[]).pop();
+      const lastKey = path.pop();
 
       if (typeof lastKey !== 'undefined' && path.length === 0) {
         cleanupForm(form, (transformedFormData as any)[lastKey]);

@@ -229,7 +229,7 @@ describe('complex examples', () => {
     expect(formField2.touched).toBe(false);
     expect(formField3.touched).toBe(false);
 
-    let hasError = await form.validateAll();
+    let hasError = await form.validateAll([]);
 
     expect(formField1.touched).toBe(true);
     expect(formField2.touched).toBe(true);
@@ -247,7 +247,7 @@ describe('complex examples', () => {
 
     formField1.modelValue = ref('foo');
 
-    hasError = await form.validateAll();
+    hasError = await form.validateAll([]);
 
     expect(hasError).toBe(true);
 
@@ -262,7 +262,7 @@ describe('complex examples', () => {
 
     formField1.modelValue = ref(null);
 
-    hasError = await form.validateAll();
+    hasError = await form.validateAll([]);
 
     expect(hasError).toBe(false);
 
@@ -351,7 +351,7 @@ describe('async validation', () => {
     formField2.modelValue = ref('ff2');
     formField3.modelValue = ref('ff3');
 
-    await form.validateAll();
+    await form.validateAll([]);
 
     expect(simpleRule1).toHaveBeenCalledTimes(1);
     expect(simpleRule2).toHaveBeenCalledTimes(1);
@@ -379,7 +379,7 @@ describe('async validation', () => {
   });
 
   it('should not set errors after resetting form', done => {
-    form.validateAll().then(() => {
+    form.validateAll([]).then(() => {
       expect(form.getErrors().value).toStrictEqual([]);
       done();
     });

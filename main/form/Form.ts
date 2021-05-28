@@ -96,22 +96,15 @@ export class Form {
     if (simple && simple.formField.touched) {
       return Promise.allSettled([
         ...simple.vs.map(v => v([simple.formField.modelValue])),
-        ...this.getPromisesFor(simple.keys)
+        ...this.getPromisesForKeys(simple.keys)
       ]);
     }
   }
 
-  async validateAll() {
-    const promises = [];
-
-    for (const { formField, vs } of this.simpleMap.values()) {
-      formField.touched = true;
-      promises.push(...vs.map(v => v([formField.modelValue])));
-    }
-
-    promises.push(...this.getPromisesFor(this.keyedSetMap.keys()));
-
-    const settledResults = await Promise.allSettled(promises);
+  async validateAll(names: string[]) {
+    const settledResults = await Promise.allSettled(
+      this.getPromisesForNames(names)
+    );
 
     for (const result of settledResults) {
       if (result.status === 'rejected') {
@@ -151,7 +144,7 @@ export class Form {
     }
   }
 
-  private getPromisesFor(keys: string[] | IterableIterator<string>) {
+  private getPromisesForKeys(keys: string[] | IterableIterator<string>) {
     const promises: Promise<ValidateResult>[] = [];
 
     for (const key of keys) {
@@ -167,6 +160,29 @@ export class Form {
           }
         }
       })(key);
+    }
+
+    return promises;
+  }
+
+  private getPromisesForNames(names: string[]) {
+    const promises: Promise<ValidateResult>[] = [];
+
+    if (names.length > 0) {
+      const nameSet = new Set(names);
+      for (const { formField, keys, vs } of this.simpleMap.values()) {
+        if (nameSet.has(formField.name)) {
+          formField.touched = true;
+          promises.push(...vs.map(v => v([formField.modelValue])));
+          promises.push(...this.getPromisesForKeys(keys));
+        }
+      }
+    } else {
+      for (const { formField, vs } of this.simpleMap.values()) {
+        formField.touched = true;
+        promises.push(...vs.map(v => v([formField.modelValue])));
+      }
+      promises.push(...this.getPromisesForKeys(this.keyedSetMap.keys()));
     }
 
     return promises;
