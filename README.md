@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
 
-Vue composition function for Form Validation with asynchronous validation.
+Vue composition function for Form Validation with async validation.
 
 - :milky_way: **Written in TypeScript**
 - :ocean: **Dynamic Form support**
