@@ -73,7 +73,7 @@ type UseValidation<T extends object> = {
   form: TransformedFormData<T>;
   submitting: Ref<boolean>;
   errors: ComputedRef<string[]>;
-  validateFields(): Promise<FormData<T>>;
+  validateFields(names?: string[]): Promise<FormData<T>>;
   resetFields(formData?: Partial<FormData<T>>): void;
   add<Ks extends Keys>(
     path: readonly [...Ks],
@@ -117,12 +117,12 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
     submitting: form.submitting,
     errors: form.getErrors(),
 
-    async validateFields() {
+    async validateFields(names = []) {
       form.submitting.value = true;
 
       const resultFormData = getResultFormData(transformedFormData);
 
-      const hasError = await promiseCancel.race(form.validateAll());
+      const hasError = await promiseCancel.race(form.validateAll(names));
 
       form.submitting.value = false;
 
