@@ -57,7 +57,7 @@ export type FormData<T extends object> = T extends any
 
 export type FieldNames<T> = T extends object
   ? {
-      [K in keyof T]: T[K] extends Field<any> | undefined
+      [K in keyof T]-?: T[K] extends Field<any> | undefined
         ? K
         : FieldNames<T[K]>;
     }[keyof T]

@@ -102,7 +102,7 @@ export default defineComponent({
 
     const handleSubmit = async () => {
       try {
-        const formData = await validateFields();
+        const formData = await validateFields([]);
         console.log(JSON.stringify(formData, null, 2));
       } catch (e) {
         if (e instanceof ValidationError) {
