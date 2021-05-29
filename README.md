@@ -1,7 +1,7 @@
 # Form Validation for Vue 3
 
 [![npm](https://badgen.net/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
-[![bundle size](https://badgen.net/bundlephobia/minzip/vue3-form-validation)](https://bundlephobia.com/result?p=vue3-form-validation@3.3.5)
+[![bundle size](https://badgen.net/bundlephobia/minzip/vue3-form-validation)](https://bundlephobia.com/result?p=vue3-form-validation@latest)
 
 Vue composition function for Form Validation with async rules.
 
