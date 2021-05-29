@@ -1,6 +1,7 @@
 import { FormField } from '../FormField';
 import { Form } from '../Form';
 import { ref } from 'vue';
+import { ValidationError } from '../ValidationError';
 
 let form: Form;
 
@@ -229,13 +230,11 @@ describe('complex examples', () => {
     expect(formField2.touched).toBe(false);
     expect(formField3.touched).toBe(false);
 
-    let hasError = await form.validateAll([]);
+    await form.validateAll();
 
     expect(formField1.touched).toBe(true);
     expect(formField2.touched).toBe(true);
     expect(formField3.touched).toBe(true);
-
-    expect(hasError).toBe(false);
 
     expect(simpleRule1).toHaveBeenCalledTimes(1);
     expect(simpleRule2).toHaveBeenCalledTimes(1);
@@ -247,9 +246,12 @@ describe('complex examples', () => {
 
     formField1.modelValue = ref('foo');
 
-    hasError = await form.validateAll([]);
-
-    expect(hasError).toBe(true);
+    try {
+      await form.validateAll();
+      fail('Should throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ValidationError);
+    }
 
     expect(simpleRule1).toHaveBeenCalledTimes(2);
     expect(simpleRule2).toHaveBeenCalledTimes(2);
@@ -260,11 +262,8 @@ describe('complex examples', () => {
     expect(keyedRule3).toHaveBeenCalledTimes(2);
     expect(keyedRule4).toHaveBeenCalledTimes(2);
 
-    formField1.modelValue = ref(null);
-
-    hasError = await form.validateAll([]);
-
-    expect(hasError).toBe(false);
+    formField1.modelValue = ref(undefined);
+    await form.validateAll();
 
     expect(simpleRule1).toHaveBeenCalledTimes(3);
     expect(simpleRule2).toHaveBeenCalledTimes(3);
@@ -351,7 +350,12 @@ describe('async validation', () => {
     formField2.modelValue = ref('ff2');
     formField3.modelValue = ref('ff3');
 
-    await form.validateAll([]);
+    try {
+      await form.validateAll();
+      fail('Should throw');
+    } catch (e) {
+      expect(e).toBeInstanceOf(ValidationError);
+    }
 
     expect(simpleRule1).toHaveBeenCalledTimes(1);
     expect(simpleRule2).toHaveBeenCalledTimes(1);
@@ -379,7 +383,7 @@ describe('async validation', () => {
   });
 
   it('should not set errors after resetting form', done => {
-    form.validateAll([]).then(() => {
+    form.validateAll().then(() => {
       expect(form.getErrors().value).toStrictEqual([]);
       done();
     });

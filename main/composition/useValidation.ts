@@ -9,7 +9,6 @@ import {
   transformFormData
 } from '../common';
 import { Form } from '../form/Form';
-import { ValidationError } from '../form/ValidationError';
 import { RefUnref } from '../types';
 
 export type SimpleRule<T = any> = (value: T) => any;
@@ -55,6 +54,14 @@ export type FormData<T extends object> = T extends any
     }
   : never;
 
+export type FieldNames<T> = T extends object
+  ? {
+      [K in keyof T]-?: T[K] extends Field<any> | undefined
+        ? K
+        : FieldNames<T[K]>;
+    }[keyof T]
+  : never;
+
 export type Keys = readonly (string | number)[];
 export type DeepIndex<T, Ks extends Keys, R = unknown> = Ks extends [
   infer First,
@@ -71,7 +78,7 @@ type UseValidation<T extends object> = {
   form: TransformedFormData<T>;
   submitting: Ref<boolean>;
   errors: ComputedRef<string[]>;
-  validateFields(names?: string[]): Promise<FormData<T>>;
+  validateFields(names?: FieldNames<T>[]): Promise<FormData<T>>;
   resetFields(formData?: Partial<FormData<T>>): void;
   add<Ks extends Keys>(
     path: readonly [...Ks],
@@ -115,20 +122,20 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
     submitting: form.submitting,
     errors: form.getErrors(),
 
-    async validateFields(names = []) {
+    async validateFields(names) {
+      const resultFormData = getResultFormData(
+        transformedFormData
+      ) as FormData<T>;
+
       form.submitting.value = true;
 
-      const resultFormData = getResultFormData(transformedFormData);
-
-      const hasError = await promiseCancel.race(form.validateAll(names));
-
-      form.submitting.value = false;
-
-      if (hasError) {
-        throw new ValidationError();
+      try {
+        await promiseCancel.race(form.validateAll(names));
+      } finally {
+        form.submitting.value = false;
       }
 
-      return resultFormData as FormData<T>;
+      return resultFormData;
     },
 
     resetFields(formData) {

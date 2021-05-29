@@ -2,6 +2,7 @@ import { computed, reactive, ref, unref } from 'vue';
 import { isDefined, LinkedList, tryGet, trySet } from '../common';
 import { SimpleRule, Rule, KeyedRule } from '../composition/useValidation';
 import { FormField } from './FormField';
+import { ValidationError } from './ValidationError';
 
 type ValidateResult = void | string;
 
@@ -99,18 +100,16 @@ export class Form {
     }
   }
 
-  async validateAll(names: string[]) {
+  async validateAll(names?: (string | number | symbol)[]) {
     const settledResults = await Promise.allSettled(
       this.getPromisesForNames(names)
     );
 
     for (const result of settledResults) {
       if (result.status === 'rejected') {
-        return true;
+        throw new ValidationError();
       }
     }
-
-    return false;
   }
 
   onDelete(uid: number) {
@@ -167,10 +166,16 @@ export class Form {
     return promises;
   }
 
-  private getPromisesForNames(names: string[]) {
+  private getPromisesForNames(names?: (string | number | symbol)[]) {
     const promises: Promise<ValidateResult>[] = [];
 
-    if (names.length > 0) {
+    if (typeof names === 'undefined') {
+      for (const { formField, vs } of this.simpleMap.values()) {
+        formField.touched = true;
+        promises.push(...vs.map(v => v([formField.modelValue])));
+      }
+      promises.push(...this.getPromisesForKeys(this.keyedSetMap.keys()));
+    } else if (names.length > 0) {
       const nameSet = new Set(names);
       for (const { formField, keys, vs } of this.simpleMap.values()) {
         if (nameSet.has(formField.name)) {
@@ -179,12 +184,6 @@ export class Form {
           promises.push(...this.getPromisesForKeys(keys));
         }
       }
-    } else {
-      for (const { formField, vs } of this.simpleMap.values()) {
-        formField.touched = true;
-        promises.push(...vs.map(v => v([formField.modelValue])));
-      }
-      promises.push(...this.getPromisesForKeys(this.keyedSetMap.keys()));
     }
 
     return promises;
