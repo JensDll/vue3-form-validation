@@ -148,7 +148,7 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
 - `resetFields(formData?: object) -> void`
   - **Description** - Reset all fields to their original value, or pass an object to set specific values.
   - **Parameters**
-    - `formData?` - Values to use when resetting (see [Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)).
+    - `formData?` - Values to use when resetting (see [Sandbox examples](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)).
 - `add(path: (string | number)[], value: any) -> void`
   - **Description** - Function for writing dynamic forms (similar to [Lodash's set function](https://lodash.com/docs/4.17.15#set)).
   - **Parameters**
