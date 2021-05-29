@@ -144,7 +144,7 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
   - **Description** - Validate all fields or pass an array to select specific ones.
   - **Parameters**
     - `names?` - Field names to validate.
-  - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the form data otherwise.
+  - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the form data otherwise. Will throw `ValidationError` which you can compare against using `instanceof`.
 - `resetFields(formData?: object) -> void`
   - **Description** - Reset all fields to their original value, or pass an object to set specific values.
   - **Parameters**
