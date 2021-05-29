@@ -153,7 +153,7 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
   - **Description** - Function for writing dynamic forms (similar to [Lodash's set function](https://lodash.com/docs/4.17.15#set)).
   - **Parameters**
     - `path` - The path of the property to add.
-    - `value` - The value to add (usually an object or array).
+    - `value` - The value to add (most often probably an object, fields will be transformed as shown above).
 - `remove(path: (string | number)[]) -> void`
   - **Description** - Function for writing dynamic forms.
   - **Parameters**
