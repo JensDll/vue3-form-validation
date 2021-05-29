@@ -140,18 +140,20 @@ As you may have noticed, all of the properties are prefixed with the `$` symbol,
 
 ### `useValidation` exposes the following methods:
 
-- `validateFields() -> Promise`
-  - **Description** - Validate all fields.
-  - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the form data otherwise.
+- `validateFields(names?: any[]) -> Promise`
+  - **Description** - Validate all fields or pass an array to select specific ones.
+  - **Parameters**
+    - `names?` - Field names to validate.
+  - **Returns** - A `Promise` which will reject if there are validation errors, and resolve with the form data otherwise. Will throw `ValidationError` which you can compare against using `instanceof`.
 - `resetFields(formData?: object) -> void`
   - **Description** - Reset all fields to their original value, or pass an object to set specific values.
   - **Parameters**
-    - `formData?` - Values to use when resetting (see [Sandbox](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)).
+    - `formData?` - Values to use when resetting (see [Sandbox examples](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue)).
 - `add(path: (string | number)[], value: any) -> void`
   - **Description** - Function for writing dynamic forms (similar to [Lodash's set function](https://lodash.com/docs/4.17.15#set)).
   - **Parameters**
     - `path` - The path of the property to add.
-    - `value` - The value to add (usually an object or array).
+    - `value` - The value to add (most often probably an object, fields will be transformed as shown above).
 - `remove(path: (string | number)[]) -> void`
   - **Description** - Function for writing dynamic forms.
   - **Parameters**
