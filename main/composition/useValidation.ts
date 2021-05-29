@@ -9,7 +9,6 @@ import {
   transformFormData
 } from '../common';
 import { Form } from '../form/Form';
-import { ValidationError } from '../form/ValidationError';
 import { RefUnref } from '../types';
 
 export type SimpleRule<T = any> = (value: T) => any;
