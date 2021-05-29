@@ -123,22 +123,20 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
     submitting: form.submitting,
     errors: form.getErrors(),
 
-    async validateFields(names = []) {
+    async validateFields(names) {
+      const resultFormData = getResultFormData(
+        transformedFormData
+      ) as FormData<T>;
+
       form.submitting.value = true;
 
-      const resultFormData = getResultFormData(transformedFormData);
-
-      const hasError = await promiseCancel.race(
-        form.validateAll(names as string[])
-      );
-
-      form.submitting.value = false;
-
-      if (hasError) {
-        throw new ValidationError();
+      try {
+        await promiseCancel.race(form.validateAll(names));
+      } finally {
+        form.submitting.value = false;
       }
 
-      return resultFormData as FormData<T>;
+      return resultFormData;
     },
 
     resetFields(formData) {
