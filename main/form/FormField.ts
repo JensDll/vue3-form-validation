@@ -15,15 +15,16 @@ export class FormField {
   constructor(name: string, modelValue: any, rules: Rule[]) {
     this.name = name;
     this.errors = reactive(rules.map(() => null));
-    this.initialModelValue = jsonCopy(unref(modelValue));
 
     if (isRef(modelValue) || isReactive(modelValue)) {
       this.modelValue = modelValue;
+      this.initialModelValue = jsonCopy(unref(modelValue));
     } else if (isObject(modelValue)) {
       this.modelValue = reactive(modelValue);
       this.initialModelValue = jsonCopy(this.modelValue);
     } else {
       this.modelValue = ref(modelValue);
+      this.initialModelValue = jsonCopy(unref(modelValue));
     }
   }
 
