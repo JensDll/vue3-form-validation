@@ -63,6 +63,9 @@
     "vue": "^3.0.7",
     "vue-router": "^4.0.4"
   },
+  "peerDependencies": {
+    "vue": "3.x"
+  },
   "prettier": {
     "singleQuote": true,
     "arrowParens": "avoid",
