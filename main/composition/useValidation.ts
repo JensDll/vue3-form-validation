@@ -38,7 +38,7 @@ export type TransformedFormData<T extends object> = T extends any
         ? T[K] extends undefined
           ? undefined
           : TransformedField<UnwrapRef<TValue>>
-        : T[K] extends Record<string, unknown> | any[]
+        : T[K] extends object
         ? TransformedFormData<T[K]>
         : T[K];
     }
@@ -54,12 +54,14 @@ export type FormData<T extends object> = T extends any
     }
   : never;
 
-export type FieldNames<T> = T extends object
+export type FieldNames<T> = T extends Record<string, unknown>
   ? {
       [K in keyof T]-?: T[K] extends Field<any> | undefined
         ? K
         : FieldNames<T[K]>;
     }[keyof T]
+  : T extends (infer TArray)[]
+  ? FieldNames<TArray>
   : never;
 
 export type Keys = readonly (string | number)[];
