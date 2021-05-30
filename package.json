@@ -6,17 +6,18 @@
     "name": "jens",
     "email": "jens@doellmann.com"
   },
+  "type": "module",
+  "exports": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist/**/*.js",
+    "./dist/**/*.d.ts"
+  ],
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/JensDll/vue3-form-validation"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
-  ],
-  "license": "MIT",
   "keywords": [
     "vue",
     "vuejs",
@@ -46,9 +47,9 @@
     "autoprefixer": "^10.2.6",
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-vue": "^7.9.0",
+    "eslint-plugin-vue": "^7.10.0",
     "husky": "^6.0.0",
-    "jest": "^27.0.1",
+    "jest": "^27.0.3",
     "lint-staged": "^11.0.0",
     "pinst": "^2.1.6",
     "postcss": "^8.3.0",
