@@ -1,6 +1,6 @@
 import { expectType } from 'tsd';
 import { Ref } from 'vue';
-import { RefUnref } from '../types';
+import { RefUnref } from '../packages/vue3-form-validation/types/refUnref';
 
 type RU1 = RefUnref<{ a: string }>;
 type RU1_Expected = { a: Ref<string> | string };

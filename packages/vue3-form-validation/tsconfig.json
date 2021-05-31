@@ -3,14 +3,14 @@
     "target": "ES2019",
     "module": "ES2020",
     "declaration": true,
-    "outDir": "../dist",
     "lib": ["ES2020"],
     "downlevelIteration": true,
+    "outDir": "dist",
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["**/__tests__", "jest.config.ts", "test-dts"]
+  "exclude": ["src/**/__tests__", "jest.config.ts", "test-dts"]
 }

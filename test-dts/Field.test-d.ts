@@ -1,6 +1,9 @@
 import { expectType } from 'tsd';
 import { Ref } from 'vue';
-import { Field, Rule } from '../composition/useValidation';
+import {
+  Field,
+  Rule
+} from '../packages/vue3-form-validation/composition/useValidation';
 
 type FL1 = Field<string>;
 type FL1_Expected = { $value: string | Ref<string>; $rules?: Rule<string>[] };

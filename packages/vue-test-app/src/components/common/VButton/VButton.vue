@@ -9,8 +9,8 @@
       focus:outline-none
       focus:ring focus:ring-offset-2
     "
-    :class="{ 'opacity-40 pointer-events-none': disabled }"
-    type="button"
+    :class="[{ 'opacity-40 pointer-events-none': disabled }, type]"
+    :type="htmlType"
   >
     <slot></slot>
     <IconLoading v-if="loading" class="ml-2 w-4 h-4 text-white" spin />
@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, PropType } from 'vue';
 import IconLoading from '../../icons/IconLoading.vue';
 
 export default defineComponent({
@@ -32,6 +32,14 @@ export default defineComponent({
     },
     disabled: {
       type: Boolean
+    },
+    htmlType: {
+      type: String as PropType<'button' | 'submit' | 'reset'>,
+      default: 'button'
+    },
+    type: {
+      type: String,
+      default: 'primary'
     }
   }
 });

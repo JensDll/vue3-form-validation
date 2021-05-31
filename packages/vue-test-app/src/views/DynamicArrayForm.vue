@@ -161,7 +161,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { Field, useValidation, ValidationError } from '../../../main';
+import { Field, useValidation, ValidationError } from 'vue3-form-validation';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
 import IconPlusCircle from '../components/icons/IconPlusCircle.vue';

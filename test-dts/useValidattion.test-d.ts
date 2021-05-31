@@ -4,7 +4,7 @@ import {
   Field,
   TransformedField,
   useValidation
-} from '../composition/useValidation';
+} from '../packages/vue3-form-validation/composition/useValidation';
 
 useValidation<{ a: Field<string> }>({
   a: {

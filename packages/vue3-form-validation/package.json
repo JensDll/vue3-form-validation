@@ -1,0 +1,32 @@
+{
+  "name": "vue3-form-validation",
+  "version": "4.0.0",
+  "description": "Vue composition function for Form Validation",
+  "author": {
+    "name": "jens",
+    "email": "jens@doellmann.com"
+  },
+  "type": "module",
+  "exports": "./dist/index.ts",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JensDll/vue3-form-validation"
+  },
+  "keywords": [
+    "vue",
+    "vuejs",
+    "form",
+    "validation",
+    "utils",
+    "vue-use"
+  ],
+  "peerDependencies": {
+    "vue": "3.x"
+  }
+}

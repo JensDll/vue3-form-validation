@@ -40,10 +40,15 @@
       </div>
     </div>
     <div class="flex mt-8">
-      <VButton class="primary py-3 px-6" type="submit" :disabled="submitting">
+      <VButton
+        class="py-3 px-6"
+        html-type="submit"
+        type="primary"
+        :disabled="submitting"
+      >
         Submit
       </VButton>
-      <VButton class="secondary ml-4 py-3 px-6" @click="resetFields()">
+      <VButton class="ml-4 py-3 px-6" type="secondary" @click="resetFields()">
         Reset
       </VButton>
     </div>
@@ -53,7 +58,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useValidation, ValidationError, Field } from '../../../main';
+import { useValidation, ValidationError, Field } from 'vue3-form-validation';
 import { randomPromise, required, min, equal } from '../utils';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';

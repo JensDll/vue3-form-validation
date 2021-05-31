@@ -1,38 +1,26 @@
 {
-  "name": "vue3-form-validation",
-  "version": "3.3.5",
+  "private": true,
+  "workspaces": [
+    "./packages/*"
+  ],
   "description": "Vue composition function for Form Validation",
   "author": {
     "name": "jens",
     "email": "jens@doellmann.com"
   },
-  "type": "module",
-  "exports": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "./dist/**/*.js",
-    "./dist/**/*.d.ts"
-  ],
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/JensDll/vue3-form-validation"
   },
-  "keywords": [
-    "vue",
-    "vuejs",
-    "form",
-    "validation",
-    "utils",
-    "vue-use"
-  ],
   "scripts": {
-    "build": "npx eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run main && npx tsc --project ./main",
-    "test": "jest --config ./main/jest.config.ts",
-    "test-dts": "npx tsd",
-    "test-all": "npm run build && npm run test && npm run test-dts",
-    "dev": "vite",
-    "_postinstall": "husky install",
+    "build": "npx eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation && npx tsc --project ./packages/vue3-form-validation",
+    "build-watch": "npx tsc --project ./packages/main --outDir ./packages/main/dist --watch",
+    "test": "jest --config ./packages/main/jest.config.ts",
+    "test-dts": "npx tsc --project ./packages/vue3-form-validation --outDir ./test-dts/dist && npx tsd",
+    "test-dts-only": "npx tsd",
+    "dev": "npm run dev -w vue-test-site",
+    "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable"
   },
@@ -56,16 +44,14 @@
     "postcss-nesting": "^8.0.1",
     "prettier": "^2.3.0",
     "tailwindcss": "^2.1.2",
-    "ts-jest": "^27.0.1",
+    "ts-jest": "^27.0.2",
     "ts-node": "^10.0.0",
     "tsd": "^0.16.0",
     "typescript": "^4.3.2",
     "vite": "^2.3.4",
-    "vue": "^3.0.7",
-    "vue-router": "^4.0.4"
-  },
-  "peerDependencies": {
-    "vue": "3.x"
+    "vue": "^3.0.11",
+    "vue-router": "^4.0.4",
+    "vue-tsc": "^0.1.6"
   },
   "prettier": {
     "singleQuote": true,
@@ -73,8 +59,9 @@
     "trailingComma": "none",
     "endOfLine": "crlf"
   },
+  "types": "test-dts/dist/index.d.ts",
   "tsd": {
-    "directory": "main/test-dts",
+    "directory": "test-dts",
     "compilerOptions": {
       "lib": [
         "DOM",

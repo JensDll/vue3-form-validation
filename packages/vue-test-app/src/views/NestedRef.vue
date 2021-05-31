@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useValidation, ValidationError } from '../../../main';
+import { useValidation, ValidationError } from 'vue3-form-validation';
 import VPreFormData from '../components/common/VPreFormData/VPreFormData.vue';
 import VButton from '../components/common/VButton/VButton.vue';
 import VInput from '../components/common/VInput/VInput.vue';
