@@ -16,9 +16,8 @@
   "scripts": {
     "build": "npx eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation && npx tsc --project ./packages/vue3-form-validation",
     "build-watch": "npx tsc --project ./packages/main --outDir ./packages/main/dist --watch",
-    "test": "jest --config ./packages/main/jest.config.ts",
-    "test-dts": "npx tsc --project ./packages/vue3-form-validation --outDir ./test-dts/dist && npx tsd",
-    "test-dts-only": "npx tsd",
+    "test": "jest",
+    "test-dts": "npx tsc --project ./test-dts && npx tsd",
     "dev": "npm run dev -w vue-test-site",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
@@ -61,13 +60,6 @@
   },
   "types": "test-dts/dist/index.d.ts",
   "tsd": {
-    "directory": "test-dts",
-    "compilerOptions": {
-      "lib": [
-        "DOM",
-        "ES2020"
-      ],
-      "strict": true
-    }
+    "directory": "test-dts"
   }
 }

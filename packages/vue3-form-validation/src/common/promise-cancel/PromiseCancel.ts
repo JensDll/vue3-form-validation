@@ -17,7 +17,7 @@ export class PromiseCancel<T = unknown> {
     this.assign();
   }
 
-  race<TRace extends Promise<any>[]>(...promises: readonly [...TRace]) {
+  race<Ps extends readonly Promise<any>[]>(...promises: [...Ps]) {
     return Promise.race([this.promise, ...promises]);
   }
 

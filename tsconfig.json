@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "ES2019",
-    "module": "ES2020",
+    "target": "ESNext",
+    "module": "ESNext",
     "declaration": true,
     "outDir": "dist",
     "allowJs": false,
     "checkJs": false,
-    "lib": ["ES2020"],
+    "lib": ["ESNext", "DOM"],
     "downlevelIteration": true,
     "strict": true,
     "moduleResolution": "node",
@@ -14,5 +14,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "exclude": ["src/**/__tests__", "jest.config.ts", "test-dts", "dist"]
+  "include": ["packages/vue3-form-validation/src"],
+  "exclude": ["packages/**/__tests__", "dist"]
 }

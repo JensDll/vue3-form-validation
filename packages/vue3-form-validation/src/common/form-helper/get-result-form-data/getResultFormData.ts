@@ -4,7 +4,7 @@ import { jsonCopy } from '../../json-copy/jsonCopy';
 import { set } from '../../set/set';
 import { isTransformedField } from '../../type-guards/typeGuards';
 
-export function getResultFormData(transformedFormData: any) {
+export function getResultFormData(transformedFormData: any): any {
   const result = {};
 
   for (const [, value, , path, isLeaf] of deepIterator(
