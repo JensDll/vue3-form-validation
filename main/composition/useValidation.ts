@@ -9,6 +9,7 @@ import {
   transformFormData
 } from '../common';
 import { Form } from '../form/Form';
+import { ValidationError } from '../form/ValidationError';
 import { RefUnref } from '../types';
 
 export type SimpleRule<T = any> = (value: T) => any;
@@ -113,7 +114,7 @@ type UseValidation<T extends object> = {
  */
 export function useValidation<T extends object>(formData: T): UseValidation<T> {
   const form = new Form();
-  const promiseCancel = new PromiseCancel<true>();
+  const promiseCancel = new PromiseCancel<ValidationError>();
 
   transformFormData(form, formData);
 
@@ -142,7 +143,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
 
     resetFields(formData) {
       if (form.submitting.value) {
-        promiseCancel.cancelResolve(true);
+        promiseCancel.cancelReject(new ValidationError());
       }
 
       if (formData) {
