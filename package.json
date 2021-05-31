@@ -15,10 +15,10 @@
   },
   "scripts": {
     "build": "npx eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation && npx tsc --project ./packages/vue3-form-validation",
-    "build-watch": "npx tsc --project ./packages/main --outDir ./packages/main/dist --watch",
+    "build-watch": "npx tsc --project ./packages/vue3-form-validation --watch",
     "test": "jest",
     "test-dts": "npx tsc --project ./test-dts && npx tsd",
-    "dev": "npm run dev -w vue-test-site",
+    "dev": "npm run dev -w vue-test-app",
     "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable"

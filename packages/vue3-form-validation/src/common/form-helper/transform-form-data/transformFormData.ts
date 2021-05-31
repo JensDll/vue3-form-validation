@@ -18,11 +18,15 @@ function registerField(
     field.$rules ?? []
   );
 
-  watch(formField.modelValue, () => {
-    if (formField.touched) {
-      form.validate(uid);
-    }
-  });
+  watch(
+    formField.modelValue,
+    () => {
+      if (formField.touched) {
+        form.validate(uid);
+      }
+    },
+    { deep: true }
+  );
 
   return {
     $uid: uid,

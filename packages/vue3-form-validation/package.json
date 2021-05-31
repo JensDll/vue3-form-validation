@@ -7,7 +7,7 @@
     "email": "jens@doellmann.com"
   },
   "type": "module",
-  "exports": "./dist/index.ts",
+  "exports": "./dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/**/*.js",

@@ -5,12 +5,12 @@
       <label for="text" class="block mb-1 font-semibold">Name</label>
       <VInput
         id="text"
-        v-model="form.name.$value"
+        v-model="form.name[0].$value"
         class="border p-3 w-full"
         type="text"
-        :validating="form.name.$validating"
-        :errors="form.name.$errors"
-        @blur="form.name.$onBlur()"
+        :validating="form.name[0].$validating"
+        :errors="form.name[0].$errors"
+        @blur="form.name[0].$onBlur()"
       />
     </div>
     <div class="flex mt-2">
@@ -65,7 +65,7 @@ import VButton from '../components/common/VButton/VButton.vue';
 import VInput from '../components/common/VInput/VInput.vue';
 
 type FormData = {
-  name: Field<string>;
+  name: [Field<string>];
   password: Field<string>;
   confirmPassword: Field<string>;
 };
@@ -79,10 +79,18 @@ export default defineComponent({
   setup() {
     const { form, errors, submitting, validateFields, resetFields } =
       useValidation<FormData>({
-        name: {
-          $value: '',
-          $rules: [required('Name is required'), randomPromise]
-        },
+        name: [
+          {
+            $value: '',
+            $rules: [
+              required('Name is required'),
+              randomPromise,
+              x => {
+                console.log(x);
+              }
+            ]
+          }
+        ],
         password: {
           $value: '',
           $rules: [
@@ -104,10 +112,10 @@ export default defineComponent({
           ]
         }
       });
-
+    console.log(form);
     const handleSubmit = async () => {
       try {
-        const formData = await validateFields([]);
+        const formData = await validateFields();
         console.log(JSON.stringify(formData, null, 2));
       } catch (e) {
         if (e instanceof ValidationError) {
