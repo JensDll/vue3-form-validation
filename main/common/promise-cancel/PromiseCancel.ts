@@ -22,7 +22,7 @@ export class PromiseCancel<T = unknown> {
     }
   }
 
-  race<TRace extends Promise<any>[]>(...promises: readonly [...TRace]) {
+  race<TRace extends readonly Promise<any>[]>(...promises: [...TRace]) {
     this.raceHasBeenCalled = true;
     return Promise.race([this.promise, ...promises]);
   }
