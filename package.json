@@ -21,7 +21,7 @@
     "test": "jest",
     "test-dts": "npm exec -- tsc --project ./test-dts && npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",
-    "publish": "node ./scripts/build.mjs && cd dist && npm publish --dry-run",
+    "publish": "node ./scripts/build.mjs && cd dist && npm publish",
     "postinstall": "husky install"
   },
   "devDependencies": {
