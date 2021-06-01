@@ -16,9 +16,10 @@
   "scripts": {
     "build": "npm exec -- eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation && npm exec -- tsc --project ./packages/vue3-form-validation",
     "build-watch": "npm exec -- tsc --project ./packages/vue3-form-validation --watch",
+    "dev": "npm run dev -w vue-test-app",
     "test": "jest",
     "test-dts": "npm exec -- tsc --project ./test-dts && npm exec -- tsd",
-    "dev": "npm run dev -w vue-test-app",
+    "test-all": "npm run test-dts && npm test",
     "postinstall": "husky install"
   },
   "devDependencies": {
