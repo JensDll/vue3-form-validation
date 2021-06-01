@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "ESNext",
+    "target": "ES2019",
+    "module": "ES2020",
     "declaration": true,
-    "outDir": "dist",
     "allowJs": false,
     "checkJs": false,
-    "lib": ["ESNext", "DOM"],
+    "lib": ["ES2020", "DOM"],
     "downlevelIteration": true,
     "strict": true,
     "moduleResolution": "node",
