@@ -1,4 +1,4 @@
-# Contributing
+# Contributing (currently outdated)
 
 Hi! :wave: I'm exited that you are interested in contributing to this project. Below are some information that might help you get started.
 
