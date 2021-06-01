@@ -1,70 +1,55 @@
 {
-  "name": "vue3-form-validation",
-  "version": "3.3.6",
+  "private": true,
+  "workspaces": [
+    "./packages/*"
+  ],
   "description": "Vue composition function for Form Validation",
   "author": {
     "name": "jens",
     "email": "jens@doellmann.com"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/JensDll/vue3-form-validation"
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
-  ],
-  "license": "MIT",
-  "keywords": [
-    "vue",
-    "vuejs",
-    "form",
-    "validation",
-    "utils",
-    "vue-use"
-  ],
   "scripts": {
-    "build": "npx eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run main && npx tsc --project ./main",
-    "test": "jest --config ./main/jest.config.ts",
-    "test-dts": "npx tsd",
-    "test-all": "npm run build && npm run test && npm run test-dts",
-    "dev": "vite",
-    "postinstall": "husky install",
-    "prepublishOnly": "pinst --disable",
-    "postpublish": "pinst --enable"
+    "build": "npm exec -- eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation && npm exec -- tsc --project ./packages/vue3-form-validation",
+    "build-watch": "npm exec -- tsc --project ./packages/vue3-form-validation --watch",
+    "dev": "npm run dev -w vue-test-app",
+    "test": "jest",
+    "test-dts": "npm exec -- tsc --project ./test-dts && npm exec -- tsd",
+    "test-all": "npm run test-dts && npm test",
+    "postinstall": "husky install"
   },
   "devDependencies": {
     "@heroicons/vue": "^1.0.1",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.6.1",
-    "@typescript-eslint/eslint-plugin": "^4.25.0",
-    "@typescript-eslint/parser": "^4.25.0",
-    "@vitejs/plugin-vue": "^1.2.2",
+    "@typescript-eslint/eslint-plugin": "^4.26.0",
+    "@typescript-eslint/parser": "^4.26.0",
+    "@vitejs/plugin-vue": "^1.2.3",
     "@vue/compiler-sfc": "^3.0.11",
     "autoprefixer": "^10.2.6",
     "eslint": "^7.27.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-vue": "^7.9.0",
+    "eslint-plugin-vue": "^7.10.0",
     "husky": "^6.0.0",
-    "jest": "^27.0.1",
+    "jest": "^27.0.3",
     "lint-staged": "^11.0.0",
     "pinst": "^2.1.6",
     "postcss": "^8.3.0",
     "postcss-nesting": "^8.0.1",
     "prettier": "^2.3.0",
     "tailwindcss": "^2.1.2",
-    "ts-jest": "^27.0.1",
+    "ts-jest": "^27.0.2",
     "ts-node": "^10.0.0",
     "tsd": "^0.16.0",
     "typescript": "^4.3.2",
-    "vite": "^2.3.4",
-    "vue": "^3.0.7",
-    "vue-router": "^4.0.4"
-  },
-  "peerDependencies": {
-    "vue": "3.x"
+    "vite": "^2.3.5",
+    "vue": "^3.0.11",
+    "vue-router": "^4.0.4",
+    "vue-tsc": "^0.1.7"
   },
   "prettier": {
     "singleQuote": true,
@@ -72,14 +57,8 @@
     "trailingComma": "none",
     "endOfLine": "crlf"
   },
+  "types": "test-dts/dist/index.d.ts",
   "tsd": {
-    "directory": "main/test-dts",
-    "compilerOptions": {
-      "lib": [
-        "DOM",
-        "ES2020"
-      ],
-      "strict": true
-    }
+    "directory": "test-dts"
   }
 }
