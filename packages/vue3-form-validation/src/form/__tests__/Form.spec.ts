@@ -369,22 +369,22 @@ describe('async validation', () => {
     expect(keyedRule1).toHaveBeenCalledWith('ff2', 'ff3');
     expect(keyedRule2).toHaveBeenCalledWith('ff2', 'ff3');
 
-    expect(formField1.getErrors().value).toContain('S1');
-    expect(formField1.getErrors().value).toContain('S2');
+    expect(formField1.errors.value).toContain('S1');
+    expect(formField1.errors.value).toContain('S2');
 
-    expect(formField2.getErrors().value).toContain('K1');
+    expect(formField2.errors.value).toContain('K1');
 
-    expect(formField3.getErrors().value).toContain('S3');
-    expect(formField3.getErrors().value).toContain('K2');
+    expect(formField3.errors.value).toContain('S3');
+    expect(formField3.errors.value).toContain('K2');
 
-    expect(form.getErrors().value.sort()).toStrictEqual(
+    expect(form.errors.value.sort()).toStrictEqual(
       ['S1', 'S2', 'S3', 'K1', 'K2'].sort()
     );
   });
 
   it('should not set errors after resetting form', done => {
     form.validateAll().then(() => {
-      expect(form.getErrors().value).toStrictEqual([]);
+      expect(form.errors.value).toStrictEqual([]);
       done();
     });
     form.resetFields();
@@ -400,7 +400,7 @@ describe('async validation', () => {
         const callback = () => {
           expect(rule).toHaveBeenCalledTimes(6);
           expect(timeoutCalledTimes).toBe(6);
-          expect(formField.getErrors().value).toStrictEqual(['50']);
+          expect(formField.errors.value).toStrictEqual(['50']);
           resolve();
         };
 

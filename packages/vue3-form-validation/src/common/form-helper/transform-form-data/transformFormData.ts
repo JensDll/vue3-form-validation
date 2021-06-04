@@ -31,8 +31,8 @@ function registerField(
   return {
     $uid: uid,
     $value: formField.modelValue,
-    $errors: formField.getErrors(),
-    $hasError: formField.hasError(),
+    $errors: formField.errors,
+    $hasError: formField.hasError,
     $validating: formField.validating,
     async $onBlur() {
       if (!formField.touched) {

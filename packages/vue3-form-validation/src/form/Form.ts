@@ -1,4 +1,4 @@
-import { computed, reactive, ref, unref } from 'vue';
+import { computed, ref, shallowReactive, unref } from 'vue';
 import { isDefined, LinkedList, tryGet, trySet } from '../common';
 import { SimpleRule, Rule, KeyedRule } from '../composition/useValidation';
 import { FormField } from './FormField';
@@ -32,13 +32,24 @@ const isSimpleRule = (rule: Rule): rule is SimpleRule =>
 export class Form {
   private simpleMap: Map<number, Simple> = new Map();
   private keyedSetMap: Map<string, Set<Keyed>> = new Map();
-  private reactiveFormFieldMap: Map<number, FormField> = reactive(new Map());
+  private reactiveFormFieldMap: Map<number, FormField> = shallowReactive(
+    new Map()
+  );
 
   private trySetKeyedSet = trySet(this.keyedSetMap);
   private tryGetKeyedSet = tryGet(this.keyedSetMap);
   private tryGetSimple = tryGet(this.simpleMap);
 
   submitting = ref(false);
+  errors = computed(() => {
+    const errors: string[] = [];
+
+    for (const formField of this.reactiveFormFieldMap.values()) {
+      errors.push(...formField.errors.value);
+    }
+
+    return errors;
+  });
 
   registerField(uid: number, name: string, modelValue: unknown, rules: Rule[]) {
     const formField = new FormField(name, modelValue, rules);
@@ -121,18 +132,6 @@ export class Form {
 
     this.simpleMap.delete(uid);
     this.reactiveFormFieldMap.delete(uid);
-  }
-
-  getErrors() {
-    return computed(() => {
-      const errors: string[] = [];
-
-      for (const formField of this.reactiveFormFieldMap.values()) {
-        errors.push(...formField.getErrors().value);
-      }
-
-      return errors;
-    });
   }
 
   resetFields(toDefaultValues = true) {
@@ -232,7 +231,7 @@ export class Form {
         const ruleResult = rule(...modelValues.map(unref));
 
         if (typeof ruleResult?.then === 'function') {
-          formField.validating.value = true;
+          formField.rulesValidating.value++;
 
           const node = buffer.addLast(false);
 
@@ -247,9 +246,9 @@ export class Form {
           }
 
           buffer.remove(node);
+          formField.rulesValidating.value--;
 
           if (!node.value) {
-            formField.validating.value = false;
             setError(formField, ruleNumber, error);
           }
         } else {

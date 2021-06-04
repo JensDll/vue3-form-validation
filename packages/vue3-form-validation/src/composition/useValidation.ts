@@ -123,7 +123,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
   return {
     form: transformedFormData,
     submitting: form.submitting,
-    errors: form.getErrors(),
+    errors: form.errors,
 
     async validateFields(names) {
       form.submitting.value = true;

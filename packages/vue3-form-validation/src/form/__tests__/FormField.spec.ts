@@ -17,7 +17,7 @@ describe('get errors', () => {
     formField.setError(2, 'c');
     formField.setError(3, 'd');
 
-    const errors = formField.getErrors().value;
+    const errors = formField.errors.value;
 
     expect(errors.length).toBe(4);
 
