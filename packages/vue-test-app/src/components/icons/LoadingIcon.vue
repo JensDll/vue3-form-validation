@@ -13,13 +13,14 @@
   </svg>
 </template>
 
-<script lang="ts">
-import { defineComponent } from '@vue/runtime-core';
+<script>
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   props: {
     spin: {
-      type: Boolean
+      type: Boolean,
+      default: true
     }
   }
 });

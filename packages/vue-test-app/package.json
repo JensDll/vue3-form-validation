@@ -10,5 +10,8 @@
     "autoprefixer": "^10.2.6",
     "postcss": "^8.3.0",
     "tailwindcss": "^2.1.2"
+  },
+  "dependencies": {
+    "@heroicons/vue": "^1.0.1"
   }
 }

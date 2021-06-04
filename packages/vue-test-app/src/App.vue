@@ -1,11 +1,18 @@
 <template>
-  <TheNavLinks />
-  <TheMain />
+  <NavLinks />
+  <main>
+    <router-view />
+  </main>
 </template>
 
-<script setup lang="ts">
-import TheNavLinks from './components/layout/TheNavLinks.vue';
-import TheMain from './components/layout/TheMain.vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+import NavLinks from './components/NavLinks.vue';
+
+export default defineComponent({
+  components: { NavLinks }
+});
 </script>
 
 <style lang="postcss">
@@ -14,13 +21,20 @@ body {
 }
 
 #app {
-  padding: 6rem 0 0 0;
+  padding: 60px;
   display: grid;
+  row-gap: 60px;
   justify-items: center;
-  row-gap: 4rem;
-  grid-template-columns: 1fr;
-  grid-template-areas:
-    'nav-links'
-    'main';
+  grid-template-rows: auto 1fr;
+}
+
+main {
+  width: 100%;
+  max-width: 700px;
+  min-width: 540px;
+}
+
+.form-label {
+  @apply block mb-2 font-semibold;
 }
 </style>

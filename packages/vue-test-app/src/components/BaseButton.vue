@@ -13,19 +13,14 @@
     :type="htmlType"
   >
     <slot></slot>
-    <IconLoading v-if="loading" class="ml-2 w-4 h-4 text-white" spin />
   </button>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue';
-import IconLoading from '../../icons/IconLoading.vue';
 
 export default defineComponent({
   name: 'VButton',
-  components: {
-    IconLoading
-  },
   props: {
     loading: {
       type: Boolean
@@ -38,7 +33,7 @@ export default defineComponent({
       default: 'button'
     },
     type: {
-      type: String,
+      type: String as PropType<'primary' | 'secondary'>,
       default: 'primary'
     }
   }
