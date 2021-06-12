@@ -18,7 +18,11 @@ export function getResultFormData(transformedFormData: any): any {
         set(result, path, value.$value);
       }
     } else if (isLeaf) {
-      set(result, path, value);
+      if (isReactive(value)) {
+        set(result, path, jsonCopy(value));
+      } else {
+        set(result, path, value);
+      }
     }
   }
 
