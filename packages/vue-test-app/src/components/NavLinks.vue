@@ -21,7 +21,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline';
 import { defineComponent } from 'vue';
 
-const links = ['/'];
+const links = ['/', '/dynamic-form'];
 
 export default defineComponent({
   components: {
