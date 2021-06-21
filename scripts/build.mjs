@@ -3,10 +3,11 @@ import execa from 'execa';
 
 async function lintCheck() {
   const { stdout } = await execa('npm', ['run', 'lint-check']);
+
   return stdout;
 }
 
-async function build() {
+async function build(dirname) {
   const { stdout } = await execa('npm', [
     'exec',
     '--',
@@ -16,6 +17,7 @@ async function build() {
     '--outDir',
     `./${dirname}/dist`
   ]);
+  
   return stdout;
 }
 
@@ -29,7 +31,7 @@ console.log('Checking files ...');
 console.log(await lintCheck());
 
 console.log('Building ...');
-console.log(await build());
+console.log(await build(dirname));
 
 await fs.copyFile(
   `packages/vue3-form-validation/package.json`,
