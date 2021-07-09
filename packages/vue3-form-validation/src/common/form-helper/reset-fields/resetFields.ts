@@ -1,4 +1,4 @@
-import { jsonCopy } from '../../json-copy/jsonCopy';
+import { deepCopy } from '../../deep-copy/deep-copy';
 import {
   isArray,
   isObject,
@@ -11,9 +11,9 @@ export function resetFields(formData: any, transformedFormData: any) {
 
     if (isTransformedField(transformedValue)) {
       if (isArray(transformedValue.$value)) {
-        transformedValue.$value = jsonCopy(value);
+        transformedValue.$value = deepCopy(value);
       } else if (isObject(transformedValue.$value)) {
-        const copy = jsonCopy(value);
+        const copy = deepCopy(value);
         Object.assign(transformedValue.$value, copy);
       } else {
         transformedValue.$value = value;
