@@ -2,11 +2,7 @@ import { deepIterator } from '../deep-iterator/deepIterator';
 import { set } from '../set/set';
 import { isArray } from '../type-guards/typeGuards';
 
-export function deepCopy(value: any) {
-  return deepCopyImpl(value);
-}
-
-function deepCopyImpl(toClone: any) {
+export function deepCopy(toClone: any) {
   if (typeof toClone !== 'object') {
     return toClone;
   }
