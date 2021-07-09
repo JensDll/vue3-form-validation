@@ -1,6 +1,6 @@
 import { computed, isReactive, isRef, reactive, ref, unref } from 'vue';
 import { isArray, isObject, isDefined } from '../common';
-import { jsonCopy } from '../common/json-copy/jsonCopy';
+import { deepCopy } from '../common/deep-copy/deep-copy';
 import { Rule } from '../composition/useValidation';
 
 export class FormField {
@@ -21,13 +21,13 @@ export class FormField {
 
     if (isRef(modelValue) || isReactive(modelValue)) {
       this.modelValue = modelValue;
-      this._initialModelValue = jsonCopy(unref(modelValue));
+      this._initialModelValue = deepCopy(unref(modelValue));
     } else if (isObject(modelValue)) {
       this.modelValue = reactive(modelValue);
-      this._initialModelValue = jsonCopy(this.modelValue);
+      this._initialModelValue = deepCopy(this.modelValue);
     } else {
       this.modelValue = ref(modelValue);
-      this._initialModelValue = jsonCopy(unref(modelValue));
+      this._initialModelValue = deepCopy(unref(modelValue));
     }
   }
 
@@ -41,12 +41,12 @@ export class FormField {
     if (toDefaultValues) {
       if (isRef(this.modelValue)) {
         if (isArray(this.modelValue.value)) {
-          this.modelValue.value = jsonCopy(this._initialModelValue);
+          this.modelValue.value = deepCopy(this._initialModelValue);
         } else {
           this.modelValue.value = this._initialModelValue;
         }
       } else {
-        const copy = jsonCopy(this._initialModelValue);
+        const copy = deepCopy(this._initialModelValue);
         Object.assign(this.modelValue, copy);
       }
     }

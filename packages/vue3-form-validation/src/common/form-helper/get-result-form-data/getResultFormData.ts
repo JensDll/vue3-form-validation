@@ -1,6 +1,6 @@
 import { isReactive } from 'vue';
 import { deepIterator } from '../../deep-iterator/deepIterator';
-import { jsonCopy } from '../../json-copy/jsonCopy';
+import { deepCopy } from '../../deep-copy/deep-copy';
 import { set } from '../../set/set';
 import { isTransformedField } from '../../type-guards/typeGuards';
 
@@ -13,13 +13,13 @@ export function getResultFormData(transformedFormData: any): any {
   )) {
     if (isTransformedField(value)) {
       if (isReactive(value.$value)) {
-        set(result, path, jsonCopy(value.$value));
+        set(result, path, deepCopy(value.$value));
       } else {
         set(result, path, value.$value);
       }
     } else if (isLeaf) {
       if (isReactive(value)) {
-        set(result, path, jsonCopy(value));
+        set(result, path, deepCopy(value));
       } else {
         set(result, path, value);
       }
