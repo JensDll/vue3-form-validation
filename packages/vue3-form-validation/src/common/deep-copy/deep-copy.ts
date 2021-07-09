@@ -3,16 +3,17 @@ import { set } from '../set/set';
 import { isArray } from '../type-guards/typeGuards';
 
 export function deepCopy(value: any) {
-  if (typeof value === 'object') {
-    return deepCopyImpl(value);
-  }
-  return value;
+  return deepCopyImpl(value);
 }
 
-function deepCopyImpl(obj: any) {
-  const copy = isArray(obj) ? [] : {};
+function deepCopyImpl(toClone: any) {
+  if (typeof toClone !== 'object') {
+    return toClone;
+  }
 
-  for (const [, value, , path, isLeaf] of deepIterator(obj)) {
+  const copy = isArray(toClone) ? [] : {};
+
+  for (const [, value, , path, isLeaf] of deepIterator(toClone)) {
     if (isLeaf) {
       if (value instanceof File) {
         set(copy, path, new File([value], value.name, { type: value.type }));
