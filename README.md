@@ -201,14 +201,14 @@ By placing the `modelValue` `x` as the last argument gives you very concise synt
 ```ts
 useValidation({
   someField: {
-    $value: "",
+    $value: '',
     rules: [
-      required("Message"),
-      min(3)("Message"),
-      max(8)("Message"),
-      minMax(5, 20)("Message"),
-      email("Message"),
-      equal("Message")
+      required('Message'),
+      min(3)('Message'),
+      max(8)('Message'),
+      minMax(5, 20)('Message'),
+      email('Message'),
+      equal('Message')
     ]
   }
 })
