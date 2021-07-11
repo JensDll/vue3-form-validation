@@ -196,7 +196,7 @@ export const email = msg => x => /\S+@\S+\.\S+/.test(x) || msg;
 export const equal = msg => (...xs) => xs.every(x => x === xs[0]) || msg;
 ```
 
-You can put these in a separate file and use them wherever you need. Placing the `modelValue` ( x ) as the last argument of the function chain gives you a concise syntax when using them together with `useValidation`:
+You can put these in a separate file and use them wherever you need. Placing the `modelValue` (here `x`) as the last argument of the function chain gives you a concise syntax when using them together with `useValidation`:
 
 ```ts
 useValidation({
