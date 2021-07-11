@@ -183,7 +183,7 @@ Simple rules will only receive their own argument, whereas keyed rules will also
 > To prevent overly aggressive error messages, keyed rules will only be called
 > after all fields with connected rules have been touched.
 
-To determine if a call should result in an error, it will check if the rule's return value is of type `string`. For convenience, you can put some of the more general rules in a separate file and reuse them wherever you need:
+To determine if a call should result in an error, it will check if the rule's return value is of type `string`. There are no build-in rules included in this package, as implementation details may differ across applications. However, here is an example of how some generic rules might look like:
 
 `rules.js`
 ```ts
@@ -196,7 +196,7 @@ export const email = msg => x => /\S+@\S+\.\S+/.test(x) || msg;
 export const equal = msg => (...xs) => xs.every(x => x === xs[0]) || msg;
 ```
 
-By placing the `modelValue` `x` as the last argument gives you very concise syntax:
+You can put these in a separate file and use them wherever you need. Placing the `modelValue` ( x ) as the last argument of the function chain gives you a concise syntax when using them together with `useValidation`:
 
 ```ts
 useValidation({
