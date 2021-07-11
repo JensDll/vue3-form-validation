@@ -203,12 +203,12 @@ useValidation({
   someField: {
     $value: '',
     rules: [
-      required('Message'),
-      min(3)('Message'),
-      max(8)('Message'),
-      minMax(5, 20)('Message'),
-      email('Message'),
-      equal('Message')
+      required('Your message'),
+      min(3)('Your message'),
+      max(8)('Your message'),
+      minMax(5, 20)('Your message'),
+      email('Your message'),
+      equal('Your message')
     ]
   }
 })
