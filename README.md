@@ -176,23 +176,43 @@ type KeyedRule = {
 type Rule<T = any> = SimpleRule<T> | KeyedRule;
 ```
 
-Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Confirm Password` fields in a [Signup Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
+Keyed rules that share the same `key` will be executed together. This can be useful in a situation where rules are dependent on another, such as the `Password` and `Confirm Password` fields in a [Register Form](https://codesandbox.io/s/vue-3-form-validation-demo-7mp4z?file=/src/views/SignupForm.vue).
 Rules will always be called with the latest `modelValue`.
 Simple rules will only receive their own argument, whereas keyed rules will also receive every other `modelValue` with a matching key.
 
 > To prevent overly aggressive error messages, keyed rules will only be called
 > after all fields with connected rules have been touched.
 
-To determine if a call should result in an error, it will check if the rule's return value is of type `string`. This way, many basic rules can be written in one line:
+To determine if a call should result in an error, it will check if the rule's return value is of type `string`. For convenience, you can put some of the more general rules in a separate file and reuse them wherever you need:
 
+`rules.js`
 ```ts
-const required = value => !value && 'This field is required';
-const min = value =>
-  value.length > 3 || 'This field has to be longer than 3 characters';
-const max = value =>
-  value.length < 7 || 'This field is too long (maximum is 6 characters)';
+export const required = msg => x => !x && msg;
+export const min = min => msg => x => x.length >= min || msg;
+export const max = max => msg => x => x.length <= max || msg;
+export const minMax = (min, max) => msg => x =>
+  (min <= x.length && x.length <= max) || msg;
+export const email = msg => x => /\S+@\S+\.\S+/.test(x) || msg;
+export const equal = msg => (...xs) => xs.every(x => x === xs[0]) || msg;
 ```
 
+By placing the `modelValue` `x` as the last argument gives you very concise syntax:
+
+```ts
+useValidation({
+  someField: {
+    $value: "",
+    rules: [
+      required("Message"),
+      min(3)("Message"),
+      max(8)("Message"),
+      minMax(5, 20)("Message"),
+      email("Message"),
+      equal("Message")
+    ]
+  }
+})
+```
 Async rules allow you to perform network requests, for example checking if a username exists in the database. The same principle applies as for synchronous rules, `resolve` or `reject` with a string if the validation fails:
 
 ```ts
