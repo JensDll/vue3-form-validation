@@ -37,7 +37,7 @@
     "fs-extra": "^10.0.0",
     "husky": "^7.0.1",
     "jest": "^27.0.6",
-    "lint-staged": "^11.0.0",
+    "lint-staged": "^11.0.1",
     "pinst": "^2.1.6",
     "postcss": "^8.3.5",
     "postcss-nesting": "^8.0.1",
