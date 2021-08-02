@@ -12,6 +12,6 @@
     "tailwindcss": "^2.2.2"
   },
   "dependencies": {
-    "@heroicons/vue": "^1.0.1"
+    "@heroicons/vue": "^1.0.3"
   }
 }
