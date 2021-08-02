@@ -28,7 +28,7 @@
     "@types/jest": "^26.0.24",
     "@types/node": "^16.3.0",
     "@typescript-eslint/eslint-plugin": "^4.28.2",
-    "@typescript-eslint/parser": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.5",
     "@vitejs/plugin-vue": "^1.2.4",
     "@vue/compiler-sfc": "^3.1.4",
     "autoprefixer": "^10.2.6",
