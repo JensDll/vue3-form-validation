@@ -9,6 +9,7 @@ import {
   transformFormData
 } from '../common';
 import { Form } from '../form/Form';
+import { FormField } from '../form/FormField';
 import { ValidationError } from '../form/ValidationError';
 import { RefUnref } from '../types';
 
@@ -77,6 +78,7 @@ export type DeepIndex<T, Ks extends Keys, R = unknown> = Ks extends [
 
 type UseValidation<T extends object> = {
   form: TransformedFormData<T>;
+  formFields: Ref<Set<FormField>>;
   submitting: Ref<boolean>;
   errors: ComputedRef<string[]>;
   validateFields(names?: FieldNames<T>[] | string[]): Promise<FormData<T>>;
@@ -120,6 +122,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
 
   return {
     form: transformedFormData,
+    formFields: form.formFields,
     submitting: form.submitting,
     errors: form.errors,
 
