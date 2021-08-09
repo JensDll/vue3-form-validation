@@ -85,52 +85,58 @@ export default defineComponent({
     ValidationErrors
   },
   setup() {
-    const { form, errors, submitting, validateFields, resetFields } =
-      useValidation({
-        name: {
-          $value: '',
-          $rules: [
-            required('Name is required'),
-            min(3)('Name has to be longer than 2 characters'),
-            name =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  if (['alice', 'bob', 'oscar'].includes(name.toLowerCase())) {
-                    resolve();
-                  } else {
-                    // Resolve or reject with a string
-                    reject('This name is already taken');
-                  }
-                }, 2000);
-              }),
-            promise(3000)
-          ]
-        },
-        email: {
-          $value: '',
-          $rules: [email('Please enter a valid email address')]
-        },
-        password: {
-          $value: '',
-          $rules: [
-            min(8)('Password has to be longer than 7 characters'),
-            {
-              key: 'pw',
-              rule: equal('Passwords do not match')
-            }
-          ]
-        },
-        confirmPassword: {
-          $value: '',
-          $rules: [
-            min(8)('Password has to be longer than 7 characters'),
-            {
-              key: 'pw',
-              rule: equal('Passwords do not match')
-            }
-          ]
-        }
-      });
+    const {
+      form,
+      formFields,
+      errors,
+      submitting,
+      validateFields,
+      resetFields
+    } = useValidation({
+      name: {
+        $value: '',
+        $rules: [
+          required('Name is required'),
+          min(3)('Name has to be longer than 2 characters'),
+          name =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                if (['alice', 'bob', 'oscar'].includes(name.toLowerCase())) {
+                  resolve();
+                } else {
+                  // Resolve or reject with a string
+                  reject('This name is already taken');
+                }
+              }, 2000);
+            }),
+          promise(3000)
+        ]
+      },
+      email: {
+        $value: '',
+        $rules: [email('Please enter a valid email address')]
+      },
+      password: {
+        $value: '',
+        $rules: [
+          min(8)('Password has to be longer than 7 characters'),
+          {
+            key: 'pw',
+            rule: equal('Passwords do not match')
+          }
+        ]
+      },
+      confirmPassword: {
+        $value: '',
+        $rules: [
+          min(8)('Password has to be longer than 7 characters'),
+          {
+            key: 'pw',
+            rule: equal('Passwords do not match')
+          }
+        ]
+      }
+    });
 
     const handleSubmit = async () => {
       try {
@@ -139,6 +145,10 @@ export default defineComponent({
       } catch (e) {
         if (e instanceof ValidationError) {
           console.log(e.message);
+        }
+      } finally {
+        for (const formField of formFields.value.values()) {
+          formField.touched = false;
         }
       }
     };

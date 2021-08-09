@@ -97,7 +97,7 @@ import SubmitButtons from '../components/SubmitButtons.vue';
 import ValidationErrors from '../components/ValidationErrors.vue';
 import { MinusCircleIcon, PlusCircleIcon } from '@heroicons/vue/outline';
 
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { required, randomPromise } from '../utils';
 import { Field, useValidation, ValidationError } from 'vue3-form-validation';
 
@@ -127,6 +127,7 @@ export default {
     const selectedNames = ref(['a', 'b', 'c', 'd']);
     const {
       form,
+      formFields,
       submitting,
       errors,
       validateFields,
@@ -175,6 +176,7 @@ export default {
     };
 
     const handleSubmit = async () => {
+      console.log(formFields.value);
       try {
         const formData = await validateFields(selectedNames.value);
         console.log(formData);
