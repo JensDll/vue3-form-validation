@@ -40,6 +40,7 @@ export class Form {
   private tryGetKeyedSet = tryGet(this.keyedSetMap);
   private tryGetSimple = tryGet(this.simpleMap);
 
+  formFields = ref(new Set<FormField>());
   submitting = ref(false);
   errors = computed(() => {
     const errors: string[] = [];
@@ -97,6 +98,8 @@ export class Form {
     this.simpleMap.set(uid, simple);
     this.reactiveFormFieldMap.set(uid, formField);
 
+    this.formFields.value.add(formField);
+
     return formField;
   }
 
@@ -125,7 +128,8 @@ export class Form {
 
   onDelete(uid: number) {
     this.tryGetSimple({
-      success({ rollbacks }) {
+      success: ({ rollbacks, formField }) => {
+        this.formFields.value.delete(formField);
         rollbacks.forEach(r => r());
       }
     })(uid);

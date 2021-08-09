@@ -11,11 +11,7 @@ export function deepCopy(toClone: any) {
 
   for (const [, value, , path, isLeaf] of deepIterator(toClone)) {
     if (isLeaf) {
-      if (value instanceof File) {
-        set(copy, path, new File([value], value.name, { type: value.type }));
-      } else {
-        set(copy, path, value);
-      }
+      set(copy, path, value);
     }
   }
 
