@@ -3,3 +3,4 @@ node_modules
 publish
 tmp
 *.local
+**/dist
