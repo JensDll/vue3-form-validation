@@ -1,21 +1,23 @@
 {
   "name": "vue3-form-validation",
-  "version": "4.1.0",
+  "version": "4.1.1",
   "description": "Vue composition function for Form Validation",
   "author": {
     "name": "jens",
     "email": "jens@doellmann.com"
   },
   "type": "module",
+  "main": "dist/vue3-form-validation.cjs.js",
+  "types": "dist/vue3-form-validation.d.ts",
   "exports": {
-    "import": "./dist-esm/index.js",
-    "require": "./dist-cjs/index.js"
+    "import": "./dist/vue3-form-validation.esm.js",
+    "require": "./dist/vue3-form-validation.cjs.js"
   },
-  "main": "dist-cjs/index.js",
-  "types": "dist/index.d.ts",
   "files": [
-    "dist/**/*.js",
-    "dist/**/*.d.ts"
+    "dist/*.js",
+    "dist/vue3-form-validation.d.ts",
+    "LICENSE",
+    "README.md"
   ],
   "license": "MIT",
   "repository": {

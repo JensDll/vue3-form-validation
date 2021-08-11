@@ -15,9 +15,9 @@
   },
   "scripts": {
     "lint-check": "npm exec -- eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
-    "build-watch": "npm exec -- tsc --project ./packages/vue3-form-validation --watch",
-    "build": "npm run link-check && rollup --config rollup.config.js",
+    "build": "npm run lint-check && node ./scripts/build.mjs",
     "dev": "npm run dev -w vue-test-app",
+    "watch": "npm exec -- tsc --project ./packages/vue3-form-validation --watch",
     "test": "jest",
     "test-dts": "npm exec -- tsc --project ./test-dts && npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",
