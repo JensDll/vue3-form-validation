@@ -1,5 +1,5 @@
-let uid = 1;
+let uid = 1
 
 export function useUid() {
-  return uid++;
+  return uid++
 }

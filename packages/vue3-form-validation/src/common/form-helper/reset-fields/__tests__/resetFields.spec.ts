@@ -1,13 +1,13 @@
-import { Field, useValidation } from '../../../../composition/useValidation';
+import { Field, useValidation } from '../../../../composition/useValidation'
 
 type FormData = {
-  a: Field<string>;
-  b: Field<string>;
+  a: Field<string>
+  b: Field<string>
   cs: {
-    d: Field<string>;
-    e: Field<string>;
-  }[];
-};
+    d: Field<string>
+    e: Field<string>
+  }[]
+}
 
 it('reset to default values', () => {
   const { form, resetFields } = useValidation<FormData>({
@@ -18,18 +18,18 @@ it('reset to default values', () => {
       { d: { $value: '' }, e: { $value: '' } },
       { d: { $value: '' }, e: { $value: '' } }
     ]
-  });
+  })
 
-  form.a.$value = 'a';
-  form.b.$value = 'b';
-  form.cs[0].d.$value = 'd1';
-  form.cs[0].e.$value = 'e1';
-  form.cs[1].d.$value = 'd2';
-  form.cs[1].e.$value = 'e2';
-  form.cs[2].d.$value = 'd3';
-  form.cs[2].e.$value = 'e3';
+  form.a.$value = 'a'
+  form.b.$value = 'b'
+  form.cs[0].d.$value = 'd1'
+  form.cs[0].e.$value = 'e1'
+  form.cs[1].d.$value = 'd2'
+  form.cs[1].e.$value = 'e2'
+  form.cs[2].d.$value = 'd3'
+  form.cs[2].e.$value = 'e3'
 
-  resetFields();
+  resetFields()
 
   expect(form).toStrictEqual<typeof form>({
     a: {
@@ -104,8 +104,8 @@ it('reset to default values', () => {
         }
       }
     ]
-  });
-});
+  })
+})
 
 it('reset to specific values', () => {
   const { form, resetFields } = useValidation<FormData>({
@@ -116,7 +116,7 @@ it('reset to specific values', () => {
       { d: { $value: '' }, e: { $value: '' } },
       { d: { $value: '' }, e: { $value: '' } }
     ]
-  });
+  })
 
   resetFields({
     a: 'a',
@@ -131,7 +131,7 @@ it('reset to specific values', () => {
         e: 'e2'
       }
     ]
-  });
+  })
 
   expect(form).toStrictEqual<typeof form>({
     a: {
@@ -206,5 +206,5 @@ it('reset to specific values', () => {
         }
       }
     ]
-  });
-});
+  })
+})

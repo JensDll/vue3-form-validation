@@ -1,5 +1,5 @@
-import { isRef } from 'vue';
-import { LinkedList } from '../linked-list/LinkedList';
+import { isRef } from 'vue'
+import { LinkedList } from '../linked-list/LinkedList'
 
 type Result = [
   key: string,
@@ -7,7 +7,7 @@ type Result = [
   parent: any,
   path: string[],
   isLeaf: boolean
-];
+]
 
 export function* deepIterator(
   obj: object,
@@ -15,14 +15,14 @@ export function* deepIterator(
 ): Generator<Result> {
   const stack = new LinkedList<
     [current: any, parent: any, parentKey: string, path: string[]]
-  >();
-  stack.addLast([obj, null, '', []]);
+  >()
+  stack.addLast([obj, null, '', []])
 
   while (stack.count > 0) {
-    const [current, parent, parentKey, path] = stack.last!.value;
-    stack.removeLast();
+    const [current, parent, parentKey, path] = stack.last!.value
+    stack.removeLast()
 
-    let pushedItemsOnStack = false;
+    let pushedItemsOnStack = false
 
     if (
       typeof current === 'object' &&
@@ -30,18 +30,18 @@ export function* deepIterator(
       !isRef(current) &&
       !predicate(current)
     ) {
-      const entries = Object.entries(current);
+      const entries = Object.entries(current)
 
-      pushedItemsOnStack = entries.length > 0;
+      pushedItemsOnStack = entries.length > 0
 
       for (let i = entries.length - 1; i >= 0; i--) {
-        const [key, value] = entries[i];
-        stack.addLast([value, current, key, [...path, key]]);
+        const [key, value] = entries[i]
+        stack.addLast([value, current, key, [...path, key]])
       }
     }
 
     if (typeof parent === 'object' && parent !== null) {
-      yield [parentKey, parent[parentKey], parent, path, !pushedItemsOnStack];
+      yield [parentKey, parent[parentKey], parent, path, !pushedItemsOnStack]
     }
   }
 }

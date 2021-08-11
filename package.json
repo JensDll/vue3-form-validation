@@ -15,16 +15,17 @@
   },
   "scripts": {
     "lint-check": "npm exec -- eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
-    "build": "node ./scripts/build.mjs",
     "build-watch": "npm exec -- tsc --project ./packages/vue3-form-validation --watch",
+    "build": "npm run link-check && rollup --config rollup.config.js",
     "dev": "npm run dev -w vue-test-app",
     "test": "jest",
     "test-dts": "npm exec -- tsc --project ./test-dts && npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",
     "postinstall": "husky install",
-    "publish": "cd dist && npm publish"
+    "publish": "cd publish && npm publish"
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.5",
     "@types/jest": "^26.0.24",
     "@types/node": "^16.4.13",
     "@typescript-eslint/eslint-plugin": "^4.29.1",
@@ -42,6 +43,7 @@
     "postcss": "^8.3.6",
     "postcss-nesting": "^8.0.1",
     "prettier": "^2.3.2",
+    "rollup-plugin-dts": "^3.0.2",
     "tailwindcss": "^2.2.7",
     "ts-jest": "^27.0.4",
     "ts-node": "^10.2.0",
@@ -56,10 +58,15 @@
     "singleQuote": true,
     "arrowParens": "avoid",
     "trailingComma": "none",
+    "semi": false,
     "endOfLine": "crlf"
   },
   "types": "test-dts/dist/index.d.ts",
   "tsd": {
     "directory": "test-dts"
+  },
+  "dependencies": {
+    "glob": "^7.1.7",
+    "rollup": "^2.56.2"
   }
 }

@@ -4,55 +4,55 @@ import {
   isDefined,
   isObject,
   isTransformedField
-} from '../typeGuards';
+} from '../typeGuards'
 
 describe('isDefined', () => {
   it('null -> false', () => {
-    expect(isDefined(null)).toBe(false);
-  });
+    expect(isDefined(null)).toBe(false)
+  })
 
   it('undefined -> false', () => {
-    expect(isDefined(void 0)).toBe(false);
-  });
+    expect(isDefined(void 0)).toBe(false)
+  })
 
   it('any -> true', () => {
-    expect(isDefined(0)).toBe(true);
-  });
-});
+    expect(isDefined(0)).toBe(true)
+  })
+})
 
 describe('isObject', () => {
   it('array -> false', () => {
-    expect(isObject([])).toBe(false);
-  });
+    expect(isObject([])).toBe(false)
+  })
 
   it('null -> false', () => {
-    expect(isObject(null)).toBe(false);
-  });
+    expect(isObject(null)).toBe(false)
+  })
 
   it('{} -> true', () => {
-    expect(isObject({})).toBe(true);
-  });
-});
+    expect(isObject({})).toBe(true)
+  })
+})
 
 describe('isArray', () => {
   it('null -> false', () => {
-    expect(isArray(null)).toBe(false);
-  });
+    expect(isArray(null)).toBe(false)
+  })
 
   it('{} -> false', () => {
-    expect(isArray({})).toBe(false);
-  });
+    expect(isArray({})).toBe(false)
+  })
 
   it('[] -> true', () => {
-    expect(isArray([])).toBe(true);
-  });
-});
+    expect(isArray([])).toBe(true)
+  })
+})
 
 describe('isField', () => {
   it('field -> true', () => {
-    expect(isField({ $value: '', $rules: [] })).toBe(true);
-  });
-});
+    expect(isField({ $value: '', $rules: [] })).toBe(true)
+  })
+})
 
 describe('isTransformedField', () => {
   it('transformedField -> true', () => {
@@ -67,6 +67,6 @@ describe('isTransformedField', () => {
           //
         }
       })
-    ).toBe(true);
-  });
-});
+    ).toBe(true)
+  })
+})

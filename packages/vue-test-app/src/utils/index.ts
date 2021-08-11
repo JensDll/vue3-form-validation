@@ -1,4 +1,4 @@
-export { sleep } from './sleep';
+export { sleep } from './sleep'
 export {
   required,
   min,
@@ -7,4 +7,4 @@ export {
   equal,
   promise,
   randomPromise
-} from './rules';
+} from './rules'

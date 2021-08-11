@@ -1,33 +1,33 @@
-import { ref } from 'vue';
-import { Field, TransformedFormData, useValidation } from '../useValidation';
+import { ref } from 'vue'
+import { Field, TransformedFormData, useValidation } from '../useValidation'
 
 type TestData = {
-  a: Field<string>;
-  b: Field<string>;
-  c: Field<number[]>;
-  d: Field<{ a: string }>;
+  a: Field<string>
+  b: Field<string>
+  c: Field<number[]>
+  d: Field<{ a: string }>
   es: {
-    f: Field<string>;
+    f: Field<string>
     gs: {
       h: Field<{
         a: {
           b: {
-            c: number[];
-          };
-        };
-      }>;
-    }[];
-  }[];
-};
+            c: number[]
+          }
+        }
+      }>
+    }[]
+  }[]
+}
 
-let testData: TestData;
+let testData: TestData
 
 const delay = () =>
   new Promise(resolve => {
     setTimeout(() => {
-      resolve(null);
-    }, 500);
-  });
+      resolve(null)
+    }, 500)
+  })
 
 beforeEach(() => {
   testData = {
@@ -78,29 +78,29 @@ beforeEach(() => {
         ]
       }
     ]
-  };
-});
+  }
+})
 
 const changeFormValues = (form: TransformedFormData<TestData>) => {
-  form.a.$value = 'a';
-  form.b.$value = 'b';
-  form.c.$value[0] = 100;
-  form.c.$value[1] = 100;
-  form.c.$value[2] = 100;
-  form.c.$value[3] = 100;
-  form.c.$value[4] = 100;
-  form.d.$value.a = 'd.a';
-  form.es[0].f.$value = 'f0';
-  form.es[1].f.$value = 'f1';
-  (form.es[1].gs[0].h.$value.a.b.c as any)[0] = 200;
-  (form.es[1].gs[0].h.$value.a.b.c as any)[1] = 200;
-  (form.es[1].gs[0].h.$value.a.b.c as any)[2] = 200;
-  (form.es[1].gs[0].h.$value.a.b.c as any)[3] = 200;
-  (form.es[1].gs[0].h.$value.a.b.c as any)[4] = 200;
-};
+  form.a.$value = 'a'
+  form.b.$value = 'b'
+  form.c.$value[0] = 100
+  form.c.$value[1] = 100
+  form.c.$value[2] = 100
+  form.c.$value[3] = 100
+  form.c.$value[4] = 100
+  form.d.$value.a = 'd.a'
+  form.es[0].f.$value = 'f0'
+  form.es[1].f.$value = 'f1'
+  ;(form.es[1].gs[0].h.$value.a.b.c as any)[0] = 200
+  ;(form.es[1].gs[0].h.$value.a.b.c as any)[1] = 200
+  ;(form.es[1].gs[0].h.$value.a.b.c as any)[2] = 200
+  ;(form.es[1].gs[0].h.$value.a.b.c as any)[3] = 200
+  ;(form.es[1].gs[0].h.$value.a.b.c as any)[4] = 200
+}
 
 test('change form values after submitting', done => {
-  const { form, validateFields } = useValidation<TestData>(testData);
+  const { form, validateFields } = useValidation<TestData>(testData)
 
   validateFields()
     .then(formData => {
@@ -120,26 +120,26 @@ test('change form values after submitting', done => {
             ]
           }
         ]
-      });
+      })
     })
     .catch(e => {
-      fail(e);
+      fail(e)
     })
     .finally(() => {
-      done();
-    });
+      done()
+    })
 
-  changeFormValues(form);
-});
+  changeFormValues(form)
+})
 
 describe('reset fields', () => {
   test('mutiple times to default values', () => {
-    const { form, resetFields } = useValidation<TestData>(testData);
+    const { form, resetFields } = useValidation<TestData>(testData)
 
     for (let i = 0; i < 10; i++) {
-      changeFormValues(form);
+      changeFormValues(form)
 
-      resetFields();
+      resetFields()
 
       expect(form).toStrictEqual<typeof form>({
         a: {
@@ -215,15 +215,15 @@ describe('reset fields', () => {
             ]
           }
         ]
-      });
+      })
     }
-  });
+  })
 
   test('mutiple times to specific values', () => {
-    const { form, resetFields } = useValidation<TestData>(testData);
+    const { form, resetFields } = useValidation<TestData>(testData)
 
     for (let i = 0; i < 10; i++) {
-      changeFormValues(form);
+      changeFormValues(form)
 
       resetFields({
         a: 'foo',
@@ -241,7 +241,7 @@ describe('reset fields', () => {
             ]
           }
         ]
-      });
+      })
 
       expect(form).toStrictEqual<typeof form>({
         a: {
@@ -317,15 +317,15 @@ describe('reset fields', () => {
             ]
           }
         ]
-      });
+      })
     }
-  });
+  })
 
   test('mutiple times to specific values and default values', () => {
-    const { form, resetFields } = useValidation<TestData>(testData);
+    const { form, resetFields } = useValidation<TestData>(testData)
 
     for (let i = 0; i < 20; i++) {
-      changeFormValues(form);
+      changeFormValues(form)
 
       if (i % 2 === 0) {
         resetFields({
@@ -344,7 +344,7 @@ describe('reset fields', () => {
               ]
             }
           ]
-        });
+        })
 
         expect(form).toStrictEqual<typeof form>({
           a: {
@@ -420,9 +420,9 @@ describe('reset fields', () => {
               ]
             }
           ]
-        });
+        })
       } else {
-        resetFields();
+        resetFields()
 
         expect(form).toStrictEqual<typeof form>({
           a: {
@@ -498,22 +498,22 @@ describe('reset fields', () => {
               ]
             }
           ]
-        });
+        })
       }
     }
-  });
-});
+  })
+})
 
 describe('add and remove', () => {
   test('add field', () => {
-    const { form, add } = useValidation(testData);
+    const { form, add } = useValidation(testData)
 
     add(['es'], {
       f: {
         $value: ref('')
       },
       gs: []
-    });
+    })
 
     expect(form).toStrictEqual<typeof form>({
       a: {
@@ -600,13 +600,13 @@ describe('add and remove', () => {
           gs: []
         }
       ]
-    });
-  });
+    })
+  })
 
   test('remove field', () => {
-    const { form, remove } = useValidation(testData);
+    const { form, remove } = useValidation(testData)
 
-    remove(['es', 1]);
+    remove(['es', 1])
 
     expect(form).toStrictEqual<typeof form>({
       a: {
@@ -654,6 +654,6 @@ describe('add and remove', () => {
           gs: []
         }
       ]
-    });
-  });
-});
+    })
+  })
+})

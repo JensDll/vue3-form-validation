@@ -1,18 +1,18 @@
-import { Field, useValidation } from '../../../../composition/useValidation';
-import { getResultFormData } from '../getResultFormData';
+import { Field, useValidation } from '../../../../composition/useValidation'
+import { getResultFormData } from '../getResultFormData'
 
 type FormData = {
-  a: Field<string>;
-  b: Field<string>;
+  a: Field<string>
+  b: Field<string>
   cs: {
-    d: Field<string>;
-    e: Field<string>;
-  }[];
+    d: Field<string>
+    e: Field<string>
+  }[]
   some: {
-    extra: string;
-    stuff: any[];
-  };
-};
+    extra: string
+    stuff: any[]
+  }
+}
 
 const generateTestData = () =>
   useValidation<FormData>({
@@ -24,10 +24,10 @@ const generateTestData = () =>
       { d: { $value: '' }, e: { $value: '' } }
     ],
     some: { extra: '', stuff: [1, 2, 3] }
-  }).form;
+  }).form
 
 it('should only keep the value proerties', () => {
-  const formData = generateTestData();
+  const formData = generateTestData()
 
   expect(getResultFormData(formData)).toStrictEqual({
     a: '',
@@ -38,5 +38,5 @@ it('should only keep the value proerties', () => {
       { d: '', e: '' }
     ],
     some: { extra: '', stuff: [1, 2, 3] }
-  });
-});
+  })
+})

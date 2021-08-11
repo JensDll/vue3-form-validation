@@ -1,13 +1,13 @@
-import { Field, useValidation } from '../../../../composition/useValidation';
+import { Field, useValidation } from '../../../../composition/useValidation'
 
 type FormData = {
-  a: Field<string>;
-  b: Field<string>;
+  a: Field<string>
+  b: Field<string>
   cs: {
-    d: Field<string>;
-    e: Field<string>;
-  }[];
-};
+    d: Field<string>
+    e: Field<string>
+  }[]
+}
 
 it('should transform every field', () => {
   const { form } = useValidation<FormData>({
@@ -18,7 +18,7 @@ it('should transform every field', () => {
       { d: { $value: '' }, e: { $value: '' } },
       { d: { $value: '' }, e: { $value: '' } }
     ]
-  });
+  })
 
   expect(form).toStrictEqual<typeof form>({
     a: {
@@ -93,5 +93,5 @@ it('should transform every field', () => {
         }
       }
     ]
-  });
-});
+  })
+})

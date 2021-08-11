@@ -1,25 +1,25 @@
-import { Field, useValidation } from '../../../../composition/useValidation';
-import { Form } from '../../../../form/Form';
-import { cleanupForm } from '../cleanupForm';
+import { Field, useValidation } from '../../../../composition/useValidation'
+import { Form } from '../../../../form/Form'
+import { cleanupForm } from '../cleanupForm'
 
-let mockOnDelete: jest.Mock;
-let mockForm: Form;
+let mockOnDelete: jest.Mock
+let mockForm: Form
 
 beforeEach(() => {
-  mockOnDelete = jest.fn();
+  mockOnDelete = jest.fn()
   mockForm = {
     onDelete: mockOnDelete
-  } as any as Form;
-});
+  } as any as Form
+})
 
 type FormData = {
-  a: Field<string>;
-  b: Field<string>;
+  a: Field<string>
+  b: Field<string>
   cs: {
-    d: Field<string>;
-    e: Field<string>;
-  }[];
-};
+    d: Field<string>
+    e: Field<string>
+  }[]
+}
 
 const generateTestData = () =>
   useValidation<FormData>({
@@ -30,20 +30,20 @@ const generateTestData = () =>
       { d: { $value: '' }, e: { $value: '' } },
       { d: { $value: '' }, e: { $value: '' } }
     ]
-  }).form;
+  }).form
 
 it('should call onDelete for every field', () => {
-  const formData = generateTestData();
+  const formData = generateTestData()
 
-  cleanupForm(mockForm, formData);
+  cleanupForm(mockForm, formData)
 
-  expect(mockOnDelete).toHaveBeenCalledTimes(8);
-});
+  expect(mockOnDelete).toHaveBeenCalledTimes(8)
+})
 
 it('should call onDelete for a subset of fields', () => {
-  const formData = generateTestData();
+  const formData = generateTestData()
 
-  cleanupForm(mockForm, formData.cs);
+  cleanupForm(mockForm, formData.cs)
 
-  expect(mockOnDelete).toHaveBeenCalledTimes(6);
-});
+  expect(mockOnDelete).toHaveBeenCalledTimes(6)
+})
