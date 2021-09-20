@@ -1,8 +1,7 @@
-export function path(
-  path: readonly any[],
-  o: Record<string | number, unknown>
-) {
-  let value = o[path[0]] as any
+import { Key, Keys } from '../types'
+
+export function path(path: Keys, obj: Record<Key, unknown>) {
+  let value = obj[path[0]] as any
 
   for (let i = 0; i < path.length; i++) {
     const key = path[i]

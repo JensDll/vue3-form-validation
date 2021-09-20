@@ -1,8 +1,7 @@
 import { computed, ref, shallowReactive, unref } from 'vue'
-import { isDefined, LinkedList, tryGet, trySet } from '../common'
-import { SimpleRule, Rule, KeyedRule } from '../composition/useValidation'
-import { FormField } from './FormField'
-import { ValidationError } from './ValidationError'
+import { isDefined, LinkedList, tryGet, trySet } from '~/common'
+import { SimpleRule, Rule, KeyedRule } from '~/composition/useValidation'
+import { FormField, ValidationError } from '~/form'
 
 type ValidateResult = void | string
 
@@ -40,7 +39,6 @@ export class Form {
   private tryGetKeyedSet = tryGet(this.keyedSetMap)
   private tryGetSimple = tryGet(this.simpleMap)
 
-  formFields = ref(new Set<FormField>())
   submitting = ref(false)
   errors = computed(() => {
     const errors: string[] = []
@@ -98,8 +96,6 @@ export class Form {
     this.simpleMap.set(uid, simple)
     this.reactiveFormFieldMap.set(uid, formField)
 
-    this.formFields.value.add(formField)
-
     return formField
   }
 
@@ -128,8 +124,7 @@ export class Form {
 
   onDelete(uid: number) {
     this.tryGetSimple({
-      success: ({ rollbacks, formField }) => {
-        this.formFields.value.delete(formField)
+      success: ({ rollbacks }) => {
         rollbacks.forEach(r => r())
       }
     })(uid)
@@ -235,12 +230,11 @@ export class Form {
         const ruleResult = rule(...modelValues.map(unref))
 
         if (typeof ruleResult?.then === 'function') {
-          formField.rulesValidating.value++
+          formField._rulesValidating.value++
+          const isLatest = buffer.addLast(true)
 
-          const node = buffer.addLast(false)
-
-          if (node.prev) {
-            node.prev.value = true
+          if (isLatest.prev) {
+            isLatest.prev.value = false
           }
 
           try {
@@ -249,10 +243,11 @@ export class Form {
             error = err
           }
 
-          buffer.remove(node)
-          formField.rulesValidating.value--
+          buffer.remove(isLatest)
+          formField._rulesValidating.value--
 
-          if (!node.value) {
+          // Is the latest called rule -> set error
+          if (isLatest.value) {
             setError(formField, ruleNumber, error)
           }
         } else {

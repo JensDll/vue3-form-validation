@@ -1,6 +1,5 @@
-import { Form } from '../../../form/Form'
-import { deepIterator } from '../../deep-iterator/deepIterator'
-import { isTransformedField } from '../../type-guards/typeGuards'
+import { Form } from '~/form'
+import { deepIterator, isTransformedField } from '~/common'
 
 export function cleanupForm(form: Form, deletedData: any) {
   if (isTransformedField(deletedData)) {

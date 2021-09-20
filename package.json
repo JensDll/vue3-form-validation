@@ -7,8 +7,8 @@
   "scripts": {
     "dev": "node ./scripts/dev.js",
     "vue": "npm run dev --workspace=vue-app",
-    "lint-check": "npm exec -- eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
-    "build": "npm run lint-check && node ./scripts/build.js",
+    "lint": "npm exec -- eslint --rule=\"no-console: error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
+    "build": "npm run lint && node ./scripts/build.js",
     "test": "jest --runInBand",
     "test-dts": "npm run build && npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",
@@ -26,6 +26,7 @@
     "directory": "test-dts"
   },
   "devDependencies": {
+    "@rollup/plugin-alias": "^3.1.5",
     "@rollup/plugin-typescript": "^8.2.5",
     "@types/fs-extra": "^9.0.12",
     "@types/jest": "^27.0.1",

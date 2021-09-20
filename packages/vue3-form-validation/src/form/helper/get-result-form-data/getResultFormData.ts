@@ -1,8 +1,5 @@
 import { isReactive } from 'vue'
-import { deepIterator } from '../../deep-iterator/deepIterator'
-import { deepCopy } from '../../deep-copy/deep-copy'
-import { set } from '../../set/set'
-import { isTransformedField } from '../../type-guards/typeGuards'
+import { isTransformedField, deepCopy, set, deepIterator } from '~/common'
 
 export function getResultFormData(transformedFormData: any): any {
   const result = {}

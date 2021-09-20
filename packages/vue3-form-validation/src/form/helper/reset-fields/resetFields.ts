@@ -1,9 +1,4 @@
-import { deepCopy } from '../../deep-copy/deep-copy'
-import {
-  isArray,
-  isObject,
-  isTransformedField
-} from '../../type-guards/typeGuards'
+import { deepCopy, isArray, isObject, isTransformedField } from '~/common'
 
 export function resetFields(formData: any, transformedFormData: any) {
   Object.entries(formData).forEach(([key, value]) => {

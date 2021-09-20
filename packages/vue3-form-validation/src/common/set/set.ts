@@ -1,9 +1,11 @@
-export function set(obj: any, keys: readonly (string | number)[], value: any) {
+import { Key, Keys } from '../types'
+
+export function set(obj: any, keys: Keys, value: any) {
   if (keys.length === 0) {
     return
   }
 
-  let o = obj as Record<string, unknown>
+  let o = obj as Record<Key, unknown>
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i]
     const nextKey = keys[i + 1]

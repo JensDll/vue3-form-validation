@@ -1,18 +1,18 @@
 import { computed, isReactive, isRef, reactive, ref, unref } from 'vue'
-import { isArray, isObject, isDefined } from '../common'
-import { deepCopy } from '../common/deep-copy/deep-copy'
-import { Rule } from '../composition/useValidation'
+import { isArray, isObject, isDefined, deepCopy } from '~/common'
+import { Rule } from '~/composition/useValidation'
 
 export class FormField {
-  private _errors: (string | null)[]
-  private _initialModelValue: any
+  _errors: (string | null)[]
+  _initialModelValue: any
+  _rulesValidating = ref(0)
 
   name: string
-  rulesValidating = ref(0)
-  modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>
   touched = false
+  dirty = false
+  modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>
   errors = computed(() => this._errors.filter(isDefined))
-  validating = computed(() => this.rulesValidating.value > 0)
+  validating = computed(() => this._rulesValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
 
   constructor(name: string, modelValue: any, rules: Rule[]) {

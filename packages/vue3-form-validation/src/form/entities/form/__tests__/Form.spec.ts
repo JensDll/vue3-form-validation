@@ -1,7 +1,5 @@
-import { FormField } from '../FormField'
-import { Form } from '../Form'
 import { ref } from 'vue'
-import { ValidationError } from '../ValidationError'
+import { Form, FormField, ValidationError } from '~/form'
 
 let form: Form
 

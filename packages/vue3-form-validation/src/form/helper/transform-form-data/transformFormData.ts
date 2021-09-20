@@ -1,9 +1,8 @@
 import { watch } from 'vue'
 import { useUid } from '../../../composition/useUid'
 import { Field, TransformedField } from '../../../composition/useValidation'
-import { Form } from '../../../form/Form'
-import { deepIterator } from '../../deep-iterator/deepIterator'
-import { isField } from '../../type-guards/typeGuards'
+import { Form } from '~/form'
+import { deepIterator, isField } from '~/common'
 
 function registerField(
   form: Form,

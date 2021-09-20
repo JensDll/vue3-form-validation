@@ -11,8 +11,11 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "~/*": ["packages/vue3-form-validation/src/*"]
+    }
   },
-  "include": ["packages/vue3-form-validation/src"],
-  "exclude": ["packages/**/__tests__", "dist"]
+  "include": ["packages/vue3-form-validation/src"]
 }

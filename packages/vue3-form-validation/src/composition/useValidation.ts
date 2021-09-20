@@ -1,17 +1,14 @@
 import { reactive, Ref, ComputedRef, UnwrapRef } from 'vue'
+import { RefUnref } from '~/common'
 import {
-  cleanupForm,
+  Form,
+  ValidationError,
+  transformFormData,
   getResultFormData,
-  path as _path,
-  PromiseCancel,
   resetFields,
-  set,
-  transformFormData
-} from '../common'
-import { Form } from '../form/Form'
-import { FormField } from '../form/FormField'
-import { ValidationError } from '../form/ValidationError'
-import { RefUnref } from '../types'
+  cleanupForm
+} from '~/form'
+import { Keys, DeepIndex, PromiseCancel, path as _path, set } from '~/common'
 
 export type SimpleRule<T = any> = (value: T) => any
 export type KeyedRule = {
@@ -64,21 +61,8 @@ export type FieldNames<T> = T extends (infer TArray)[]
         : FieldNames<T[K]>
     }[keyof T]
 
-export type Keys = readonly (string | number)[]
-export type DeepIndex<T, Ks extends Keys, R = unknown> = Ks extends [
-  infer First,
-  ...infer Rest
-]
-  ? First extends keyof T
-    ? Rest extends Keys
-      ? DeepIndex<T[First], Rest>
-      : R
-    : R
-  : T
-
 type UseValidation<T extends object> = {
   form: TransformedFormData<T>
-  formFields: Ref<Set<FormField>>
   submitting: Ref<boolean>
   errors: ComputedRef<string[]>
   validateFields(names?: FieldNames<T>[] | string[]): Promise<FormData<T>>
@@ -122,7 +106,6 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
 
   return {
     form: transformedFormData,
-    formFields: form.formFields,
     submitting: form.submitting,
     errors: form.errors,
 

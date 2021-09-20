@@ -1,6 +1,8 @@
 import { defineConfig } from 'rollup'
 import typescript from '@rollup/plugin-typescript'
+import alias from '@rollup/plugin-alias'
 import dts from 'rollup-plugin-dts'
+import path from 'path'
 
 const PUBLISH_BASE = 'packages/vue3-form-validation/dist/vue3-form-validation'
 
@@ -16,7 +18,13 @@ const buildConfig = defineConfig({
       format: 'cjs'
     }
   ],
-  plugins: [typescript()]
+  plugins: [
+    typescript(),
+    alias({
+      find: '~',
+      replacement: path.resolve(__dirname, 'packages/vue3-form-validation/src')
+    })
+  ]
 })
 
 const dtsConfig = defineConfig({
