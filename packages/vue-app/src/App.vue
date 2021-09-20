@@ -1,9 +1,16 @@
 <template>
-  <h1 class="font-bold text-3xl">{{ x }}</h1>
+  <input type="text" v-model="form.name.$value" @blur="form.name.$onBlur" />
+  <pre>{{ form }}</pre>
 </template>
 
 <script setup lang="ts">
-const x: number = 20
+import { useValidation } from 'vue3-form-validation'
+
+const { form } = useValidation({
+  name: {
+    $value: ''
+  }
+})
 </script>
 
 <style>

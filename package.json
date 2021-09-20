@@ -5,10 +5,10 @@
   ],
   "type": "module",
   "scripts": {
+    "dev": "node ./scripts/dev.js",
+    "vue": "npm run dev --workspace=vue-app",
     "lint-check": "npm exec -- eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
     "build": "npm run lint-check && node ./scripts/build.js",
-    "dev": "npm run dev --workspace=vue-app",
-    "watch": "npm exec -- tsc --project ./packages/vue3-form-validation --watch",
     "test": "jest --runInBand",
     "test-dts": "npm exec -- tsc --project ./test-dts && npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",

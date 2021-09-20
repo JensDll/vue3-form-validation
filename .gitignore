@@ -2,5 +2,6 @@ node_modules
 .DS_Store
 publish
 tmp
+dts
 *.local
 **/dist

@@ -2,7 +2,7 @@ import { defineConfig } from 'rollup'
 import typescript from '@rollup/plugin-typescript'
 import dts from 'rollup-plugin-dts'
 
-const PUBLISH_BASE = 'publish/dist/vue3-form-validation'
+const PUBLISH_BASE = 'packages/vue3-form-validation/dist/vue3-form-validation'
 
 const buildConfig = defineConfig({
   input: 'packages/vue3-form-validation/src/index.ts',
@@ -24,7 +24,7 @@ const buildConfig = defineConfig({
 })
 
 const dtsConfig = defineConfig({
-  input: 'tmp/index.d.ts',
+  input: 'dts/index.d.ts',
   output: [
     {
       file: `${PUBLISH_BASE}.d.ts`,

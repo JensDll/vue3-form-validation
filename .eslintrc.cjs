@@ -19,5 +19,6 @@ module.exports = {
         extendDefaults: true
       }
     ]
-  }
+  },
+  ignorePatterns: ['**/dist']
 }
