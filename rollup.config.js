@@ -16,11 +16,7 @@ const buildConfig = defineConfig({
       format: 'cjs'
     }
   ],
-  plugins: [
-    typescript({
-      tsconfig: 'packages/vue3-form-validation/tsconfig.json'
-    })
-  ]
+  plugins: [typescript()]
 })
 
 const dtsConfig = defineConfig({

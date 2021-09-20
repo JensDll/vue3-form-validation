@@ -13,13 +13,11 @@ await Promise.all([
   )
 ])
 
-console.log('Generate TypeScript definitions ...')
+console.log('Generate dts ...')
 await execa('npm', [
   'exec',
   '--',
   'tsc',
-  '--project',
-  './packages/vue3-form-validation',
   '--declaration',
   'true',
   '--emitDeclarationOnly',
@@ -33,4 +31,4 @@ await execa('rollup', ['--config', 'rollup.config.js'])
 console.log('Copy dist ...')
 await fs.copy('packages/vue3-form-validation/dist', 'publish/dist')
 
-console.log('Done!')
+console.log('Done !')

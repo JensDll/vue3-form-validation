@@ -10,7 +10,7 @@
     "lint-check": "npm exec -- eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
     "build": "npm run lint-check && node ./scripts/build.js",
     "test": "jest --runInBand",
-    "test-dts": "npm exec -- tsc --project ./test-dts && npm exec -- tsd",
+    "test-dts": "npm run build && npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",
     "postinstall": "husky install"
   },
@@ -21,12 +21,13 @@
     "semi": false,
     "endOfLine": "crlf"
   },
-  "types": "test-dts/dist/index.d.ts",
+  "types": "publish/dist/vue3-form-validation.d.ts",
   "tsd": {
     "directory": "test-dts"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.5",
+    "@types/fs-extra": "^9.0.12",
     "@types/jest": "^27.0.1",
     "@types/node": "^16.9.4",
     "@typescript-eslint/eslint-plugin": "^4.31.1",
