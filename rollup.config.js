@@ -1,7 +1,6 @@
 import { defineConfig } from 'rollup'
-import typescript from '@rollup/plugin-typescript'
+import typescript from 'rollup-plugin-typescript2'
 import alias from '@rollup/plugin-alias'
-import dts from 'rollup-plugin-dts'
 import path from 'path'
 
 const PUBLISH_BASE = 'packages/vue3-form-validation/dist/vue3-form-validation'
@@ -18,26 +17,21 @@ const buildConfig = defineConfig({
       format: 'cjs'
     }
   ],
+  external: ['vue'],
   plugins: [
-    typescript(),
     alias({
       find: '~',
       replacement: path.resolve(__dirname, 'packages/vue3-form-validation/src')
+    }),
+    typescript({
+      tsconfigOverride: {
+        exclude: ['**/__tests__']
+      }
     })
   ]
 })
 
-const dtsConfig = defineConfig({
-  input: 'dts/index.d.ts',
-  output: [
-    {
-      file: `${PUBLISH_BASE}.d.ts`,
-      format: 'es'
-    }
-  ],
-  plugins: [dts()]
-})
-
-export default async () => {
-  return [buildConfig, dtsConfig]
+export default async args => {
+  console.log(args)
+  return [buildConfig]
 }

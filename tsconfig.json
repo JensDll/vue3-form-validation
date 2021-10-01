@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
     "target": "ES2019",
     "module": "ES2020",
     "useDefineForClassFields": true,
@@ -14,7 +16,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "~/*": ["packages/vue3-form-validation/src/*"]
+      "@/*": ["packages/*/src"]
     }
   },
   "include": ["packages/vue3-form-validation/src"]

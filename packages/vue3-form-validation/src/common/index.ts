@@ -1,18 +1,16 @@
-export { deepCopy } from './deep-copy/deepCopy'
-export { deepIterator } from './deep-iterator/deepIterator'
-export { LinkedList } from './linked-list/LinkedList'
-export { tryGet } from './map/tryGet'
-export { trySet } from './map/trySet'
-export { path } from './path/path'
-export { PromiseCancel } from './promise-cancel/PromiseCancel'
-export { set } from './set/set'
-
+export { deepCopy } from './deepCopy'
+export { deepIterator } from './deepIterator'
+export { tryGet, trySet } from './map'
+export { path } from './path'
+export { set } from './set'
 export {
-  isDefined,
   isArray,
-  isObject,
+  isTransformedField,
+  isDefined,
   isField,
-  isTransformedField
-} from './type-guards/typeGuards'
-
-export { Key, Keys, DeepIndex, RefUnref } from './types'
+  isObject,
+  isRecord
+} from './typeGuards'
+export { uid } from './uid'
+export { LinkedList, PromiseCancel } from './entities'
+export type { Key, KeyArray, DeepMaybeRef, MaybeRef, DeepIndex } from './types'

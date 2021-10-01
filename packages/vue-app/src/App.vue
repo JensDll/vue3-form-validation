@@ -1,14 +1,20 @@
 <template>
-  <input type="text" v-model="form.name.$value" @blur="form.name.$onBlur" />
+  <input type="text" v-model="form.name.$value" @blur="form.name.$setTouched" />
   <pre>{{ form }}</pre>
 </template>
 
 <script setup lang="ts">
-import { useValidation } from 'vue3-form-validation'
+import { Field, useValidation } from 'vue3-form-validation'
+import { required } from '~/domain'
 
-const { form } = useValidation({
+type FormData = {
+  name: Field<string>
+}
+
+const { form, validateFields } = useValidation<FormData>({
   name: {
-    $value: ''
+    $value: '',
+    $rules: [required('Name is required')]
   }
 })
 </script>

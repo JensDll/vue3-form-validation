@@ -1,34 +1,33 @@
+import path from 'path'
 import fs from 'fs-extra'
 import execa from 'execa'
+import { packageNames } from './utils.js'
+import { Extractor, ExtractorConfig } from '@microsoft/api-extractor'
 
-await fs.mkdir('publish', { recursive: true })
-
-console.log('Copy files ...')
-await Promise.all([
-  fs.copyFile('LICENSE', 'publish/LICENSE'),
-  fs.copyFile('README.md', 'publish/README.md'),
-  fs.copyFile(
-    'packages/vue3-form-validation/package.json',
-    'publish/package.json'
+async function build(packageName) {
+  const packageFolder = path.resolve(`packages/${packageName}`)
+  const packageJson = JSON.parse(
+    await fs.readFile(`${packageFolder}/package.json`)
   )
-])
 
-console.log('Generate dts ...')
-await execa('npm', [
-  'exec',
-  '--',
-  'tsc',
-  '--declaration',
-  'true',
-  '--emitDeclarationOnly',
-  '--outDir',
-  'dts'
-])
+  if (!packageJson.private) {
+    await execa('rollup', ['--config', '--environment', 'FORMATS'], {
+      stdio: 'inherit'
+    })
 
-console.log('Running Rollup ...')
-await execa('rollup', ['--config', 'rollup.config.js'])
+    const extractorConfigPath = path.resolve(
+      packageFolder,
+      `api-extractor.json`
+    )
+    const extractorConfig =
+      ExtractorConfig.loadFileAndPrepare(extractorConfigPath)
+    const extractorResult = Extractor.invoke(extractorConfig, {
+      localBuild: true,
+      showVerboseMessages: true
+    })
 
-console.log('Copy dist ...')
-await fs.copy('packages/vue3-form-validation/dist', 'publish/dist')
+    console.log(extractorResult)
+  }
+}
 
-console.log('Done !')
+packageNames.forEach(build)

@@ -1,5 +1,4 @@
 import { reactive, Ref, ComputedRef, UnwrapRef } from 'vue'
-import { RefUnref } from '~/common'
 import {
   Form,
   ValidationError,
@@ -7,8 +6,8 @@ import {
   getResultFormData,
   resetFields,
   cleanupForm
-} from '~/form'
-import { Keys, DeepIndex, PromiseCancel, path as _path, set } from '~/common'
+} from '../form'
+import * as _ from '../common'
 
 export type SimpleRule<T = any> = (value: T) => any
 export type KeyedRule = {
@@ -18,7 +17,7 @@ export type KeyedRule = {
 export type Rule<T = any> = SimpleRule<T> | KeyedRule
 
 export type Field<TValue> = {
-  $value: RefUnref<TValue>
+  $value: _.DeepMaybeRef<TValue>
   $rules?: Rule<TValue extends any[] ? TValue : UnwrapRef<TValue>>[]
 }
 
@@ -28,7 +27,7 @@ export type TransformedField<T> = {
   $errors: string[]
   $hasError: boolean
   $validating: boolean
-  $onBlur(): void
+  $setTouched(): void
 }
 
 export type TransformedFormData<T extends object> = T extends any
@@ -67,18 +66,18 @@ type UseValidation<T extends object> = {
   errors: ComputedRef<string[]>
   validateFields(names?: FieldNames<T>[] | string[]): Promise<FormData<T>>
   resetFields(formData?: Partial<FormData<T>>): void
-  add<Ks extends Keys>(
+  add<Ks extends _.KeyArray>(
     path: readonly [...Ks],
-    value: DeepIndex<T, Ks> extends Array<infer TArray>
+    value: _.DeepIndex<T, Ks> extends (infer TArray)[]
       ? TArray
-      : DeepIndex<T, Ks>
+      : _.DeepIndex<T, Ks>
   ): void
   remove(path: (string | number)[]): void
 }
 
 /**
  *
- * @param formData The structure of your Form Data.
+ * @param formData - The structure of your Form Data.
  * @description
  * Vue composition function for Form Validation.
  * @docs
@@ -98,7 +97,7 @@ type UseValidation<T extends object> = {
  */
 export function useValidation<T extends object>(formData: T): UseValidation<T> {
   const form = new Form()
-  const promiseCancel = new PromiseCancel<ValidationError>()
+  const promiseCancel = new _.PromiseCancel<ValidationError>()
 
   transformFormData(form, formData)
 
@@ -145,12 +144,12 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
         const box = { [lastKey]: value }
         transformFormData(form, box)
 
-        const x = _path(path, transformedFormData)
+        const x = _.path(path, transformedFormData)
 
         if (Array.isArray(x)) {
           x.push(box[lastKey])
         } else {
-          set(transformedFormData, path, box[lastKey])
+          _.set(transformedFormData, path, box[lastKey])
         }
       }
     },
@@ -162,7 +161,7 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
         cleanupForm(form, (transformedFormData as any)[lastKey])
         delete (transformedFormData as any)[lastKey]
       } else if (typeof lastKey !== 'undefined') {
-        const value = _path(path, transformedFormData)
+        const value = _.path(path, transformedFormData)
 
         if (Array.isArray(value)) {
           const deleted = value.splice(+lastKey, 1)

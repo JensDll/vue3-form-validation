@@ -1,13 +1,11 @@
 import execa from 'execa'
+import fs from 'fs-extra'
 
-console.log('Running tsc and rollup in watch mode ...')
-
+console.log('Running tsc in watch mode ...')
 execa('npm', [
   'exec',
   '--',
   'tsc',
-  '--project',
-  './packages/vue3-form-validation',
   '--declaration',
   'true',
   '--emitDeclarationOnly',
@@ -16,4 +14,13 @@ execa('npm', [
   'dts'
 ])
 
+// Wait until tsc output exists
+await new Promise(resolve => {
+  while (!fs.pathExistsSync('dts')) {
+    // Wait
+  }
+  resolve()
+})
+
+console.log('Running rollup in watch mode ...')
 await execa('rollup', ['--config', 'rollup.config.js', '--watch'])

@@ -1,30 +1,33 @@
 import { Ref, UnwrapRef } from 'vue'
 
 export type Key = string | number
-export type Keys = readonly Key[]
-export type DeepIndex<T, Ks extends Keys, R = unknown> = Ks extends [
+export type KeyArray = readonly Key[]
+
+export type DeepIndex<T, Ks extends KeyArray, R = unknown> = Ks extends [
   infer First,
   ...infer Rest
 ]
   ? First extends keyof T
-    ? Rest extends Keys
+    ? Rest extends KeyArray
       ? DeepIndex<T[First], Rest>
       : R
     : R
   : T
 
-type RefUnrefObject<T extends Record<string, unknown>> = {
+export type MaybeRef<T> = Ref<T> | Ref
+
+type DeepMaybeRefObject<T extends Record<string, unknown>> = {
   [K in keyof T]: T[K] extends Ref
     ? T[K] | UnwrapRef<T[K]>
     : T[K] extends any[]
     ? Ref<T[K]> | T[K]
     : T[K] extends Record<string, unknown>
-    ? RefUnref<T[K]>
+    ? DeepMaybeRefObject<T[K]>
     : Ref<T[K]> | T[K]
 }
 
-export type RefUnref<T> = T extends Ref
+export type DeepMaybeRef<T> = T extends Ref
   ? T | UnwrapRef<T>
   : T extends Record<string, unknown>
-  ? RefUnrefObject<T>
+  ? DeepMaybeRefObject<T>
   : Ref<T> | T
