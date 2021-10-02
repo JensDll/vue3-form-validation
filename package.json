@@ -5,10 +5,10 @@
   ],
   "type": "module",
   "scripts": {
-    "dev": "node ./scripts/dev.js",
+    "build": "esmo scripts/build.ts",
+    "dev": "esmo scripts/dev.ts --targets vue3-form-validation",
     "vue": "npm run dev --workspace=vue-app",
     "lint": "npm exec -- eslint --rule=\"no-console: error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
-    "build": "node ./scripts/build.js",
     "test": "jest --runInBand",
     "test-dts": "npm run build && npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",
@@ -21,7 +21,6 @@
   "dependencies": {
     "@microsoft/api-extractor": "^7.18.11",
     "@rollup/plugin-alias": "^3.1.5",
-    "@rollup/plugin-typescript": "^8.2.5",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.10.2",
@@ -30,6 +29,7 @@
     "@typescript-eslint/parser": "^4.32.0",
     "@vue/compiler-sfc": "^3.2.19",
     "eslint": "^7.32.0",
+    "esno": "^0.10.0",
     "execa": "^5.1.1",
     "fs-extra": "^10.0.0",
     "husky": "^7.0.2",

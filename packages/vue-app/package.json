@@ -8,12 +8,12 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@tailwindcss/forms": "^0.3.3",
-    "@vitejs/plugin-vue": "^1.8.1",
-    "autoprefixer": "^10.3.4",
-    "postcss": "^8.3.6",
-    "tailwindcss": "^2.2.15",
-    "vite": "^2.5.10",
+    "@tailwindcss/forms": "^0.3.4",
+    "@vitejs/plugin-vue": "^1.9.2",
+    "autoprefixer": "^10.3.6",
+    "postcss": "^8.3.8",
+    "tailwindcss": "^2.2.16",
+    "vite": "^2.6.2",
     "vue-tsc": "^0.3.0"
   }
 }

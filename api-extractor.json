@@ -1,10 +1,10 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
   "apiReport": {
-    "enabled": true
+    "enabled": false
   },
   "docModel": {
-    "enabled": true
+    "enabled": false
   },
   "dtsRollup": {
     "enabled": true,
@@ -21,10 +21,12 @@
     },
     "extractorMessageReporting": {
       "default": {
-        "logLevel": "warning",
-        "addToApiReportFile": true
+        "logLevel": "warning"
       },
       "ae-missing-release-tag": {
+        "logLevel": "none"
+      },
+      "ae-forgotten-export": {
         "logLevel": "none"
       }
     },

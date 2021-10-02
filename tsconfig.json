@@ -2,8 +2,9 @@
   "compilerOptions": {
     "declaration": true,
     "declarationMap": true,
+    "outDir": "dist",
     "target": "ES2019",
-    "module": "ES2020",
+    "module": "ESNext",
     "useDefineForClassFields": true,
     "allowJs": false,
     "checkJs": false,
@@ -14,10 +15,8 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["packages/*/src"]
-    }
+    "baseUrl": "."
   },
-  "include": ["packages/vue3-form-validation/src"]
+  "include": ["packages/vue3-form-validation/src", "scripts/*.ts"],
+  "exclude": ["**/dist", "**/publish"]
 }

@@ -11,7 +11,7 @@ type FormData = {
   name: Field<string>
 }
 
-const { form, validateFields } = useValidation<FormData>({
+const { form, validateFields } = useValidation({
   name: {
     $value: '',
     $rules: [required('Name is required')]

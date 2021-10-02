@@ -5,5 +5,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true
   },
+  "editor.bracketPairColorization.enabled": true,
   "typescript.tsdk": "node_modules\\typescript\\lib"
 }
