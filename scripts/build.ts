@@ -1,10 +1,10 @@
 import path from 'path'
 import fs from 'fs-extra'
 import execa from 'execa'
+import { buildFormats, buildTargets } from './meta'
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor'
 
-const targets = fs.readdirSync('packages')
-targets.forEach(build)
+buildTargets.forEach(build)
 
 async function build(target: string) {
   const packageFolder = path.resolve(`packages/${target}`)
@@ -13,9 +13,17 @@ async function build(target: string) {
   )
 
   if (!packageJson.private) {
-    await execa('rollup', ['--config', '--environment', `TARGETS:${target}`], {
-      stdio: 'inherit'
-    })
+    await execa(
+      'rollup',
+      [
+        '--config',
+        '--environment',
+        `BUILD,TARGETS:${target},FORMATS:${buildFormats.join(' ')}`
+      ],
+      {
+        stdio: 'inherit'
+      }
+    )
 
     const extractorConfigPath = path.resolve(
       packageFolder,
@@ -33,7 +41,7 @@ async function build(target: string) {
         fs.copyFile('LICENSE', 'publish/LICENSE'),
         fs.copyFile('README.md', 'publish/README.md'),
         fs.copyFile(`${packageFolder}/package.json`, 'publish/package.json'),
-        ...['esm', 'cjs'].map(format => {
+        ...buildFormats.map(format => {
           const bundel = `${target}.${format}.js`
           return fs.copyFile(
             `${packageFolder}/dist/${bundel}`,
@@ -42,5 +50,7 @@ async function build(target: string) {
         })
       ])
     }
+
+    console.log(`Build finished ! (success = ${extractorResult.succeeded})`)
   }
 }
