@@ -1,21 +1,15 @@
 {
   "compilerOptions": {
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "dist",
-    "target": "ES2019",
-    "module": "ES2020",
+    "target": "ESNext",
+    "module": "ESNext",
     "useDefineForClassFields": true,
     "allowJs": false,
     "checkJs": false,
-    "lib": ["ES2020", "DOM"],
     "downlevelIteration": true,
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
-  },
-  "include": ["packages/vue3-form-validation/src"],
-  "exclude": ["**/dist", "**/publish", "**/__tests__"]
+  }
 }
