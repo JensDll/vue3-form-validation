@@ -2,42 +2,34 @@ import { expectType } from 'tsd'
 import { Ref } from 'vue'
 import { DeepMaybeRef } from '../packages/vue3-form-validation/src/common/types'
 
-type RU1 = DeepMaybeRef<{ a: string }>
-type RU1_Expected = { a: Ref<string> | string }
+expectType<DeepMaybeRef<{ a: string }>>({} as { a: Ref<string> | string })
 
-expectType<RU1_Expected>({} as RU1)
-
-type RU2 = DeepMaybeRef<{ a: string[] }>
-type RU2_Expected = { a: string[] | Ref<string[]> }
-
-expectType<RU2_Expected>({} as RU2)
-
-type RU3 = DeepMaybeRef<{
-  a: string
-  b: {
-    c: number
+expectType<DeepMaybeRef<{ a: string[] }>>(
+  {} as {
+    a: Ref<string[]> | string[]
   }
-}>
-type RU3_Expected = {
-  a: Ref<string> | string
-  b: {
-    c: Ref<number> | number
+)
+
+expectType<
+  DeepMaybeRef<{
+    a: string
+    b: {
+      c: number
+    }
+  }>
+>(
+  {} as {
+    a: Ref<string> | string
+    b: {
+      c: Ref<number> | number
+    }
   }
-}
+)
 
-expectType<RU3_Expected>({} as RU3)
+expectType<DeepMaybeRef<string[]>>({} as string[] | Ref<string[]>)
 
-type RU4 = DeepMaybeRef<string[]>
-type RU4_Expected = string[] | Ref<string[]>
+expectType<DeepMaybeRef<string>>({} as string | Ref<string>)
 
-expectType<RU4_Expected>({} as RU4)
-
-type RU5 = DeepMaybeRef<string>
-type RU5_Expected = string | Ref<string>
-
-expectType<RU5_Expected>({} as RU5)
-
-type RU6 = DeepMaybeRef<{ a: { b: Ref<string> }[] }>
-type RU6_Expected = { a: { b: Ref<string> }[] | Ref<{ b: Ref<string> }[]> }
-
-expectType<RU6_Expected>({} as RU6)
+expectType<DeepMaybeRef<{ a: { b: Ref<string> }[] }>>(
+  {} as { a: { b: Ref<string> }[] | Ref<{ b: Ref<string> }[]> }
+)

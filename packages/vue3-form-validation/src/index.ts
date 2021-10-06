@@ -1,3 +1,3 @@
-export { useValidation } from './composition/useValidation'
+export { useValidation } from './composition'
 export { ValidationError } from './form'
-export type { Field } from './composition/useValidation'
+export type { Field } from './composition'

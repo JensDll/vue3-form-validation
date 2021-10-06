@@ -1,24 +1,11 @@
 import { reactive, Ref, ComputedRef, UnwrapRef } from 'vue'
-import {
-  Form,
-  ValidationError,
-  transformFormData,
-  getResultFormData,
-  resetFields,
-  cleanupForm
-} from '../form'
-import * as _ from '../common'
-
-export type SimpleRule<T = any> = (value: T) => any
-export type KeyedRule = {
-  key: string
-  rule?: (...values: any[]) => any
-}
-export type Rule<T = any> = SimpleRule<T> | KeyedRule
+import * as n_form from '../form'
+import * as n_domain from '../domain'
 
 export type Field<TValue> = {
-  $value: _.DeepMaybeRef<TValue>
-  $rules?: Rule<TValue extends any[] ? TValue : UnwrapRef<TValue>>[]
+  $value: n_domain.DeepMaybeRef<TValue>
+  $rules?: n_domain.Rule<TValue extends any[] ? TValue : UnwrapRef<TValue>>[]
+  $validationBehaviour?: n_form.ValidationBehavior
 }
 
 export type TransformedField<T> = {
@@ -27,52 +14,60 @@ export type TransformedField<T> = {
   $errors: string[]
   $hasError: boolean
   $validating: boolean
-  $setTouched(): void
+  $listener: {
+    blur: EventListener
+  }
 }
 
-export type TransformedFormData<T extends object> = T extends any
+export type TransformedFormData<FormData extends object> = FormData extends any
   ? {
-      [K in keyof T]: T[K] extends Field<infer TValue> | undefined
-        ? T[K] extends undefined
+      [K in keyof FormData]: FormData[K] extends
+        | { $value: infer TValue }
+        | undefined
+        ? FormData[K] extends undefined
           ? undefined
           : TransformedField<UnwrapRef<TValue>>
-        : T[K] extends object
-        ? TransformedFormData<T[K]>
-        : T[K]
+        : FormData[K] extends object
+        ? TransformedFormData<FormData[K]>
+        : FormData[K]
     }
   : never
 
-export type FormData<T extends object> = T extends any
+type ResultFormData<FormData extends object> = FormData extends any
   ? {
-      [K in keyof T]: T[K] extends Field<infer TValue> | undefined
+      [K in keyof FormData]: FormData[K] extends
+        | { $value: infer TValue }
+        | undefined
         ? UnwrapRef<TValue>
-        : T[K] extends object
-        ? FormData<T[K]>
-        : T[K]
+        : FormData[K] extends object
+        ? ResultFormData<FormData[K]>
+        : FormData[K]
     }
   : never
 
-export type FieldNames<T> = T extends (infer TArray)[]
+type FieldNames<T> = T extends (infer TArray)[]
   ? FieldNames<TArray>
   : {
-      [K in keyof T]-?: T[K] extends Field<any> | undefined
+      [K in keyof T]-?: T[K] extends { $value: any } | undefined
         ? K
         : FieldNames<T[K]>
     }[keyof T]
 
-type UseValidation<T extends object> = {
-  form: TransformedFormData<T>
+type UseValidation<FormData extends object> = {
+  form: TransformedFormData<FormData>
   submitting: Ref<boolean>
   errors: ComputedRef<string[]>
-  validateFields(names?: FieldNames<T>[] | string[]): Promise<FormData<T>>
-  resetFields(formData?: Partial<FormData<T>>): void
-  add<Ks extends _.KeyArray>(
+  validateFields(
+    names?: FieldNames<FormData>[] | string[]
+  ): Promise<ResultFormData<FormData>>
+  resetFields(formData?: Partial<ResultFormData<FormData>>): void
+  add<Ks extends readonly n_domain.Key[]>(
     path: readonly [...Ks],
-    value: _.DeepIndex<T, Ks> extends (infer TArray)[]
+    value: n_domain.DeepIndex<FormData, Ks> extends (infer TArray)[]
       ? TArray
-      : _.DeepIndex<T, Ks>
+      : n_domain.DeepIndex<FormData, Ks>
   ): void
-  remove(path: (string | number)[]): void
+  remove(path: n_domain.Key[]): void
 }
 
 /**
@@ -84,7 +79,7 @@ type UseValidation<T extends object> = {
  * https://github.com/JensDll/vue3-form-validation
  * @typescript
  * For better type inference, consider defining the structure
- * of your `formData` upfront and pass it as the generic parameter `T`:
+ * of your `formData` upfront and pass it as the generic parameter `FormData`:
  * ```
  * type FormData = {
  *   name: Field<string>,
@@ -95,28 +90,30 @@ type UseValidation<T extends object> = {
  * const { ... } = useValidation<FormData>({ ... })
  * ```
  */
-export function useValidation<T extends object>(formData: T): UseValidation<T> {
-  const form = new Form()
-  const promiseCancel = new _.PromiseCancel<ValidationError>()
+export function useValidation<FormData extends object>(
+  formData: FormData
+): UseValidation<FormData> {
+  const form = new n_form.Form()
+  const promiseCancel = new n_domain.PromiseCancel<n_form.ValidationError>()
 
-  transformFormData(form, formData)
+  n_form.transformFormData(form, formData)
 
-  const transformedFormData = reactive(formData) as TransformedFormData<T>
+  const transformedFormData: any = reactive(formData)
 
   return {
-    form: transformedFormData,
+    form: transformedFormData as TransformedFormData<FormData>,
     submitting: form.submitting,
     errors: form.errors,
 
     async validateFields(names) {
       form.submitting.value = true
 
-      const resultFormData = getResultFormData(
+      const resultFormData = n_form.getResultFormData(
         transformedFormData
-      ) as FormData<T>
+      ) as ResultFormData<FormData>
 
       try {
-        await promiseCancel.race(form.validateAll(names))
+        await promiseCancel.race(form.validateAll(names as any))
       } finally {
         form.submitting.value = false
       }
@@ -126,30 +123,29 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
 
     resetFields(formData) {
       if (form.submitting.value) {
-        promiseCancel.cancelReject(new ValidationError())
+        promiseCancel.cancelReject(new n_form.ValidationError())
       }
 
-      if (formData) {
-        form.resetFields(false)
-        resetFields(formData, transformedFormData)
+      if (formData === undefined) {
+        form.resetFields(true)
       } else {
-        form.resetFields()
+        form.resetFields(false)
+        n_form.resetFields(formData, transformedFormData)
       }
     },
 
     add(path, value) {
       const lastKey = path[path.length - 1]
 
-      if (typeof lastKey !== 'undefined') {
+      if (lastKey !== undefined) {
         const box = { [lastKey]: value }
-        transformFormData(form, box)
-
-        const x = _.path(path, transformedFormData)
-
-        if (Array.isArray(x)) {
-          x.push(box[lastKey])
+        n_form.transformFormData(form, box)
+        const transformedField = box[lastKey]
+        const valueAtPath = n_domain.path(path, transformedFormData)
+        if (Array.isArray(valueAtPath)) {
+          valueAtPath.push(transformedField)
         } else {
-          _.set(transformedFormData, path, box[lastKey])
+          n_domain.set(transformedFormData, path, transformedField)
         }
       }
     },
@@ -157,18 +153,19 @@ export function useValidation<T extends object>(formData: T): UseValidation<T> {
     remove(path) {
       const lastKey = path.pop()
 
-      if (typeof lastKey !== 'undefined' && path.length === 0) {
-        cleanupForm(form, (transformedFormData as any)[lastKey])
-        delete (transformedFormData as any)[lastKey]
-      } else if (typeof lastKey !== 'undefined') {
-        const value = _.path(path, transformedFormData)
-
-        if (Array.isArray(value)) {
-          const deleted = value.splice(+lastKey, 1)
-          cleanupForm(form, deleted)
+      if (lastKey !== undefined) {
+        if (path.length === 0) {
+          n_form.cleanupForm(form, transformedFormData[lastKey])
+          delete transformedFormData[lastKey]
         } else {
-          cleanupForm(form, value[lastKey])
-          delete value[lastKey]
+          const valueAtPath = n_domain.path(path, transformedFormData)
+          if (Array.isArray(valueAtPath)) {
+            const deletedFormData = valueAtPath.splice(+lastKey, 1)
+            n_form.cleanupForm(form, deletedFormData)
+          } else {
+            n_form.cleanupForm(form, valueAtPath[lastKey])
+            delete valueAtPath[lastKey]
+          }
         }
       }
     }

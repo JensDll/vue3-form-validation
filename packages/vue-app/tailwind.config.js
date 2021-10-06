@@ -2,7 +2,16 @@ module.exports = {
   purge: ['index.html', 'src/**/*.vue'],
   darkMode: false,
   theme: {
-    extend: {}
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      ...require('tailwindcss/colors')
+    },
+    extend: {
+      fontFamily: {
+        body: ["'Montserrat', sans-serif"]
+      }
+    }
   },
   variants: {
     extend: {}
