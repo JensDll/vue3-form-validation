@@ -6,13 +6,11 @@ beforeEach(() => {
   linkedList = new LinkedList()
 })
 
-const iterationValuesForwards = <T>(linkedList: LinkedList<T>) => [
-  ...linkedList.valuesForwards()
-]
+const iterationValuesForwards = <T>(linkedList: LinkedList<T>) =>
+  [...linkedList.nodesForwards()].map(node => node.value)
 
-const iterationValuesBackwards = <T>(linkedList: LinkedList<T>) => [
-  ...linkedList.valuesBackwards()
-]
+const iterationValuesBackwards = <T>(linkedList: LinkedList<T>) =>
+  [...linkedList.nodesBackwards()].map(node => node.value)
 
 describe('Adding nodes', () => {
   describe('Add first by value', () => {

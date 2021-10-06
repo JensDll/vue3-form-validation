@@ -22,10 +22,6 @@
           </p>
         </div>
       </div>
-      <div>
-        <input type="text" v-model="form.k1.$value" v-on="form.k1.$listener" />
-        <input type="text" v-model="form.k2.$value" v-on="form.k2.$listener" />
-      </div>
       <FormFileUpload
         label="Select some Files"
         v-model="form.files.$value"
@@ -34,9 +30,16 @@
         multiple
       >
       </FormFileUpload>
-      <div>
+      <div class="flex">
         <BaseButton html-type="submit" class="px-4 py-2 rounded-md font-medium">
           Submit
+        </BaseButton>
+        <BaseButton
+          class="px-4 py-2 rounded-md font-medium ml-4"
+          type="secondary"
+          @click="resetFields"
+        >
+          Reset
         </BaseButton>
       </div>
     </form>
@@ -52,11 +55,9 @@ import { min } from '~/domain'
 interface FormData {
   files: Field<File[]>
   text: Field<string>
-  k1: Field<string>
-  k2: Field<string>
 }
 
-const { form, validateFields, add } = useValidation<FormData>({
+const { form, validateFields, resetFields } = useValidation<FormData>({
   files: {
     $value: [],
     $rules: [min(1)('Please select one or more files')],
@@ -66,45 +67,12 @@ const { form, validateFields, add } = useValidation<FormData>({
     $value: '',
     $rules: [min(6)('Please enter text longer than 5 chracters')],
     $validationBehaviour: 'lazier'
-  },
-  k1: {
-    $value: '',
-    $rules: [
-      {
-        key: 'k',
-        rule: () => {
-          console.log('k1')
-        }
-      },
-      {
-        key: 'a',
-        rule: () => {
-          console.log('k1')
-        }
-      }
-    ],
-    $validationBehaviour: 'aggresive'
-  },
-  k2: {
-    $value: '',
-    $rules: [
-      () => {
-        console.log('k2')
-      },
-      {
-        key: 'k',
-        rule: () => {
-          console.log('k2')
-        }
-      }
-    ],
-    $validationBehaviour: 'aggresive'
   }
 })
 
 async function handleSubmit() {
   try {
-    const formData = await validateFields(['k2'])
+    const formData = await validateFields()
     console.log(formData)
   } catch (e) {
     console.log(e)

@@ -1,29 +1,15 @@
 import { PromiseCancel } from '../../src/domain'
+import { promiseFactory } from '../utils'
 
 let promiseCancel: PromiseCancel<string>
-
-const promiseFactory = (
-  mode: 'resolve' | 'reject',
-  message: string,
-  timeout: number
-) =>
-  new Promise<string>((resolve, reject) => {
-    setTimeout(() => {
-      if (mode === 'resolve') {
-        resolve(message)
-      } else {
-        reject(message)
-      }
-    }, timeout)
-  })
 
 beforeEach(() => {
   promiseCancel = new PromiseCancel()
 })
 
 it('should resolve normal when not cancelled', done => {
-  const p1 = promiseFactory('resolve', 'p1', 400)
-  const p2 = promiseFactory('resolve', 'p2', 800)
+  const p1 = promiseFactory('p1', 400)
+  const p2 = promiseFactory('p2', 800)
 
   promiseCancel
     .race(p1, p2)
@@ -37,8 +23,8 @@ it('should resolve normal when not cancelled', done => {
 })
 
 it('should resolve directly after cancelResolve', done => {
-  const p1 = promiseFactory('resolve', 'p1', 400)
-  const p2 = promiseFactory('resolve', 'p2', 800)
+  const p1 = promiseFactory('p1', 400)
+  const p2 = promiseFactory('p2', 800)
 
   promiseCancel
     .race(p1, p2)
@@ -54,8 +40,8 @@ it('should resolve directly after cancelResolve', done => {
 })
 
 it('should reject directly after cancelReject', done => {
-  const p1 = promiseFactory('resolve', 'p1', 400)
-  const p2 = promiseFactory('resolve', 'p2', 800)
+  const p1 = promiseFactory('p1', 400)
+  const p2 = promiseFactory('p2', 800)
 
   promiseCancel
     .race(p1, p2)

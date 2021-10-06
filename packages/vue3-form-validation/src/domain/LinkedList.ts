@@ -106,25 +106,25 @@ export class LinkedList<T> {
     }
   }
 
-  valuesForwards() {
+  nodesForwards() {
     let node = this.head
 
     return {
       *[Symbol.iterator]() {
         for (; node !== null; node = node.next) {
-          yield node.value
+          yield node
         }
       }
     }
   }
 
-  valuesBackwards() {
+  nodesBackwards() {
     let node = this.tail
 
     return {
       *[Symbol.iterator]() {
         for (; node !== null; node = node.prev) {
-          yield node.value
+          yield node
         }
       }
     }

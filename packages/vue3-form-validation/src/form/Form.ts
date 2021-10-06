@@ -1,4 +1,4 @@
-import { computed, ref, shallowReactive, unref } from 'vue'
+import { computed, ref, shallowReactive } from 'vue'
 import { FormField } from './FormField'
 import { ValidationError } from './ValidationError'
 import {
@@ -11,7 +11,6 @@ type ValidationResult = Promise<void | string>
 
 type CurriedValidator = (
   formField: FormField,
-  rule: Required<n_domain.KeyedRule>['rule'],
   ruleNumber: number
 ) => (modelValues: unknown[]) => ValidationResult
 
@@ -27,7 +26,7 @@ export type SimpleValidators = {
 }
 
 type KeyedValidator = {
-  validator?: Validator
+  validator: Validator
   meta: {
     formField: FormField
   }
@@ -76,12 +75,10 @@ export class Form {
     }
 
     rules.forEach((rule, ruleNumber) => {
-      const validator = Form._validatorFactory(formField, rule, ruleNumber)
+      const validator = Form._validatorFactory(formField, ruleNumber)
 
       if (n_domain.isSimpleRule(rule)) {
-        if (validator !== undefined) {
-          simpleValidators.validators.push(validator)
-        }
+        simpleValidators.validators.push(validator)
       } else {
         const { key } = rule
         const keyedValidator: KeyedValidator = {
@@ -183,12 +180,9 @@ export class Form {
             const modelValues = values.map(
               ({ meta }) => meta.formField.modelValue
             )
-            const results = values
-              .map(({ validator }) => validator)
-              .filter(n_domain.isDefined)
-              .map(validator => validator(modelValues))
-
-            validationResults.push(...results)
+            validationResults.push(
+              ...values.map(({ validator }) => validator(modelValues))
+            )
           }
         }
       })(key)
@@ -246,60 +240,13 @@ export class Form {
 
   private static _validatorFactory(
     formField: FormField,
-    rule: n_domain.Rule,
     ruleNumber: number
-  ): Validator | undefined {
-    const buffer = new n_domain.LinkedList<boolean>()
-
-    const setError = (
-      formField: FormField,
-      ruleNumber: number,
-      error: unknown
-    ) => {
-      if (typeof error === 'string') {
-        formField.setError(ruleNumber, error)
-        throw error
-      } else {
-        formField.setError(ruleNumber, null)
-      }
-    }
-
+  ): Validator {
     const curriedValidator: CurriedValidator =
-      (formField, rule, ruleNumber) => async modelValues => {
-        let error: unknown
-        const ruleResult = rule(...modelValues.map(unref))
-
-        if (typeof ruleResult?.then === 'function') {
-          formField.increaseRulesValidating()
-          const isLatest = buffer.addLast(true)
-
-          if (isLatest.prev) {
-            isLatest.prev.value = false
-          }
-
-          try {
-            error = await ruleResult
-          } catch (err) {
-            error = err
-          }
-
-          buffer.remove(isLatest)
-          formField.decreaseRulesValidating()
-
-          // Is this the latest called rule? Then set the error
-          if (isLatest.value) {
-            setError(formField, ruleNumber, error)
-          }
-        } else {
-          error = ruleResult
-          setError(formField, ruleNumber, error)
-        }
+      (formField, ruleNumber) => modelValues => {
+        return formField.validate(ruleNumber, modelValues)
       }
 
-    if (n_domain.isSimpleRule(rule)) {
-      return curriedValidator(formField, rule, ruleNumber)
-    } else if (rule.rule) {
-      return curriedValidator(formField, rule.rule, ruleNumber)
-    }
+    return curriedValidator(formField, ruleNumber)
   }
 }

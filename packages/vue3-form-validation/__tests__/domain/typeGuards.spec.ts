@@ -85,7 +85,11 @@ describe('isTransformedField', () => {
         $errors: [],
         $hasError: false,
         $validating: false,
-        $listener: {}
+        $listener: {
+          blur() {
+            //
+          }
+        }
       } as TransformedField<any>)
     ).toBe(true)
   })

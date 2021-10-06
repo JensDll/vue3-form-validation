@@ -12,8 +12,8 @@ it('should copy nested object and leave no reference', () => {
   const jsonCopy = JSON.parse(JSON.stringify(original))
 
   const copy = deepCopy(original)
-  original.c.d = 10
-  original.c.e[0] = 10
+  original.c.d = -1
+  original.c.e[0] = -1
 
   expect(jsonCopy).toStrictEqual(copy)
 })

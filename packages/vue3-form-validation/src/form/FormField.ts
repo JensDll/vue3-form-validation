@@ -4,12 +4,16 @@ import * as n_domain from '../domain'
 import { Form } from './Form'
 import { ValidationBehaviorString } from '.'
 
-export class FormField {
-  private _errors: (string | null)[]
-  private _rulesValidating = ref(0)
-  private _validationBehavior: ValidationBehavior
+type Rule = ((...modelValues: unknown[]) => any) | undefined
 
-  initialModelValue: any
+export class FormField {
+  private _rules: Rule[]
+  private _buffers: n_domain.LinkedList<boolean>[]
+  private _errors: (string | null)[]
+  private _validationBehavior: ValidationBehavior
+  private _rulesValidating = ref(0)
+
+  initialModelValue: unknown
   name: string
   touched = false
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>
@@ -23,9 +27,14 @@ export class FormField {
     validationBehavior: ValidationBehavior,
     rules: n_domain.Rule[]
   ) {
-    this.name = name
-    this._validationBehavior = validationBehavior
+    this._rules = rules.map(rule =>
+      n_domain.isSimpleRule(rule) ? rule : rule.rule
+    )
+    this._buffers = rules.map(() => new n_domain.LinkedList())
     this._errors = reactive(rules.map(() => null))
+    this._validationBehavior = validationBehavior
+
+    this.name = name
 
     if (isRef(modelValue) || isReactive(modelValue)) {
       this.modelValue = modelValue
@@ -39,16 +48,50 @@ export class FormField {
     }
   }
 
-  setError(ruleNumber: number, error: string | null) {
-    this._errors[ruleNumber] = error
+  async validate(ruleNumber: number, modelValues: unknown[]) {
+    const rule = this._rules[ruleNumber]
+    const buffer = this._buffers[ruleNumber]
+    let error: unknown
+
+    if (!rule) {
+      return
+    }
+
+    const ruleResult = rule(...modelValues.map(unref))
+
+    if (typeof ruleResult?.then === 'function') {
+      this._rulesValidating.value++
+      const shouldSetError = buffer.addLast(true)
+
+      if (shouldSetError.prev) {
+        shouldSetError.prev.value = false
+      }
+
+      try {
+        error = await ruleResult
+      } catch (err) {
+        error = err
+      }
+
+      buffer.remove(shouldSetError)
+      this._rulesValidating.value--
+
+      if (shouldSetError.value) {
+        this.setError(ruleNumber, error)
+      }
+    } else {
+      error = ruleResult
+      this.setError(ruleNumber, error)
+    }
   }
 
-  increaseRulesValidating() {
-    this._rulesValidating.value++
-  }
-
-  decreaseRulesValidating() {
-    this._rulesValidating.value++
+  setError(ruleNumber: any, error: unknown) {
+    if (typeof error === 'string') {
+      this._errors[ruleNumber] = error
+      throw error
+    } else {
+      this._errors[ruleNumber] = null
+    }
   }
 
   getValidationBehavior(form: Form) {
@@ -95,6 +138,12 @@ export class FormField {
       } else {
         const copy = n_domain.deepCopy(this.initialModelValue)
         Object.assign(this.modelValue, copy)
+      }
+    }
+
+    for (const buffer of this._buffers) {
+      for (const shouldSetError of buffer.nodesForwards()) {
+        shouldSetError.value = false
       }
     }
 
