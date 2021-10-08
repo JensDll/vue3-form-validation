@@ -10,9 +10,27 @@ it('should iterate correctly for basic objects', () => {
 
   const it = deepIterator(obj)
 
-  expect(it.next().value).toStrictEqual(['a', obj.a, obj, ['a'], true])
-  expect(it.next().value).toStrictEqual(['b', obj.b, obj, ['b'], true])
-  expect(it.next().value).toStrictEqual(['c', obj.c, obj, ['c'], true])
+  expect(it.next().value).toStrictEqual({
+    key: 'a',
+    value: obj.a,
+    parent: obj,
+    path: ['a'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'b',
+    value: obj.b,
+    parent: obj,
+    path: ['b'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'c',
+    value: obj.c,
+    parent: obj,
+    path: ['c'],
+    isLeaf: true
+  })
   expect(it.next().done).toBe(true)
 })
 
@@ -30,30 +48,48 @@ it('should iterate correctly for basic nested objects', () => {
 
   const it = deepIterator(obj)
 
-  expect(it.next().value).toStrictEqual(['a', obj.a, obj, ['a'], true])
-  expect(it.next().value).toStrictEqual(['b', obj.b, obj, ['b'], false])
-  expect(it.next().value).toStrictEqual(['c', obj.b.c, obj.b, ['b', 'c'], true])
-  expect(it.next().value).toStrictEqual([
-    'd',
-    obj.b.d,
-    obj.b,
-    ['b', 'd'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'e',
-    obj.b.d.e,
-    obj.b.d,
-    ['b', 'd', 'e'],
-    true
-  ])
-  expect(it.next().value).toStrictEqual([
-    'f',
-    obj.b.d.f,
-    obj.b.d,
-    ['b', 'd', 'f'],
-    true
-  ])
+  expect(it.next().value).toStrictEqual({
+    key: 'a',
+    value: obj.a,
+    parent: obj,
+    path: ['a'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'b',
+    value: obj.b,
+    parent: obj,
+    path: ['b'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'c',
+    value: obj.b.c,
+    parent: obj.b,
+    path: ['b', 'c'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'd',
+    value: obj.b.d,
+    parent: obj.b,
+    path: ['b', 'd'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'e',
+    value: obj.b.d.e,
+    parent: obj.b.d,
+    path: ['b', 'd', 'e'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'f',
+    value: obj.b.d.f,
+    parent: obj.b.d,
+    path: ['b', 'd', 'f'],
+    isLeaf: true
+  })
   expect(it.next().done).toBe(true)
 })
 
@@ -78,64 +114,76 @@ it('should iterate correctly for nested objects with arrays', () => {
 
   const it = deepIterator(obj)
 
-  expect(it.next().value).toStrictEqual(['a', obj.a, obj, ['a'], true])
-  expect(it.next().value).toStrictEqual(['bs', obj.bs, obj, ['bs'], false])
-  expect(it.next().value).toStrictEqual([
-    '0',
-    obj.bs[0],
-    obj.bs,
-    ['bs', '0'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'c',
-    obj.bs[0].c,
-    obj.bs[0],
-    ['bs', '0', 'c'],
-    true
-  ])
-  expect(it.next().value).toStrictEqual([
-    'd',
-    obj.bs[0].d,
-    obj.bs[0],
-    ['bs', '0', 'd'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'e',
-    obj.bs[0].d.e,
-    obj.bs[0].d,
-    ['bs', '0', 'd', 'e'],
-    true
-  ])
-  expect(it.next().value).toStrictEqual([
-    '1',
-    obj.bs[1],
-    obj.bs,
-    ['bs', '1'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'c',
-    obj.bs[1].c,
-    obj.bs[1],
-    ['bs', '1', 'c'],
-    true
-  ])
-  expect(it.next().value).toStrictEqual([
-    'd',
-    obj.bs[1].d,
-    obj.bs[1],
-    ['bs', '1', 'd'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'e',
-    obj.bs[1].d.e,
-    obj.bs[1].d,
-    ['bs', '1', 'd', 'e'],
-    true
-  ])
+  expect(it.next().value).toStrictEqual({
+    key: 'a',
+    value: obj.a,
+    parent: obj,
+    path: ['a'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'bs',
+    value: obj.bs,
+    parent: obj,
+    path: ['bs'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: '0',
+    value: obj.bs[0],
+    parent: obj.bs,
+    path: ['bs', '0'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'c',
+    value: obj.bs[0].c,
+    parent: obj.bs[0],
+    path: ['bs', '0', 'c'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'd',
+    value: obj.bs[0].d,
+    parent: obj.bs[0],
+    path: ['bs', '0', 'd'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'e',
+    value: obj.bs[0].d.e,
+    parent: obj.bs[0].d,
+    path: ['bs', '0', 'd', 'e'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: '1',
+    value: obj.bs[1],
+    parent: obj.bs,
+    path: ['bs', '1'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'c',
+    value: obj.bs[1].c,
+    parent: obj.bs[1],
+    path: ['bs', '1', 'c'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'd',
+    value: obj.bs[1].d,
+    parent: obj.bs[1],
+    path: ['bs', '1', 'd'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'e',
+    value: obj.bs[1].d.e,
+    parent: obj.bs[1].d,
+    path: ['bs', '1', 'd', 'e'],
+    isLeaf: true
+  })
   expect(it.next().done).toBe(true)
 })
 
@@ -160,64 +208,76 @@ it("should not iterate over ref's", () => {
 
   const it = deepIterator(obj)
 
-  expect(it.next().value).toStrictEqual(['a', obj.a, obj, ['a'], true])
-  expect(it.next().value).toStrictEqual(['bs', obj.bs, obj, ['bs'], false])
-  expect(it.next().value).toStrictEqual([
-    '0',
-    obj.bs[0],
-    obj.bs,
-    ['bs', '0'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'c',
-    obj.bs[0].c,
-    obj.bs[0],
-    ['bs', '0', 'c'],
-    true
-  ])
-  expect(it.next().value).toStrictEqual([
-    'd',
-    obj.bs[0].d,
-    obj.bs[0],
-    ['bs', '0', 'd'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'e',
-    obj.bs[0].d.e,
-    obj.bs[0].d,
-    ['bs', '0', 'd', 'e'],
-    true
-  ])
-  expect(it.next().value).toStrictEqual([
-    '1',
-    obj.bs[1],
-    obj.bs,
-    ['bs', '1'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'c',
-    obj.bs[1].c,
-    obj.bs[1],
-    ['bs', '1', 'c'],
-    true
-  ])
-  expect(it.next().value).toStrictEqual([
-    'd',
-    obj.bs[1].d,
-    obj.bs[1],
-    ['bs', '1', 'd'],
-    false
-  ])
-  expect(it.next().value).toStrictEqual([
-    'e',
-    obj.bs[1].d.e,
-    obj.bs[1].d,
-    ['bs', '1', 'd', 'e'],
-    true
-  ])
+  expect(it.next().value).toStrictEqual({
+    key: 'a',
+    value: obj.a,
+    parent: obj,
+    path: ['a'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'bs',
+    value: obj.bs,
+    parent: obj,
+    path: ['bs'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: '0',
+    value: obj.bs[0],
+    parent: obj.bs,
+    path: ['bs', '0'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'c',
+    value: obj.bs[0].c,
+    parent: obj.bs[0],
+    path: ['bs', '0', 'c'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'd',
+    value: obj.bs[0].d,
+    parent: obj.bs[0],
+    path: ['bs', '0', 'd'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'e',
+    value: obj.bs[0].d.e,
+    parent: obj.bs[0].d,
+    path: ['bs', '0', 'd', 'e'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: '1',
+    value: obj.bs[1],
+    parent: obj.bs,
+    path: ['bs', '1'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'c',
+    value: obj.bs[1].c,
+    parent: obj.bs[1],
+    path: ['bs', '1', 'c'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'd',
+    value: obj.bs[1].d,
+    parent: obj.bs[1],
+    path: ['bs', '1', 'd'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'e',
+    value: obj.bs[1].d.e,
+    parent: obj.bs[1].d,
+    path: ['bs', '1', 'd', 'e'],
+    isLeaf: true
+  })
   expect(it.next().done).toBe(true)
 })
 
@@ -236,9 +296,33 @@ it('passing a predicate should stop the traversal', () => {
 
   const it = deepIterator(obj, value => value !== null && '$' in value)
 
-  expect(it.next().value).toStrictEqual(['a', obj.a, obj, ['a'], true])
-  expect(it.next().value).toStrictEqual(['b', obj.b, obj, ['b'], false])
-  expect(it.next().value).toStrictEqual(['c', obj.b.c, obj.b, ['b', 'c'], true])
-  expect(it.next().value).toStrictEqual(['d', obj.b.d, obj.b, ['b', 'd'], true])
+  expect(it.next().value).toStrictEqual({
+    key: 'a',
+    value: obj.a,
+    parent: obj,
+    path: ['a'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'b',
+    value: obj.b,
+    parent: obj,
+    path: ['b'],
+    isLeaf: false
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'c',
+    value: obj.b.c,
+    parent: obj.b,
+    path: ['b', 'c'],
+    isLeaf: true
+  })
+  expect(it.next().value).toStrictEqual({
+    key: 'd',
+    value: obj.b.d,
+    parent: obj.b,
+    path: ['b', 'd'],
+    isLeaf: true
+  })
   expect(it.next().done).toBe(true)
 })

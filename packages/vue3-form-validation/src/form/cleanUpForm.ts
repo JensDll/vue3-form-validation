@@ -7,7 +7,7 @@ export function cleanupForm(form: Form, deletedFormData: any) {
     return
   }
 
-  for (const [, value] of n_domain.deepIterator(
+  for (const { value } of n_domain.deepIterator(
     deletedFormData,
     n_domain.isTransformedField
   )) {

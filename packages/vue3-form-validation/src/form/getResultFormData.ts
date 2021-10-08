@@ -4,7 +4,7 @@ import * as n_domain from '../domain'
 export function getResultFormData(transformedFormData: any): any {
   const result = {}
 
-  for (const [, value, , path, isLeaf] of n_domain.deepIterator(
+  for (const { value, path, isLeaf } of n_domain.deepIterator(
     transformedFormData,
     n_domain.isTransformedField
   )) {

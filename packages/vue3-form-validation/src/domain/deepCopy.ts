@@ -6,7 +6,7 @@ export function deepCopy<T>(toClone: T): T {
   if (isObject(toClone)) {
     const copy = isArray(toClone) ? [] : {}
 
-    for (const [, value, , path, isLeaf] of deepIterator(toClone as any)) {
+    for (const { value, path, isLeaf } of deepIterator(toClone as any)) {
       if (isLeaf) {
         set(copy, path, value)
       }

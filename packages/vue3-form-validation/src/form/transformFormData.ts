@@ -39,7 +39,7 @@ function registerField(
 }
 
 export function transformFormData(form: Form, formData: object): void {
-  for (const [key, value, parent] of n_domain.deepIterator(formData)) {
+  for (const { key, value, parent } of n_domain.deepIterator(formData)) {
     if (n_domain.isField(value)) {
       const transformedField = registerField(form, key, value)
       parent[key] = transformedField
