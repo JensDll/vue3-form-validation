@@ -9,21 +9,20 @@ export type ValidationBehavior =
   | ValidationBehaviorString
   | ((info: ValidationBehaviorInfo) => ValidationBehaviorString | void)
 
-const VALIDATION_BEHAVIOR_RESTRICTIVENESS: Map<
-  ValidationBehaviorString,
-  number
-> = new Map([
-  ['aggresive', 0],
-  ['lazy', 1],
-  ['lazier', 2]
-])
+const VALIDATION_BEHAVIOR_RESTRICTIVENESS: {
+  [K in ValidationBehaviorString]: number
+} = {
+  aggresive: 0,
+  lazy: 1,
+  lazier: 2
+}
 
 const compareValidationBehavior = (
   a: ValidationBehaviorString,
   b: ValidationBehaviorString
 ) =>
-  VALIDATION_BEHAVIOR_RESTRICTIVENESS.get(a)! -
-  VALIDATION_BEHAVIOR_RESTRICTIVENESS.get(b)!
+  VALIDATION_BEHAVIOR_RESTRICTIVENESS[a] -
+  VALIDATION_BEHAVIOR_RESTRICTIVENESS[b]
 
 export const getMostRestrictiveValidationBehavior = (
   form: Form,

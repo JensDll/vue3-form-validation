@@ -13,7 +13,7 @@ function registerField(
     uid,
     name,
     field.$value,
-    field.$validationBehavior || 'lazy',
+    field.$validationBehavior || 'lazier',
     field.$rules ?? []
   )
 
@@ -31,11 +31,9 @@ function registerField(
     $errors: formField.errors,
     $hasError: formField.hasError,
     $validating: formField.validating,
-    $listener: {
-      blur() {
-        formField.touched = true
-        form.validate(uid, true)
-      }
+    async $setTouched() {
+      formField.touched = true
+      await form.validate(uid, true)
     }
   }
 }

@@ -14,9 +14,7 @@ export type TransformedField<T> = {
   $errors: string[]
   $hasError: boolean
   $validating: boolean
-  $listener: {
-    blur: EventListener
-  }
+  $setTouched(): Promise<void>
 }
 
 export type TransformedFormData<FormData extends object> = FormData extends any

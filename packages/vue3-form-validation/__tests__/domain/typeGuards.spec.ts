@@ -85,12 +85,10 @@ describe('isTransformedField', () => {
         $errors: [],
         $hasError: false,
         $validating: false,
-        $listener: {
-          blur() {
-            //
-          }
+        async $setTouched() {
+          // empty
         }
-      } as TransformedField<any>)
+      } as TransformedField<unknown>)
     ).toBe(true)
   })
 })

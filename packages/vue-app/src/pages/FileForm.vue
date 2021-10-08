@@ -12,7 +12,7 @@
             'text-sm block rounded-md border-gray-300 form-input',
             { error: form.text.$hasError }
           ]"
-          v-on="form.text.$listener"
+          @blur="form.text.$setTouched"
           v-model="form.text.$value"
           autocomplete="off"
         />
@@ -26,7 +26,6 @@
         label="Select some Files"
         v-model="form.files.$value"
         :errors="form.files.$errors"
-        v-on="form.files.$listener"
         multiple
       >
       </FormFileUpload>
@@ -60,13 +59,11 @@ interface FormData {
 const { form, validateFields, resetFields } = useValidation<FormData>({
   files: {
     $value: [],
-    $rules: [min(1)('Please select one or more files')],
-    $validationBehaviour: 'lazier'
+    $rules: [min(1)('Please select one or more files')]
   },
   text: {
     $value: '',
-    $rules: [min(6)('Please enter text longer than 5 characters')],
-    $validationBehaviour: 'lazier'
+    $rules: [min(6)('Please enter text longer than 5 characters')]
   }
 })
 

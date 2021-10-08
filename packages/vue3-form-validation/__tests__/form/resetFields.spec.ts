@@ -38,7 +38,7 @@ it('reset to default values', () => {
       $errors: [],
       $hasError: false,
       $validating: false,
-      $listener: expect.any(Object)
+      $setTouched: expect.any(Function)
     },
     b: {
       $uid: expect.any(Number),
@@ -46,7 +46,7 @@ it('reset to default values', () => {
       $errors: [],
       $hasError: false,
       $validating: false,
-      $listener: expect.any(Object)
+      $setTouched: expect.any(Function)
     },
     cs: [
       {
@@ -56,7 +56,7 @@ it('reset to default values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -64,7 +64,7 @@ it('reset to default values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       },
       {
@@ -74,7 +74,7 @@ it('reset to default values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -82,7 +82,7 @@ it('reset to default values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       },
       {
@@ -92,7 +92,7 @@ it('reset to default values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -100,7 +100,7 @@ it('reset to default values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       }
     ]
@@ -140,7 +140,7 @@ it('reset to specific values', () => {
       $errors: [],
       $hasError: false,
       $validating: false,
-      $listener: expect.any(Object)
+      $setTouched: expect.any(Function)
     },
     b: {
       $uid: expect.any(Number),
@@ -148,7 +148,7 @@ it('reset to specific values', () => {
       $errors: [],
       $hasError: false,
       $validating: false,
-      $listener: expect.any(Object)
+      $setTouched: expect.any(Function)
     },
     cs: [
       {
@@ -158,7 +158,7 @@ it('reset to specific values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -166,7 +166,7 @@ it('reset to specific values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       },
       {
@@ -176,7 +176,7 @@ it('reset to specific values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -184,7 +184,7 @@ it('reset to specific values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       },
       {
@@ -194,7 +194,7 @@ it('reset to specific values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -202,7 +202,7 @@ it('reset to specific values', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       }
     ]

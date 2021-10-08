@@ -32,7 +32,7 @@ it('should transform every field', () => {
       $errors: [],
       $hasError: false,
       $validating: false,
-      $listener: expect.any(Object)
+      $setTouched: expect.any(Function)
     },
     b: {
       $uid: expect.any(Number),
@@ -40,7 +40,7 @@ it('should transform every field', () => {
       $errors: [],
       $hasError: false,
       $validating: false,
-      $listener: expect.any(Object)
+      $setTouched: expect.any(Function)
     },
     cs: [
       {
@@ -50,7 +50,7 @@ it('should transform every field', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -58,7 +58,7 @@ it('should transform every field', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       },
       {
@@ -68,7 +68,7 @@ it('should transform every field', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -76,7 +76,7 @@ it('should transform every field', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       },
       {
@@ -86,7 +86,7 @@ it('should transform every field', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         },
         e: {
           $uid: expect.any(Number),
@@ -94,7 +94,7 @@ it('should transform every field', () => {
           $errors: [],
           $hasError: false,
           $validating: false,
-          $listener: expect.any(Object)
+          $setTouched: expect.any(Function)
         }
       }
     ],

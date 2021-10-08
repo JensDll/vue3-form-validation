@@ -3,7 +3,6 @@
 </template>
 
 <script setup lang="ts">
-import MainPage from './pages/MainPage.vue'
 import FileForm from './pages/FileForm.vue'
 </script>
 
