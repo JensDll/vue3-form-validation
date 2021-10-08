@@ -1,6 +1,6 @@
 {
   "name": "vue3-form-validation",
-  "version": "4.1.1",
+  "version": "5.0.0-beta.1",
   "description": "Vue composition function for Form Validation",
   "author": {
     "name": "jens",

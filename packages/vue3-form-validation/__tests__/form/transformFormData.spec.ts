@@ -7,6 +7,10 @@ type FormData = {
     d: Field<string>
     e: Field<string>
   }[]
+  some: {
+    extra: string
+    stuff: number[]
+  }
 }
 
 it('should transform every field', () => {
@@ -17,7 +21,8 @@ it('should transform every field', () => {
       { d: { $value: '' }, e: { $value: '' } },
       { d: { $value: '' }, e: { $value: '' } },
       { d: { $value: '' }, e: { $value: '' } }
-    ]
+    ],
+    some: { extra: '', stuff: [1, 2, 3] }
   })
 
   expect(form).toStrictEqual<typeof form>({
@@ -92,6 +97,7 @@ it('should transform every field', () => {
           $listener: expect.any(Object)
         }
       }
-    ]
+    ],
+    some: { extra: '', stuff: [1, 2, 3] }
   })
 })

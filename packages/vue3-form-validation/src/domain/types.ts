@@ -30,3 +30,10 @@ export type DeepMaybeRef<T> = T extends Ref
   : T extends Record<string, unknown>
   ? DeepMaybeRefObject<T>
   : MaybeRef<T>
+
+type _Tuple<T, N extends number, R extends unknown[]> = R['length'] extends N
+  ? R
+  : _Tuple<T, N, [T, ...R]>
+export type Tuple<T, N extends number> = number extends N
+  ? T[]
+  : _Tuple<T, N, []>

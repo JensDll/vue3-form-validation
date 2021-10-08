@@ -1,8 +1,10 @@
 import { computed, isReactive, isRef, reactive, ref, unref } from 'vue'
-import { ValidationBehavior } from './validationBehavior'
-import * as n_domain from '../domain'
+import {
+  ValidationBehavior,
+  ValidationBehaviorString
+} from './validationBehavior'
 import { Form } from './Form'
-import { ValidationBehaviorString } from '.'
+import * as n_domain from '../domain'
 
 type Rule = ((...modelValues: unknown[]) => any) | undefined
 
@@ -77,20 +79,11 @@ export class FormField {
       this._rulesValidating.value--
 
       if (shouldSetError.value) {
-        this.setError(ruleNumber, error)
+        this._setError(ruleNumber, error)
       }
     } else {
       error = ruleResult
-      this.setError(ruleNumber, error)
-    }
-  }
-
-  setError(ruleNumber: any, error: unknown) {
-    if (typeof error === 'string') {
-      this._errors[ruleNumber] = error
-      throw error
-    } else {
-      this._errors[ruleNumber] = null
+      this._setError(ruleNumber, error)
     }
   }
 
@@ -151,5 +144,14 @@ export class FormField {
       this._errors,
       this._errors.map(() => null)
     )
+  }
+
+  private _setError(ruleNumber: any, error: unknown) {
+    if (typeof error === 'string') {
+      this._errors[ruleNumber] = error
+      throw error
+    } else {
+      this._errors[ruleNumber] = null
+    }
   }
 }

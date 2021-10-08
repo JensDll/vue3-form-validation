@@ -65,7 +65,7 @@ const { form, validateFields, resetFields } = useValidation<FormData>({
   },
   text: {
     $value: '',
-    $rules: [min(6)('Please enter text longer than 5 chracters')],
+    $rules: [min(6)('Please enter text longer than 5 characters')],
     $validationBehaviour: 'lazier'
   }
 })

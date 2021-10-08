@@ -5,7 +5,7 @@ import * as n_domain from '../domain'
 export type Field<TValue> = {
   $value: n_domain.DeepMaybeRef<TValue>
   $rules?: n_domain.Rule<TValue extends any[] ? TValue : UnwrapRef<TValue>>[]
-  $validationBehaviour?: n_form.ValidationBehavior
+  $validationBehavior?: n_form.ValidationBehavior
 }
 
 export type TransformedField<T> = {

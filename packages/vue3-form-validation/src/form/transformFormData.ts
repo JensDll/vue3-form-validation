@@ -13,7 +13,7 @@ function registerField(
     uid,
     name,
     field.$value,
-    field.$validationBehaviour || 'lazy',
+    field.$validationBehavior || 'lazy',
     field.$rules ?? []
   )
 

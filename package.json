@@ -11,6 +11,7 @@
     "lint": "npm exec -- eslint --rule=\"no-console: error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
     "test": "jest --runInBand",
     "test-dts": "npm run build && npm exec -- tsd",
+    "test-dts-only": "npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",
     "postinstall": "husky install"
   },
@@ -19,7 +20,7 @@
     "directory": "test-dts"
   },
   "dependencies": {
-    "@microsoft/api-extractor": "^7.18.13",
+    "@microsoft/api-extractor": "^7.18.15",
     "@rollup/plugin-alias": "^3.1.5",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.2",

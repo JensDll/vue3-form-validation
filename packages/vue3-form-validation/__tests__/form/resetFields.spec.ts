@@ -20,14 +20,14 @@ it('reset to default values', () => {
     ]
   })
 
-  form.a.$value = 'a'
-  form.b.$value = 'b'
-  form.cs[0].d.$value = 'd1'
-  form.cs[0].e.$value = 'e1'
-  form.cs[1].d.$value = 'd2'
-  form.cs[1].e.$value = 'e2'
-  form.cs[2].d.$value = 'd3'
-  form.cs[2].e.$value = 'e3'
+  form.a.$value = 'x'
+  form.b.$value = 'x'
+  form.cs[0].d.$value = 'x'
+  form.cs[0].e.$value = 'x'
+  form.cs[1].d.$value = 'x'
+  form.cs[1].e.$value = 'x'
+  form.cs[2].d.$value = 'x'
+  form.cs[2].e.$value = 'x'
 
   resetFields()
 

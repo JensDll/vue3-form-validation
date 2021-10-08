@@ -221,7 +221,7 @@ it("should not iterate over ref's", () => {
   expect(it.next().done).toBe(true)
 })
 
-it('passing predicate should stop the traversal', () => {
+it('passing a predicate should stop the traversal', () => {
   const obj = {
     a: {
       $: ''

@@ -4,7 +4,7 @@ import {
   Field,
   TransformedField,
   useValidation
-} from '../packages/vue3-form-validation/src/composition/useValidation'
+} from '../packages/vue3-form-validation/src/composition'
 
 useValidation<{ a: Field<string> }>({
   a: {
@@ -95,6 +95,7 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
   expectError(add(['cs'], { d: { $value: '' } }))
 }
 
+// example with nested field
 {
   const { form, validateFields } = useValidation<{
     a: Field<
@@ -176,12 +177,6 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
       c?: number
     }>
   >(validateFields())
-
-  expectType<{
-    a: string
-    b?: boolean
-    c?: number
-  }>(await validateFields())
 
   add(['a'], { $value: '' })
   add(['b'], { $value: false })

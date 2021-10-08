@@ -20,4 +20,4 @@ export {
 export { LinkedList } from './LinkedList'
 export { PromiseCancel } from './PromiseCancel'
 
-export type { Key, DeepMaybeRef, MaybeRef, DeepIndex } from './types'
+export type { Key, DeepMaybeRef, MaybeRef, DeepIndex, Tuple } from './types'
