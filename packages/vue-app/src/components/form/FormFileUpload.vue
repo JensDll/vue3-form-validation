@@ -1,14 +1,12 @@
 <template>
   <div>
     <label class="block">
-      <div class="font-medium mb-2">
+      <div class="form-label">
         {{ label }}
       </div>
       <div
         :class="[
-          'group relative py-10 form-input',
-          'border-2 border-dashed rounded',
-          'flex justify-center items-center',
+          'group relative py-10 form-input border-2 border-dashed rounded flex justify-center items-center',
           { 'error bg-red-50 border': hasError }
         ]"
       >
@@ -24,14 +22,14 @@
             <span
               :class="[
                 'font-semibold text-indigo-500 group-hover:text-indigo-600',
-                { 'text-red-500 group-hover:text-red-600': hasError }
+                { '!text-red-500 group-hover:!text-red-600': hasError }
               ]"
             >
               Upload a file
             </span>
             or drag and drop
           </p>
-          <slot name="hint"></slot>
+          <slot></slot>
           <div
             v-if="image && isFileSelected"
             class="flex flex-col items-center"
@@ -44,11 +42,7 @@
         </div>
       </div>
     </label>
-    <div class="text-red-500 text-sm mt-2" v-if="errors.length">
-      <p v-for="(error, i) in errors" :key="i">
-        {{ error }}
-      </p>
-    </div>
+    <FormErrors :errors="errors" class="mt-2" />
     <ul class="mt-4" v-if="files.length">
       <li
         class="flex items-center cursor-pointer group"
@@ -68,6 +62,7 @@
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
 import { MinusCircleIcon } from '@heroicons/vue/outline'
+import FormErrors from './FormErrors.vue'
 
 type FileHelper = {
   src: string

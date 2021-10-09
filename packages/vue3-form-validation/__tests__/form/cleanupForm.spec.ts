@@ -34,7 +34,7 @@ const generateTestData = () =>
 it('should call onDelete for every field', () => {
   const formData = generateTestData()
 
-  cleanupForm(mockForm, formData)
+  cleanupForm(mockForm, formData, new Map())
 
   expect(mockOnDelete).toHaveBeenCalledTimes(8)
 })
@@ -42,7 +42,7 @@ it('should call onDelete for every field', () => {
 it('should call onDelete for a subset of fields', () => {
   const formData = generateTestData()
 
-  cleanupForm(mockForm, formData.cs)
+  cleanupForm(mockForm, formData.cs, new Map())
 
   expect(mockOnDelete).toHaveBeenCalledTimes(6)
 })

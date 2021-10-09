@@ -3,10 +3,13 @@ import { Field, TransformedField } from '../composition'
 import { Form } from './Form'
 import * as n_domain from '../domain'
 
+export type DisposableMap = Map<number, (() => void)[]>
+
 function registerField(
   form: Form,
   name: string,
-  field: Field<unknown>
+  field: Field<unknown>,
+  disposables: DisposableMap
 ): { [K in keyof TransformedField<unknown>]: unknown } {
   const uid = n_domain.uid()
   const formField = form.registerField(
@@ -17,13 +20,15 @@ function registerField(
     field.$rules ?? []
   )
 
-  watch(
+  const stop = watch(
     formField.modelValue,
     () => {
       form.validate(uid)
     },
     { deep: true }
   )
+
+  disposables.set(uid, [stop, formField.dispose.bind(formField)])
 
   return {
     $uid: uid,
@@ -38,11 +43,15 @@ function registerField(
   }
 }
 
-export function transformFormData(form: Form, formData: object): void {
+export function transformFormData(form: Form, formData: object) {
+  const disposables: DisposableMap = new Map()
+
   for (const { key, value, parent } of n_domain.deepIterator(formData)) {
     if (n_domain.isField(value)) {
-      const transformedField = registerField(form, key, value)
+      const transformedField = registerField(form, key, value, disposables)
       parent[key] = transformedField
     }
   }
+
+  return disposables
 }

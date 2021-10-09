@@ -146,6 +146,12 @@ export class FormField {
     )
   }
 
+  dispose() {
+    this.errors.effect.stop()
+    this.validating.effect.stop()
+    this.hasError.effect.stop()
+  }
+
   private _setError(ruleNumber: any, error: unknown) {
     if (typeof error === 'string') {
       this._errors[ruleNumber] = error

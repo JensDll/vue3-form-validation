@@ -1,0 +1,14 @@
+{
+  "vue init": {
+    "prefix": "vue init",
+    "scope": "vue",
+    "body": [
+      "<template></template>",
+      "",
+      "<script setup lang=\"ts\">$0</script>",
+      "",
+      "<style lang=\"postcss\" scoped></style>"
+    ],
+    "description": "Vue base script setup"
+  }
+}

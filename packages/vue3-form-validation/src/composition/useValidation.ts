@@ -94,7 +94,7 @@ export function useValidation<FormData extends object>(
   const form = new n_form.Form()
   const promiseCancel = new n_domain.PromiseCancel<n_form.ValidationError>()
 
-  n_form.transformFormData(form, formData)
+  const disposables = n_form.transformFormData(form, formData)
 
   const transformedFormData: any = reactive(formData)
 
@@ -137,7 +137,9 @@ export function useValidation<FormData extends object>(
 
       if (lastKey !== undefined) {
         const box = { [lastKey]: value }
-        n_form.transformFormData(form, box)
+        n_form.transformFormData(form, box).forEach((fs, uid) => {
+          disposables.set(uid, fs)
+        })
         const transformedField = box[lastKey]
         const valueAtPath = n_domain.path(path, transformedFormData)
         if (Array.isArray(valueAtPath)) {
@@ -153,15 +155,15 @@ export function useValidation<FormData extends object>(
 
       if (lastKey !== undefined) {
         if (path.length === 0) {
-          n_form.cleanupForm(form, transformedFormData[lastKey])
+          n_form.cleanupForm(form, transformedFormData[lastKey], disposables)
           delete transformedFormData[lastKey]
         } else {
           const valueAtPath = n_domain.path(path, transformedFormData)
           if (Array.isArray(valueAtPath)) {
             const deletedFormData = valueAtPath.splice(+lastKey, 1)
-            n_form.cleanupForm(form, deletedFormData)
+            n_form.cleanupForm(form, deletedFormData, disposables)
           } else {
-            n_form.cleanupForm(form, valueAtPath[lastKey])
+            n_form.cleanupForm(form, valueAtPath[lastKey], disposables)
             delete valueAtPath[lastKey]
           }
         }

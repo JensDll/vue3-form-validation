@@ -6,18 +6,18 @@ const FORMATS = process.env.FORMATS.split(' ')
 
 const configs = []
 
+const tsconfigOverride = {
+  exclude: ['**/__tests__', 'scripts']
+}
+
 for (const target of TARGETS) {
   const config = {
     input: `packages/${target}/src/index.ts`,
     external: ['vue'],
     plugins: [
       process.env.BUILD
-        ? typescript({
-            tsconfigOverride: {
-              exclude: ['**/__tests__', 'scripts']
-            }
-          })
-        : esbuild({ exclude: ['**/__tests__', 'scripts'] })
+        ? typescript({ tsconfigOverride })
+        : esbuild(tsconfigOverride)
     ]
   }
 

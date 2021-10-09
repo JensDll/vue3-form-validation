@@ -16,7 +16,7 @@
     "postcss-nesting": "^8.0.1",
     "tailwindcss": "^2.2.16",
     "vite": "^2.6.5",
-    "vue-router": "^3.5.2",
-    "vue-tsc": "^0.28.0"
+    "vue-router": "^4.0.11",
+    "vue-tsc": "^0.28.1"
   }
 }
