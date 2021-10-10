@@ -1,13 +1,23 @@
-export { cleanupForm } from './cleanUpForm'
-export { getResultFormData } from './getResultFormData'
-export { resetFields } from './resetFields'
-export { transformFormData } from './transformFormData'
 export {
-  ValidationBehavior,
-  ValidationBehaviorInfo,
-  ValidationBehaviorString,
-  getMostRestrictiveValidationBehavior
-} from './validationBehavior'
+  DisposableMap,
+  cleanupForm,
+  getResultFormData,
+  resetFields,
+  transformFormData
+} from './data'
 export { Form } from './Form'
 export { FormField } from './FormField'
 export { ValidationError } from './ValidationError'
+export {
+  Field,
+  FieldRule,
+  KeyedRule,
+  SimpleRule,
+  TransformedField,
+  TransformedFormData,
+  FieldNames,
+  ResultFormData,
+  ValidationBehavior,
+  ValidationBehaviorInfo,
+  ValidationBehaviorString
+} from './types'

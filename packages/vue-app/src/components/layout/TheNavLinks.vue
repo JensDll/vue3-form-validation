@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline'
-import { isDefined } from '~/domain'
+import { guards } from '~/domain'
 import { RouteRecordName, useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
@@ -22,7 +22,7 @@ const router = useRouter()
 const routeRecordNames: RouteRecordName[] = router
   .getRoutes()
   .map(({ name }) => name)
-  .filter(isDefined)
+  .filter(guards.isDefined)
 
 const lookup = new Map(routeRecordNames.map((name, i) => [name, i]))
 

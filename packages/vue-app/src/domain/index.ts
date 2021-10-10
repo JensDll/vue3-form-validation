@@ -1,3 +1,3 @@
-export * from './rules'
-export * from './types'
-export * from './typeGuards'
+export { rules } from './rules'
+export type { Lengthy } from './types'
+export { guards } from './typeGuards'

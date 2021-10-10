@@ -30,7 +30,7 @@ const delay = () =>
   new Promise(resolve => {
     setTimeout(() => {
       resolve(null)
-    }, 500)
+    }, 100)
   })
 
 beforeEach(() => {

@@ -7,11 +7,12 @@
     @reset="resetFields()"
   >
     <div>
-      <label for="text" class="form-label"> Enter some Text </label>
+      <label for="text" class="form-label">Enter some Text</label>
       <input
         type="text"
         id="text"
         :class="['text-sm form-input', { error: form.text.$hasError }]"
+        @blur="form.text.$setTouched()"
         v-model="form.text.$value"
       />
       <FormErrors :errors="form.text.$errors" class="mt-2" />
@@ -28,9 +29,8 @@
 
 <script setup lang="ts">
 import FormFileUpload from '~/components/form/FormFileUpload.vue'
-import BaseButton from '~/components/base/BaseButton.vue'
 import { Field, useValidation } from 'vue3-form-validation'
-import { min } from '~/domain'
+import { rules } from '~/domain'
 import FormProvider from '~/components/layout/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
 
@@ -42,11 +42,25 @@ interface FormData {
 const { form, validateFields, resetFields } = useValidation<FormData>({
   files: {
     $value: [],
-    $rules: [min(1)('Please select one or more files')]
+    $rules: [rules.min(1)('Please select one or more files')]
   },
   text: {
     $value: '',
-    $rules: [min(6)('Please enter text longer than 5 characters')]
+    $rules: [
+      rules.min(6)('Please enter text longer than 5 characters'),
+      [
+        'aggresive',
+        x => {
+          console.log('aggresive', x)
+        }
+      ],
+      [
+        'lazier',
+        x => {
+          console.log('lazier', x)
+        }
+      ]
+    ]
   }
 })
 

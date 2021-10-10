@@ -1,64 +1,15 @@
-import { reactive, Ref, ComputedRef, UnwrapRef } from 'vue'
-import * as n_form from '../form'
-import * as n_domain from '../domain'
-
-export type Field<TValue> = {
-  $value: n_domain.DeepMaybeRef<TValue>
-  $rules?: n_domain.Rule<TValue extends any[] ? TValue : UnwrapRef<TValue>>[]
-  $validationBehavior?: n_form.ValidationBehavior
-}
-
-export type TransformedField<T> = {
-  $uid: number
-  $value: T
-  $errors: string[]
-  $hasError: boolean
-  $validating: boolean
-  $setTouched(): Promise<void>
-}
-
-export type TransformedFormData<FormData extends object> = FormData extends any
-  ? {
-      [K in keyof FormData]: FormData[K] extends
-        | { $value: infer TValue }
-        | undefined
-        ? FormData[K] extends undefined
-          ? undefined
-          : TransformedField<UnwrapRef<TValue>>
-        : FormData[K] extends object
-        ? TransformedFormData<FormData[K]>
-        : FormData[K]
-    }
-  : never
-
-type ResultFormData<FormData extends object> = FormData extends any
-  ? {
-      [K in keyof FormData]: FormData[K] extends
-        | { $value: infer TValue }
-        | undefined
-        ? UnwrapRef<TValue>
-        : FormData[K] extends object
-        ? ResultFormData<FormData[K]>
-        : FormData[K]
-    }
-  : never
-
-type FieldNames<T> = T extends (infer TArray)[]
-  ? FieldNames<TArray>
-  : {
-      [K in keyof T]-?: T[K] extends { $value: any } | undefined
-        ? K
-        : FieldNames<T[K]>
-    }[keyof T]
+import { reactive, Ref, ComputedRef } from 'vue'
+import * as n_form from './form'
+import * as n_domain from './domain'
 
 type UseValidation<FormData extends object> = {
-  form: TransformedFormData<FormData>
+  form: n_form.TransformedFormData<FormData>
   submitting: Ref<boolean>
   errors: ComputedRef<string[]>
   validateFields(
-    names?: FieldNames<FormData>[] | string[]
-  ): Promise<ResultFormData<FormData>>
-  resetFields(formData?: Partial<ResultFormData<FormData>>): void
+    names?: n_form.FieldNames<FormData>[] | string[]
+  ): Promise<n_form.ResultFormData<FormData>>
+  resetFields(formData?: Partial<n_form.ResultFormData<FormData>>): void
   add<Ks extends readonly n_domain.Key[]>(
     path: readonly [...Ks],
     value: n_domain.DeepIndex<FormData, Ks> extends (infer TArray)[]
@@ -99,7 +50,7 @@ export function useValidation<FormData extends object>(
   const transformedFormData: any = reactive(formData)
 
   return {
-    form: transformedFormData as TransformedFormData<FormData>,
+    form: transformedFormData as n_form.TransformedFormData<FormData>,
     submitting: form.submitting,
     errors: form.errors,
 
@@ -108,7 +59,7 @@ export function useValidation<FormData extends object>(
 
       const resultFormData = n_form.getResultFormData(
         transformedFormData
-      ) as ResultFormData<FormData>
+      ) as n_form.ResultFormData<FormData>
 
       try {
         await promiseCancel.race(form.validateAll(names as any))
@@ -171,3 +122,19 @@ export function useValidation<FormData extends object>(
     }
   }
 }
+
+// type FormData = {
+//   text: n_form.Field<string>
+// }
+
+// useValidation<FormData>({
+//   text: {
+//     $value: '',
+//     $rules: [
+//       x => x,
+//       { key: 'a', rule: x => x },
+//       ['lazy', x => x],
+//       ['aggresive', { key: 'b', rule: x => x }]
+//     ]
+//   }
+// })

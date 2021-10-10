@@ -13,7 +13,7 @@
           id="a"
           type="text"
           v-model="form.a.$value"
-          @blur="form.a.$setTouched"
+          @blur="form.a.$setTouched()"
           class="form-input w-full mr-16"
           :class="{ error: form.a.$hasError }"
         />
@@ -32,7 +32,7 @@
             id="b"
             type="text"
             v-model="x.b.$value"
-            @blur="x.b.$setTouched"
+            @blur="x.b.$setTouched()"
             class="form-input w-full mr-16"
             :class="{ error: x.b.$hasError }"
           />
@@ -57,7 +57,7 @@
             id="c"
             type="text"
             v-model="y.c.$value"
-            @blur="y.c.$setTouched"
+            @blur="y.c.$setTouched()"
             class="form-input w-full mr-8"
             :class="{ error: y.c.$hasError }"
           />
@@ -65,7 +65,7 @@
             id="d"
             type="text"
             v-model="y.d.$value"
-            @blur="y.d.$setTouched"
+            @blur="y.d.$setTouched()"
             class="form-input w-full mr-16"
             :class="{ error: y.d.$hasError }"
           />
@@ -98,7 +98,7 @@ import FormProvider from '~/components/layout/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
 import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/outline'
 import { Field, useValidation } from 'vue3-form-validation'
-import { required, random } from '~/domain'
+import { rules } from '~/domain'
 
 type FormData = {
   a: Field<string>
@@ -115,7 +115,7 @@ const { form, validateFields, resetFields, add, remove } =
   useValidation<FormData>({
     a: {
       $value: '',
-      $rules: [required('Please input some text'), random()]
+      $rules: [rules.required('Please input some text'), rules.random()]
     },
     xs: []
   })
@@ -133,7 +133,7 @@ function addX() {
   add(['xs'], {
     b: {
       $value: '',
-      $rules: [required('Please input some text'), random()]
+      $rules: [rules.required('Please input some text'), rules.random()]
     },
     ys: []
   })
@@ -143,15 +143,30 @@ function removeX(xi: number) {
   remove(['xs', xi])
 }
 
+let i = 0
 function addY(xi: number) {
   add(['xs', xi, 'ys'], {
     c: {
       $value: '',
-      $rules: [required('Please input some text'), random()]
+      $rules: [
+        rules.required('Please input some text'),
+        rules.random(),
+        {
+          key: `key${++i}`,
+          rule: rules.equal('Please select matching values for C and D')
+        }
+      ]
     },
     d: {
       $value: '',
-      $rules: [required('Please input some text'), random()]
+      $rules: [
+        rules.required('Please input some text'),
+        rules.random(),
+        {
+          key: `key${i}`,
+          rule: rules.equal('Please select matching values for C and D')
+        }
+      ]
     }
   })
 }

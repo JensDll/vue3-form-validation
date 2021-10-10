@@ -1,4 +1,7 @@
-export { useValidation } from './composition'
+export { useValidation } from './useValidation'
+export { configureValidation } from './configureValidation'
 export { ValidationError } from './form'
-export type { Rule, SimpleRule, KeyedRule } from './domain'
-export type { Field, TransformedField } from './composition'
+
+export type { ValidationBehaviorString } from './form'
+export type { Configuration } from './configureValidation'
+export type { Field, TransformedField, SimpleRule, KeyedRule } from './form'

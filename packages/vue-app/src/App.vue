@@ -14,7 +14,7 @@ import TheNavLinks from './components/layout/TheNavLinks.vue'
 @tailwind utilities;
 
 #app {
-  @apply container mx-auto mt-8 px-4 pb-8 font-body grid justify-items-center gap-y-12;
+  @apply container mx-auto mt-8 px-4 pb-8 font-body grid justify-items-center gap-y-16;
 }
 
 @screen xs {

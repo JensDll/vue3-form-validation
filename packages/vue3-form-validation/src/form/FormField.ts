@@ -1,18 +1,14 @@
 import { computed, isReactive, isRef, reactive, ref, unref } from 'vue'
-import {
-  ValidationBehavior,
-  ValidationBehaviorString
-} from './validationBehavior'
 import { Form } from './Form'
+import { SimpleRule, RuleWithKey, ValidationBehavior } from './types'
+import { isSimpleRule } from './typeGuards'
 import * as n_domain from '../domain'
 
-type Rule = ((...modelValues: unknown[]) => any) | undefined
-
 export class FormField {
-  private _rules: Rule[]
+  private _rules: (SimpleRule | undefined)[]
+  private _validationBehaviors: ValidationBehavior[]
   private _buffers: n_domain.LinkedList<boolean>[]
   private _errors: (string | null)[]
-  private _validationBehavior: ValidationBehavior
   private _rulesValidating = ref(0)
 
   initialModelValue: unknown
@@ -26,15 +22,16 @@ export class FormField {
   constructor(
     name: string,
     modelValue: any,
-    validationBehavior: ValidationBehavior,
-    rules: n_domain.Rule[]
+    rules: [ValidationBehavior, SimpleRule | RuleWithKey][]
   ) {
-    this._rules = rules.map(rule =>
-      n_domain.isSimpleRule(rule) ? rule : rule.rule
+    this._rules = rules.map(([, rule]) =>
+      isSimpleRule(rule) ? rule : rule.rule
+    )
+    this._validationBehaviors = rules.map(
+      ([validationBehavior]) => validationBehavior
     )
     this._buffers = rules.map(() => new n_domain.LinkedList())
     this._errors = reactive(rules.map(() => null))
-    this._validationBehavior = validationBehavior
 
     this.name = name
 
@@ -50,7 +47,16 @@ export class FormField {
     }
   }
 
-  async validate(ruleNumber: number, modelValues: unknown[]) {
+  async validate(
+    ruleNumber: number,
+    modelValues: unknown[],
+    form: Form,
+    force: boolean
+  ) {
+    if (!(force || this._shouldValidate(ruleNumber, form))) {
+      return
+    }
+
     const rule = this._rules[ruleNumber]
     const buffer = this._buffers[ruleNumber]
     let error: unknown
@@ -87,37 +93,6 @@ export class FormField {
     }
   }
 
-  getValidationBehavior(form: Form) {
-    return typeof this._validationBehavior === 'function'
-      ? this._validationBehavior({
-          submitCount: form.submitCount,
-          errorMessages: this.errors.value
-        })
-      : this._validationBehavior
-  }
-
-  shouldValidate(
-    form: Form,
-    validationBehavior?: ValidationBehaviorString
-  ): boolean {
-    switch (validationBehavior || this.getValidationBehavior(form)) {
-      case 'aggresive':
-        return true
-      case 'lazy':
-        if (this.touched) {
-          return true
-        }
-        break
-      case 'lazier':
-        if (this.touched && this.hasError.value) {
-          return true
-        }
-        break
-    }
-
-    return false
-  }
-
   reset(toDefaultValues: boolean) {
     this.touched = false
 
@@ -150,6 +125,42 @@ export class FormField {
     this.errors.effect.stop()
     this.validating.effect.stop()
     this.hasError.effect.stop()
+  }
+
+  getValidationBehavior(ruleNumber: number) {
+    return this._validationBehaviors[ruleNumber]
+  }
+
+  private _shouldValidate(ruleNumber: number, form: Form): boolean {
+    const validationBehavior = this.getValidationBehavior(ruleNumber)
+    const validationBehaviorResult =
+      typeof validationBehavior === 'function'
+        ? validationBehavior({
+            submitCount: form.submitCount,
+            errorMessages: this.errors.value
+          })
+        : validationBehavior
+
+    if (typeof validationBehaviorResult === 'boolean') {
+      return validationBehaviorResult
+    }
+
+    switch (validationBehaviorResult) {
+      case 'aggresive':
+        return true
+      case 'lazy':
+        if (this.touched) {
+          return true
+        }
+        break
+      case 'lazier':
+        if (this.touched && this.hasError.value) {
+          return true
+        }
+        break
+    }
+
+    return false
   }
 
   private _setError(ruleNumber: any, error: unknown) {

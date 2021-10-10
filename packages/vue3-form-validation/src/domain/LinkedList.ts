@@ -9,27 +9,21 @@ export class LinkedListNode<T> {
 }
 
 export class LinkedList<T> {
-  private head: LinkedListNode<T> | null = null
-  private tail: LinkedListNode<T> | null = null
+  first: LinkedListNode<T> | null = null
+  last: LinkedListNode<T> | null = null
 
   count = 0
-  get first() {
-    return this.head
-  }
-  get last() {
-    return this.tail
-  }
 
   addFirst(value: T) {
     const node = new LinkedListNode(value)
 
     if (this.count === 0) {
-      this.head = node
-      this.tail = node
+      this.first = node
+      this.last = node
     } else {
-      node.next = this.head
-      this.head!.prev = node
-      this.head = node
+      node.next = this.first
+      this.first!.prev = node
+      this.first = node
     }
 
     this.count++
@@ -41,12 +35,12 @@ export class LinkedList<T> {
     const node = new LinkedListNode(value)
 
     if (this.count === 0) {
-      this.head = node
-      this.tail = node
+      this.first = node
+      this.last = node
     } else {
-      node.prev = this.tail
-      this.tail!.next = node
-      this.tail = node
+      node.prev = this.last
+      this.last!.next = node
+      this.last = node
     }
 
     this.count++
@@ -59,9 +53,9 @@ export class LinkedList<T> {
       return
     }
 
-    if (node === this.head) {
+    if (node === this.first) {
       this.removeFirst()
-    } else if (node === this.tail) {
+    } else if (node === this.last) {
       this.removeLast()
     } else {
       node.prev!.next = node.next
@@ -78,13 +72,13 @@ export class LinkedList<T> {
     }
 
     if (this.count === 1) {
-      this.head = null
-      this.tail = null
+      this.first = null
+      this.last = null
       this.count--
     } else {
-      this.head = this.head!.next
-      this.head!.prev!.next = null
-      this.head!.prev = null
+      this.first = this.first!.next
+      this.first!.prev!.next = null
+      this.first!.prev = null
       this.count--
     }
   }
@@ -95,19 +89,19 @@ export class LinkedList<T> {
     }
 
     if (this.count === 1) {
-      this.head = null
-      this.tail = null
+      this.first = null
+      this.last = null
       this.count--
     } else {
-      this.tail = this.tail!.prev
-      this.tail!.next!.prev = null
-      this.tail!.next = null
+      this.last = this.last!.prev
+      this.last!.next!.prev = null
+      this.last!.next = null
       this.count--
     }
   }
 
   nodesForwards() {
-    let node = this.head
+    let node = this.first
 
     return {
       *[Symbol.iterator]() {
@@ -119,7 +113,7 @@ export class LinkedList<T> {
   }
 
   nodesBackwards() {
-    let node = this.tail
+    let node = this.last
 
     return {
       *[Symbol.iterator]() {

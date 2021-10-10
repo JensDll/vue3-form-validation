@@ -1,13 +1,13 @@
 <template>
   <section class="w-full xl:w-3/4" v-bind="attrsRest">
-    <h1 class="font-semibold text-2xl mb-8">{{ title }}</h1>
+    <h1 class="font-semibold text-2xl mb-12">{{ title }}</h1>
     <form
       @submit.prevent="$emit('submit')"
       :class="attrsClass"
       autocomplete="off"
     >
       <slot></slot>
-      <div class="flex mt-2">
+      <div class="flex mt-4">
         <BaseButton html-type="submit" class="px-4 py-2 rounded-md font-medium">
           Submit
         </BaseButton>
