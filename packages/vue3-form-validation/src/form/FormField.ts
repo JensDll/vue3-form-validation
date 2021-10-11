@@ -1,6 +1,10 @@
 import { computed, isReactive, isRef, reactive, ref, unref } from 'vue'
 import { Form } from './Form'
-import { SimpleRule, RuleWithKey, ValidationBehavior } from './types'
+import {
+  ValidationBehavior,
+  ValidationBehaviorRuleTupel
+} from './types/validationBehavior'
+import { SimpleRule } from './types/rules'
 import { isSimpleRule } from './typeGuards'
 import * as n_domain from '../domain'
 
@@ -22,7 +26,7 @@ export class FormField {
   constructor(
     name: string,
     modelValue: any,
-    rules: [ValidationBehavior, SimpleRule | RuleWithKey][]
+    rules: ValidationBehaviorRuleTupel[]
   ) {
     this._rules = rules.map(([, rule]) =>
       isSimpleRule(rule) ? rule : rule.rule
@@ -131,36 +135,16 @@ export class FormField {
     return this._validationBehaviors[ruleNumber]
   }
 
-  private _shouldValidate(ruleNumber: number, form: Form): boolean {
-    const validationBehavior = this.getValidationBehavior(ruleNumber)
-    const validationBehaviorResult =
-      typeof validationBehavior === 'function'
-        ? validationBehavior({
-            submitCount: form.submitCount,
-            errorMessages: this.errors.value
-          })
-        : validationBehavior
-
-    if (typeof validationBehaviorResult === 'boolean') {
-      return validationBehaviorResult
-    }
-
-    switch (validationBehaviorResult) {
-      case 'aggresive':
-        return true
-      case 'lazy':
-        if (this.touched) {
-          return true
-        }
-        break
-      case 'lazier':
-        if (this.touched && this.hasError.value) {
-          return true
-        }
-        break
-    }
-
-    return false
+  private _shouldValidate(ruleNumber: number, form: Form) {
+    return this.getValidationBehavior(ruleNumber)({
+      form: {
+        submitCount: form.submitCount
+      },
+      field: {
+        errorMessages: this.errors.value,
+        touched: this.touched
+      }
+    })
   }
 
   private _setError(ruleNumber: any, error: unknown) {

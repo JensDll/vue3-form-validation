@@ -1,4 +1,5 @@
-import { Field, useValidation } from '../../src/composition/useValidation'
+import { Field } from '../../src/form'
+import { useValidation } from '../../src/useValidation'
 import { getResultFormData } from '../../src/form'
 
 type FormData = {

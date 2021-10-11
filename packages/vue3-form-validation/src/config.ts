@@ -1,14 +1,26 @@
-import {
-  ValidationBehaviorFunction,
-  ValidationBehaviorString
-} from './form/types'
+import { ValidationBehavior, ValidationBehaviorString } from './form'
 
-export type Config = {
+export class Config {
   defaultValidationBehavior: ValidationBehaviorString
-  customValidationBehavior: Map<string, ValidationBehaviorFunction>
+  validationBehavior: Map<string, ValidationBehavior>
+
+  constructor() {
+    const aggresive: ValidationBehavior = () => true
+    const lazy: ValidationBehavior = ({ field }) => field.touched
+    const lazier: ValidationBehavior = ({ field }) =>
+      field.touched && field.errorMessages.length > 0
+
+    this.defaultValidationBehavior = 'lazier'
+    this.validationBehavior = new Map([
+      ['aggresive', aggresive],
+      ['lazy', lazy],
+      ['lazier', lazier]
+    ])
+  }
+
+  getDefaultValidationBehavior() {
+    return this.validationBehavior.get(this.defaultValidationBehavior)!
+  }
 }
 
-export const CONFIG: Config = {
-  defaultValidationBehavior: 'lazier',
-  customValidationBehavior: new Map()
-}
+export const CONFIG = new Config()

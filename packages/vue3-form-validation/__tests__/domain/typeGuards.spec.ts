@@ -1,12 +1,4 @@
-import {
-  isArray,
-  isField,
-  isDefined,
-  isObject,
-  isTransformedField,
-  isRecord
-} from '../../src/domain'
-import { Field, TransformedField } from '../../src/composition'
+import { isArray, isDefined, isObject, isRecord } from '../../src/domain'
 
 describe('isDefined', () => {
   it('null -> false', () => {
@@ -61,34 +53,5 @@ describe('isObject', () => {
 
   it('{} -> true', () => {
     expect(isObject({})).toBe(true)
-  })
-})
-
-describe('isField', () => {
-  it('field -> true', () => {
-    expect(
-      isField({
-        $value: '',
-        $rules: [],
-        $validationBehaviour: 'lazy'
-      } as Field<unknown>)
-    ).toBe(true)
-  })
-})
-
-describe('isTransformedField', () => {
-  it('transformedField -> true', () => {
-    expect(
-      isTransformedField({
-        $uid: 1,
-        $value: '',
-        $errors: [],
-        $hasError: false,
-        $validating: false,
-        async $setTouched() {
-          // empty
-        }
-      } as TransformedField<unknown>)
-    ).toBe(true)
   })
 })

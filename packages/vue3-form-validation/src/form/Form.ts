@@ -1,7 +1,7 @@
 import { computed, ref, shallowReactive } from 'vue'
 import { FormField } from './FormField'
 import { ValidationError } from './ValidationError'
-import { RuleWithKey, SimpleRule, ValidationBehavior } from './types'
+import { ValidationBehaviorRuleTupel } from './types/validationBehavior'
 import { isSimpleRule } from './typeGuards'
 import * as n_domain from '../domain'
 
@@ -53,7 +53,7 @@ export class Form {
     uid: number,
     name: string,
     modelValue: unknown,
-    rules: [ValidationBehavior, SimpleRule | RuleWithKey][]
+    rules: ValidationBehaviorRuleTupel[]
   ) {
     const field = new FormField(name, modelValue, rules)
 
@@ -211,22 +211,10 @@ export class Form {
 
   private _shouldEveryFieldValidate(keyedValidators: KeyedValidators) {
     for (const {
-      meta: { field, ruleNumber }
+      meta: { field }
     } of keyedValidators) {
-      const validationBehavior = field.getValidationBehavior(ruleNumber)
-      if (typeof validationBehavior === 'function') {
-        const result = validationBehavior({
-          errorMessages: field.errors.value,
-          submitCount: this.submitCount
-        })
-        // Note the explicit check is necessary here
-        if (result !== true) {
-          return false
-        }
-      } else {
-        if (!field.touched) {
-          return false
-        }
+      if (!field.touched) {
+        return false
       }
     }
 

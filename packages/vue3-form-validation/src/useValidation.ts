@@ -122,19 +122,3 @@ export function useValidation<FormData extends object>(
     }
   }
 }
-
-// type FormData = {
-//   text: n_form.Field<string>
-// }
-
-// useValidation<FormData>({
-//   text: {
-//     $value: '',
-//     $rules: [
-//       x => x,
-//       { key: 'a', rule: x => x },
-//       ['lazy', x => x],
-//       ['aggresive', { key: 'b', rule: x => x }]
-//     ]
-//   }
-// })

@@ -2,14 +2,39 @@ import { Tuple } from '../../src/domain'
 import {
   Form,
   FormField,
-  ValidationBehaviorString,
+  ValidationBehavior,
   ValidationError
 } from '../../src/form'
 import { mockFactory } from '../utils'
+import { CONFIG } from '../../src/config'
 
 let form: Form
 let asyncRules: Tuple<jest.Mock, 6>
 let syncRules: Tuple<jest.Mock, 6>
+let fields: [FormField, FormField, FormField]
+
+function assignFields(validationBehavior: ValidationBehavior) {
+  fields = [
+    form.registerField(1, 'field_1', '', [
+      [validationBehavior, syncRules[0]],
+      [validationBehavior, syncRules[1]],
+      [validationBehavior, { key: 'a', rule: asyncRules[0] }],
+      [validationBehavior, asyncRules[1]]
+    ]),
+    form.registerField(2, 'field_2', '', [
+      [validationBehavior, syncRules[2]],
+      [validationBehavior, { key: 'a', rule: asyncRules[2] }],
+      [validationBehavior, { key: 'b', rule: asyncRules[3] }],
+      [validationBehavior, asyncRules[4]]
+    ]),
+    form.registerField(3, 'field_3', '', [
+      [validationBehavior, syncRules[3]],
+      [validationBehavior, syncRules[4]],
+      [validationBehavior, syncRules[5]],
+      [validationBehavior, { key: 'b', rule: asyncRules[5] }]
+    ])
+  ]
+}
 
 beforeEach(() => {
   form = new Form()
@@ -18,18 +43,22 @@ beforeEach(() => {
 })
 
 type EachValidationBehavior = {
-  validationBehavior: ValidationBehaviorString
+  validationBehavior: ValidationBehavior
 }
 
-const EACH_VALIDATION_BEHAVIORS: EachValidationBehavior[] = [
-  { validationBehavior: 'aggresive' },
-  { validationBehavior: 'lazy' },
-  { validationBehavior: 'lazier' }
+const EACH_VALIDATION_BEHAVIOR: EachValidationBehavior[] = [
+  { validationBehavior: CONFIG.validationBehavior.get('aggresive')! },
+  { validationBehavior: CONFIG.validationBehavior.get('lazy')! },
+  { validationBehavior: CONFIG.validationBehavior.get('lazier')! }
 ]
 
-describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIORS)(
+describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(
   'form.validate ($validationBehavior)',
   ({ validationBehavior }) => {
+    beforeEach(() => {
+      assignFields(validationBehavior)
+    })
+
     it('should prioritize last rule call', async () => {
       const testFactory = () =>
         new Promise<void>(resolve => {
@@ -56,8 +85,8 @@ describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIORS)(
               })
           )
 
-          const field = form.registerField(1, 'name', '', validationBehavior, [
-            rule
+          const field = form.registerField(1, 'name', '', [
+            [validationBehavior, rule]
           ])
 
           ms.value = 600
@@ -85,32 +114,11 @@ describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIORS)(
   }
 )
 
-describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIORS)(
+describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(
   'form.validateAll ($validationBehavior) ',
   ({ validationBehavior }) => {
-    let fields: [FormField, FormField, FormField]
-
     beforeEach(() => {
-      fields = [
-        form.registerField(1, 'field_1', '', validationBehavior, [
-          syncRules[0],
-          syncRules[1],
-          { key: 'a', rule: asyncRules[0] },
-          asyncRules[1]
-        ]),
-        form.registerField(2, 'field_2', '', validationBehavior, [
-          syncRules[2],
-          { key: 'a', rule: asyncRules[2] },
-          { key: 'b', rule: asyncRules[3] },
-          asyncRules[4]
-        ]),
-        form.registerField(3, 'field_3', '', validationBehavior, [
-          syncRules[3],
-          syncRules[4],
-          syncRules[5],
-          { key: 'b', rule: asyncRules[5] }
-        ])
-      ]
+      assignFields(validationBehavior)
     })
 
     it('should invoke every rule once per call', async () => {

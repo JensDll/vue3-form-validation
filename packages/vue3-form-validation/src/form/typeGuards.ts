@@ -1,5 +1,6 @@
 import * as n_domain from '../domain'
-import { Field, TransformedField, SimpleRule, RuleWithKey } from './types'
+import { Field, TransformedField } from './types/data'
+import { SimpleRule, RuleWithKey } from './types/rules'
 
 export const isField = <T>(x: unknown): x is Field<T> =>
   n_domain.isRecord(x) ? '$value' in x : false

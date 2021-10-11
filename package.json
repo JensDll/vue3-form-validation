@@ -8,7 +8,7 @@
     "build": "esmo scripts/build.ts",
     "dev": "esmo scripts/dev.ts --targets vue3-form-validation",
     "vue": "npm run dev --workspace=vue-app",
-    "lint": "npm exec -- eslint --rule=\"no-console: error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
+    "lint": "npm exec -- eslint --rule=\"no-console: [\"error\", { allow: [\"warn\", \"error\"] }]\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
     "test": "jest --runInBand",
     "test-dts": "npm run build && npm exec -- tsd",
     "test-dts-only": "npm exec -- tsd",

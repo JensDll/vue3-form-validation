@@ -1,14 +1,12 @@
 import { Plugin } from 'vue'
 import { CONFIG } from './config'
-import {
-  ValidationBehaviorFunction,
-  ValidationBehaviorString
-} from './form/types'
+import { ValidationBehavior, ValidationBehaviorString } from './form'
+import * as n_domain from './domain'
 
 export type Configuration = {
   defaultValidationBehavior?: ValidationBehaviorString
   validationBehavior?: {
-    [key: string]: ValidationBehaviorFunction
+    [key: string]: ValidationBehavior
   }
 }
 
@@ -17,10 +15,17 @@ export function configureValidation(configuration: Configuration = {}): Plugin {
     install() {
       CONFIG.defaultValidationBehavior =
         configuration.defaultValidationBehavior ?? 'lazier'
-      for (const [key, validationBehaviorFunction] of Object.entries(
+
+      for (const [key, validationBehavior] of Object.entries(
         configuration.validationBehavior ?? {}
       )) {
-        CONFIG.customValidationBehavior.set(key, validationBehaviorFunction)
+        n_domain.trySet(CONFIG.validationBehavior)({
+          failure() {
+            console.warn(
+              `[vue 3 from validation warn] Validation behavior with name '${key}' already exists`
+            )
+          }
+        })(key, validationBehavior)
       }
     }
   }

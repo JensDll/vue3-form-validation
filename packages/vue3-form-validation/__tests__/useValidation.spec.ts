@@ -1,9 +1,6 @@
 import { ref } from 'vue'
-import {
-  Field,
-  TransformedFormData,
-  useValidation
-} from '../../src/composition/useValidation'
+import { useValidation } from '../src/useValidation'
+import { Field, TransformedFormData } from '../src/form'
 
 type TestData = {
   a: Field<string>

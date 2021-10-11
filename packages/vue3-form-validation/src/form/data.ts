@@ -1,12 +1,7 @@
 import { isReactive, ComputedRef, watch } from 'vue'
 import { Form } from './Form'
-import {
-  Field,
-  TransformedField,
-  SimpleRule,
-  ValidationBehavior,
-  RuleWithKey
-} from './types'
+import { Field, TransformedField } from './types/data'
+import { ValidationBehaviorRuleTupel } from './types/validationBehavior'
 import { isTransformedField, isField } from './typeGuards'
 import { CONFIG } from '../config'
 import * as n_domain from '../domain'
@@ -23,24 +18,34 @@ function registerField(
     | TransformedField<unknown>[K]
     | ComputedRef<TransformedField<unknown>[K]>
 } {
-  const uid = n_domain.uid()
+  const defaultValidationBehavior = CONFIG.getDefaultValidationBehavior()
   const rules =
-    field.$rules?.map<[ValidationBehavior, SimpleRule | RuleWithKey]>(
-      fieldRule => {
-        if (typeof fieldRule === 'function') {
-          return [CONFIG.defaultValidationBehavior, fieldRule]
-        }
-        if (fieldRule !== null) {
-          if (Array.isArray(fieldRule)) {
-            return fieldRule
-          } else {
-            return [CONFIG.defaultValidationBehavior, fieldRule]
+    field.$rules?.map<ValidationBehaviorRuleTupel>(fieldRule => {
+      if (typeof fieldRule === 'function') {
+        return [defaultValidationBehavior, fieldRule]
+      }
+
+      if (Array.isArray(fieldRule)) {
+        const [fieldValidationBehavior, rule] = fieldRule
+
+        if (typeof fieldValidationBehavior === 'function') {
+          return [fieldValidationBehavior, rule]
+        } else {
+          const validationBehavior = CONFIG.validationBehavior.get(
+            fieldValidationBehavior
+          )
+          if (validationBehavior !== undefined) {
+            return [validationBehavior, rule]
           }
         }
-        throw Error('Invalid rule provided')
+      } else {
+        return [defaultValidationBehavior, fieldRule]
       }
-    ) ?? []
 
+      throw Error('Invalid rule provided')
+    }) ?? []
+
+  const uid = n_domain.uid()
   const formField = form.registerField(uid, name, field.$value, rules)
 
   const stop = watch(

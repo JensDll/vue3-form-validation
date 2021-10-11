@@ -1,6 +1,6 @@
 <template>
   <section class="w-full xl:w-3/4" v-bind="attrsRest">
-    <h1 class="font-semibold text-2xl mb-12">{{ title }}</h1>
+    <h1 class="font-semibold text-2xl mb-8">{{ title }}</h1>
     <form
       @submit.prevent="$emit('submit')"
       :class="attrsClass"

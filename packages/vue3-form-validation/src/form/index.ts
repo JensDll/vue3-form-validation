@@ -8,16 +8,19 @@ export {
 export { Form } from './Form'
 export { FormField } from './FormField'
 export { ValidationError } from './ValidationError'
+export { isField, isSimpleRule, isTransformedField } from './typeGuards'
+
+export { FieldRule, KeyedRule, SimpleRule, RuleWithKey } from './types/rules'
+export {
+  ValidationBehavior,
+  ValidationBehaviorInfo,
+  ValidationBehaviorRuleTupel,
+  ValidationBehaviorString
+} from './types/validationBehavior'
 export {
   Field,
-  FieldRule,
-  KeyedRule,
-  SimpleRule,
   TransformedField,
   TransformedFormData,
   FieldNames,
-  ResultFormData,
-  ValidationBehavior,
-  ValidationBehaviorInfo,
-  ValidationBehaviorString
-} from './types'
+  ResultFormData
+} from './types/data'

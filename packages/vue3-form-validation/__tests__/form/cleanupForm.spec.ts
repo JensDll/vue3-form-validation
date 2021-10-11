@@ -1,5 +1,5 @@
-import { Field, useValidation } from '../../src/composition'
-import { Form, cleanupForm } from '../../src/form'
+import { Field, Form, cleanupForm } from '../../src/form'
+import { useValidation } from '../../src/useValidation'
 
 let mockOnDelete: jest.Mock
 let mockForm: Form

@@ -1,4 +1,5 @@
-import { Field, useValidation } from '../../src/composition/useValidation'
+import { Field } from '../../src/form'
+import { useValidation } from '../../src/useValidation'
 
 type FormData = {
   a: Field<string>

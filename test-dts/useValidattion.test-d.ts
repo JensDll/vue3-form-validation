@@ -2,9 +2,9 @@ import { expectType, expectError } from 'tsd'
 import { ref, Ref } from 'vue'
 import {
   Field,
-  TransformedField,
-  useValidation
-} from '../packages/vue3-form-validation/src/composition'
+  TransformedField
+} from '../packages/vue3-form-validation/src/form'
+import { useValidation } from '../packages/vue3-form-validation/src/useValidation'
 
 useValidation<{ a: Field<string> }>({
   a: {
