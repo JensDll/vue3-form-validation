@@ -37,8 +37,11 @@ export class Form {
   trySetKeyedValidators = n_domain.trySet(this._keyedValidators)
   tryGetKeyedValidators = n_domain.tryGet(this._keyedValidators)
 
-  submitCount = 0
+  ruleValidating = ref(0)
+  submitCount = ref(0)
   submitting = ref(false)
+  validating = computed(() => this.ruleValidating.value > 0)
+  hasError = computed(() => this.errors.value.length > 0)
   errors = computed(() => {
     const errors: string[] = []
 
@@ -113,7 +116,7 @@ export class Form {
       if (force) {
         return Promise.allSettled([
           ...validators.map(v => v([meta.field.modelValue], true)),
-          ...this._getValidationResultsForKeys(meta.keys, false)
+          ...this._getValidationResultsForKeys(meta.keys, true)
         ])
       }
 
@@ -125,7 +128,7 @@ export class Form {
   }
 
   async validateAll(names?: readonly n_domain.Key[]) {
-    this.submitCount++
+    this.submitCount.value++
 
     const settledResults = await Promise.allSettled(
       this._getValidationResultsForNames(names)
@@ -157,18 +160,22 @@ export class Form {
 
   private _getValidationResultsForKeys(
     keys: string[] | IterableIterator<string>,
-    force: boolean
+    force: boolean,
+    skipShouldValidate = false
   ) {
     const validationResults: ValidationResult[] = []
 
     for (const key of keys) {
       this.tryGetKeyedValidators({
         success: keyedValidators => {
-          if (force || this._shouldEveryFieldValidate(keyedValidators)) {
+          if (
+            skipShouldValidate ||
+            this._shouldEveryFieldValidate(keyedValidators)
+          ) {
             const values = [...keyedValidators.values()]
             const modelValues = values.map(({ meta }) => meta.field.modelValue)
             validationResults.push(
-              ...values.map(({ validator }) => validator(modelValues, true))
+              ...values.map(({ validator }) => validator(modelValues, force))
             )
           }
         }
@@ -189,7 +196,11 @@ export class Form {
         )
       }
       validationResults.push(
-        ...this._getValidationResultsForKeys(this._keyedValidators.keys(), true)
+        ...this._getValidationResultsForKeys(
+          this._keyedValidators.keys(),
+          true,
+          true
+        )
       )
     } else if (names.length > 0) {
       const uniqueNames = new Set(names)
@@ -200,7 +211,7 @@ export class Form {
             ...validators.map(v => v([meta.field.modelValue], true))
           )
           validationResults.push(
-            ...this._getValidationResultsForKeys(meta.keys, true)
+            ...this._getValidationResultsForKeys(meta.keys, true, true)
           )
         }
       }

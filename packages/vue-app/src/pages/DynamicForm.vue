@@ -3,6 +3,7 @@
     title="Dynamic Form"
     class="grid gap-y-6 max-w-3xl"
     :form="form"
+    :submitting="submitting"
     @submit="handleSubmit"
     @reset="resetFields()"
   >
@@ -111,7 +112,7 @@ type FormData = {
   }[]
 }
 
-const { form, validateFields, resetFields, add, remove } =
+const { form, submitting, validateFields, resetFields, add, remove } =
   useValidation<FormData>({
     a: {
       $value: '',
@@ -151,10 +152,13 @@ function addY(xi: number) {
       $rules: [
         rules.required('Please input some text'),
         rules.random(),
-        {
-          key: `key${++i}`,
-          rule: rules.equal('Please select matching values for C and D')
-        }
+        [
+          'error',
+          {
+            key: `key${++i}`,
+            rule: rules.equal('Please select matching values for C and D')
+          }
+        ]
       ]
     },
     d: {
@@ -162,10 +166,13 @@ function addY(xi: number) {
       $rules: [
         rules.required('Please input some text'),
         rules.random(),
-        {
-          key: `key${i}`,
-          rule: rules.equal('Please select matching values for C and D')
-        }
+        [
+          'error',
+          {
+            key: `key${i}`,
+            rule: rules.equal('Please select matching values for C and D')
+          }
+        ]
       ]
     }
   })

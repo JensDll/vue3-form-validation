@@ -3,13 +3,10 @@ import { SimpleRule, RuleWithKey } from './rules'
 export type ValidationBehaviorString = string
 
 export type ValidationBehaviorInfo = {
-  form: {
-    submitCount: number
-  }
-  field: {
-    errorMessages: string[]
-    touched: boolean
-  }
+  submitCount: number
+  errorMessages: string[]
+  hasError: boolean
+  touched: boolean
 }
 
 export type ValidationBehavior = (

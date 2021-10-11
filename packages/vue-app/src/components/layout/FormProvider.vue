@@ -8,7 +8,11 @@
     >
       <slot></slot>
       <div class="flex mt-4">
-        <BaseButton html-type="submit" class="px-4 py-2 rounded-md font-medium">
+        <BaseButton
+          html-type="submit"
+          class="px-4 py-2 rounded-md font-medium"
+          :disabled="submitting"
+        >
           Submit
         </BaseButton>
         <BaseButton
@@ -45,6 +49,9 @@ defineProps({
   form: {
     type: Object,
     required: true
+  },
+  submitting: {
+    type: Boolean
   }
 })
 

@@ -6,9 +6,9 @@ export class Config {
 
   constructor() {
     const aggresive: ValidationBehavior = () => true
-    const lazy: ValidationBehavior = ({ field }) => field.touched
-    const lazier: ValidationBehavior = ({ field }) =>
-      field.touched && field.errorMessages.length > 0
+    const lazy: ValidationBehavior = ({ touched }) => touched
+    const lazier: ValidationBehavior = ({ touched, hasError }) =>
+      touched && hasError
 
     this.defaultValidationBehavior = 'lazier'
     this.validationBehavior = new Map([

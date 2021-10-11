@@ -73,6 +73,8 @@ export class FormField {
 
     if (typeof ruleResult?.then === 'function') {
       this._rulesValidating.value++
+      form.ruleValidating.value++
+
       const shouldSetError = buffer.addLast(true)
 
       if (shouldSetError.prev) {
@@ -86,6 +88,8 @@ export class FormField {
       }
 
       buffer.remove(shouldSetError)
+
+      form.ruleValidating.value--
       this._rulesValidating.value--
 
       if (shouldSetError.value) {
@@ -137,13 +141,10 @@ export class FormField {
 
   private _shouldValidate(ruleNumber: number, form: Form) {
     return this.getValidationBehavior(ruleNumber)({
-      form: {
-        submitCount: form.submitCount
-      },
-      field: {
-        errorMessages: this.errors.value,
-        touched: this.touched
-      }
+      submitCount: form.submitCount.value,
+      errorMessages: this.errors.value,
+      hasError: this.errors.value.length > 0,
+      touched: this.touched
     })
   }
 

@@ -10,6 +10,12 @@ export type Configuration = {
   }
 }
 
+/**
+ *
+ * @description
+ * Configure the validation behavior of `useValidation`
+ * @param configuration - Form validation configuration
+ */
 export function configureValidation(configuration: Configuration = {}): Plugin {
   return {
     install() {
@@ -22,7 +28,7 @@ export function configureValidation(configuration: Configuration = {}): Plugin {
         n_domain.trySet(CONFIG.validationBehavior)({
           failure() {
             console.warn(
-              `[vue 3 from validation warn] Validation behavior with name '${key}' already exists`
+              `Validation behavior with name '${key}' already exists`
             )
           }
         })(key, validationBehavior)

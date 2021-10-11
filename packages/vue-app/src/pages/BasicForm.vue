@@ -55,9 +55,9 @@ const { form, validateFields, resetFields } = useValidation<FormData>({
         }
       ],
       [
-        'lazier',
+        'error',
         x => {
-          console.log('lazier', x)
+          console.log('error', x)
         }
       ]
     ]

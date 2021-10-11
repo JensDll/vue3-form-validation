@@ -3,6 +3,7 @@
     title="Signup Form"
     class="grid gap-6 grid-cols-2 max-w-2xl"
     :form="form"
+    :validating="validating"
     @submit="handleSubmit"
     @reset="resetFields()"
   >
@@ -72,7 +73,12 @@ interface FormData {
   confirmPassword: Field<string>
 }
 
-const { form, validateFields, resetFields } = useValidation<FormData>({
+const {
+  form,
+  meta: { validating },
+  validateFields,
+  resetFields
+} = useValidation<FormData>({
   name: {
     $value: '',
     $rules: [rules.required('Please select a name')]

@@ -5,7 +5,11 @@ import * as n_domain from './domain'
 export type UseValidation<FormData extends object> = {
   form: n_form.TransformedFormData<FormData>
   submitting: Ref<boolean>
+  submitCount: Ref<number>
+  validating: ComputedRef<boolean>
+  hasError: ComputedRef<boolean>
   errors: ComputedRef<string[]>
+
   validateFields(
     names?: n_form.FieldNames<FormData>[] | string[]
   ): Promise<n_form.ResultFormData<FormData>>
@@ -21,22 +25,21 @@ export type UseValidation<FormData extends object> = {
 
 /**
  *
- * @param formData - The structure of your Form Data.
+ * @param formData - The structure of your Form data.
  * @description
- * Vue composition function for Form Validation.
- * @docs
- * https://github.com/JensDll/vue3-form-validation
- * @typescript
+ * Vue composition function for Form validation.
+ *
+ * [Documentation and examples](https://github.com/JensDll/vue3-form-validation)
+ *
  * For better type inference, consider defining the structure
  * of your `formData` upfront and pass it as the generic parameter `FormData`:
  * ```
  * type FormData = {
  *   name: Field<string>,
- *   email: Field<string>,
  *   password: Field<string>
  * }
  *
- * const { ... } = useValidation<FormData>({ ... })
+ * const { form } = useValidation<FormData>({})
  * ```
  */
 export function useValidation<FormData extends object>(
@@ -52,6 +55,9 @@ export function useValidation<FormData extends object>(
   return {
     form: transformedFormData as n_form.TransformedFormData<FormData>,
     submitting: form.submitting,
+    submitCount: form.submitCount,
+    validating: form.validating,
+    hasError: form.hasError,
     errors: form.errors,
 
     async validateFields(names) {
