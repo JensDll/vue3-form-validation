@@ -17,5 +17,5 @@
     "forceConsistentCasingInFileNames": true
   },
   "include": ["packages/vue3-form-validation/src"],
-  "exclude": ["**/dist", "**/publish", "**/__tests__"]
+  "exclude": ["**/dist", "**/publish", "**/__tests__", "**/__mocks__"]
 }

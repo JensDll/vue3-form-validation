@@ -24,6 +24,7 @@
       multiple
     >
     </FormFileUpload>
+    <FormButtons :submitting="submitting" @reset="resetFields()" class="mt-2" />
   </FormProvider>
 </template>
 
@@ -33,36 +34,38 @@ import { Field, useValidation } from 'vue3-form-validation'
 import { rules } from '~/domain'
 import FormProvider from '~/components/layout/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
+import FormButtons from './components/FormButtons.vue'
 
 interface FormData {
   files: Field<File[]>
   text: Field<string>
 }
 
-const { form, validateFields, resetFields } = useValidation<FormData>({
-  files: {
-    $value: [],
-    $rules: [rules.min(1)('Please select one or more files')]
-  },
-  text: {
-    $value: '',
-    $rules: [
-      rules.min(6)('Please enter text longer than 5 characters'),
-      [
-        'aggresive',
-        x => {
-          console.log('aggresive', x)
-        }
-      ],
-      [
-        'error',
-        x => {
-          console.log('error', x)
-        }
+const { form, submitting, validateFields, resetFields } =
+  useValidation<FormData>({
+    files: {
+      $value: [],
+      $rules: [rules.min(1)('Please select one or more files')]
+    },
+    text: {
+      $value: '',
+      $rules: [
+        rules.min(6)('Please enter text longer than 5 characters'),
+        [
+          'aggresive',
+          x => {
+            console.log('aggresive', x)
+          }
+        ],
+        [
+          'error',
+          x => {
+            console.log('error', x)
+          }
+        ]
       ]
-    ]
-  }
-})
+    }
+  })
 
 async function handleSubmit() {
   try {
