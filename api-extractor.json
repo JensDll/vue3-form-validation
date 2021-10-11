@@ -27,7 +27,7 @@
         "logLevel": "none"
       },
       "ae-forgotten-export": {
-        "logLevel": "none"
+        "logLevel": "warning"
       }
     },
     "tsdocMessageReporting": {

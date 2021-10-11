@@ -2,7 +2,7 @@ import { reactive, Ref, ComputedRef } from 'vue'
 import * as n_form from './form'
 import * as n_domain from './domain'
 
-type UseValidation<FormData extends object> = {
+export type UseValidation<FormData extends object> = {
   form: n_form.TransformedFormData<FormData>
   submitting: Ref<boolean>
   errors: ComputedRef<string[]>
