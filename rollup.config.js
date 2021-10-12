@@ -7,7 +7,7 @@ const FORMATS = process.env.FORMATS.split(' ')
 const configs = []
 
 const tsconfigOverride = {
-  exclude: ['**/__tests__', 'scripts']
+  exclude: ['**/__tests__', '**/__mocks__', 'scripts']
 }
 
 for (const target of TARGETS) {

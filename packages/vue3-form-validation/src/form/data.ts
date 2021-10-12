@@ -136,8 +136,8 @@ export function cleanupForm(
   }
 }
 
-export function resetFields(formData: any, transformedFormData: any) {
-  Object.entries(formData).forEach(([key, value]) => {
+export function resetFields(data: any, transformedFormData: any) {
+  Object.entries(data).forEach(([key, value]) => {
     const transformedValue = transformedFormData[key]
 
     if (isTransformedField(transformedValue)) {
