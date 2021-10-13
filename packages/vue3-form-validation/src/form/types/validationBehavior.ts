@@ -4,7 +4,7 @@ export type DefaultValidationBehaviorString = 'aggresive' | 'lazy' | 'lazier'
 
 export type ValidationBehaviorString =
   | DefaultValidationBehaviorString
-  | keyof CustomValidationBehavior
+  | keyof UseValidation_CustomValidationBehavior
 
 export type ValidationBehaviorInfo = {
   submitCount: number

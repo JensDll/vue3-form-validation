@@ -1,7 +1,7 @@
 import { createValidation } from 'vue3-form-validation'
 
 export const validation = createValidation({
-  defaultValidationBehavior: 'lazier',
+  defaultValidationBehavior: 'lazy',
   validationBehavior: {
     aggresive: () => true,
     lazy: ({ touched }) => touched,

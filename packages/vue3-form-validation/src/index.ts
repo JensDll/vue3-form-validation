@@ -3,5 +3,8 @@ export { createValidation } from './createValidation'
 export { ValidationError } from './form'
 
 export type { UseValidation } from './useValidation'
-export type { Configuration } from './createValidation'
+export type {
+  Configuration,
+  ConfigurationValidationBehavior
+} from './createValidation'
 export type { Field, TransformedField, SimpleRule, KeyedRule } from './form'

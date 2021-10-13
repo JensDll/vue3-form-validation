@@ -1,4 +1,4 @@
-interface CustomValidationBehavior {
+interface UseValidation_CustomValidationBehavior {
   force: any
   submit: any
 }
