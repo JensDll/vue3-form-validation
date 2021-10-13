@@ -7,10 +7,6 @@ jobs:
       matrix:
         node-version: [15.x, 16.x]
     steps:
-      - name: Latest npm
-        run: |
-          run: npm i -g npm@7
-          env
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -19,6 +15,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
+      - name: Latest npm
+        run: |
+          run: npm i -g npm@7
+          env
       - name: Install dependencies and build
         run: |
           npm ci
