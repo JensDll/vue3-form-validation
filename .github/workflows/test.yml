@@ -7,8 +7,9 @@ jobs:
       matrix:
         node-version: [15.x, 16.x]
     steps:
-      - run: |
-          npm --version
+      - name: Latest npm
+        run: |
+          run: npm i -g npm@7
           env
       - name: Checkout repository
         uses: actions/checkout@v2
