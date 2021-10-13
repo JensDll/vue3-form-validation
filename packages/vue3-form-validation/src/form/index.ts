@@ -14,8 +14,9 @@ export { FieldRule, KeyedRule, SimpleRule, RuleWithKey } from './types/rules'
 export {
   ValidationBehavior,
   ValidationBehaviorInfo,
-  ValidationBehaviorRuleTupel,
-  ValidationBehaviorString
+  DefaultValidationBehaviorString,
+  ValidationBehaviorString,
+  ValidationBehaviorRuleTupel
 } from './types/validationBehavior'
 export {
   Field,

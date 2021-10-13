@@ -7,7 +7,11 @@ import * as n_domain from '../domain'
 
 type ValidationResult = Promise<void | string>
 
-type Validator = (modelValues: unknown[], force: boolean) => ValidationResult
+type Validator = (
+  modelValues: unknown[],
+  force: boolean,
+  submit: boolean
+) => ValidationResult
 
 export type SimpleValidators = {
   validators: Validator[]
@@ -22,7 +26,6 @@ type KeyedValidator = {
   validator: Validator
   meta: {
     field: FormField
-    ruleNumber: number
   }
 }
 
@@ -70,8 +73,8 @@ export class Form {
     }
 
     rules.forEach(([, rule], ruleNumber) => {
-      const validator: Validator = (modelValues, force) =>
-        field.validate(ruleNumber, modelValues, this, force)
+      const validator: Validator = (modelValues, force, submit) =>
+        field.validate(ruleNumber, modelValues, this, force, submit)
 
       if (isSimpleRule(rule)) {
         simpleValidators.validators.push(validator)
@@ -79,7 +82,9 @@ export class Form {
         const { key } = rule
         const keyedValidator: KeyedValidator = {
           validator,
-          meta: { field, ruleNumber }
+          meta: {
+            field
+          }
         }
         const rollback = () => {
           this.tryGetKeyedValidators({
@@ -108,23 +113,14 @@ export class Form {
   }
 
   validate(uid: number, force = false) {
-    const simpleValidators = this._simpleValidators.get(uid)
+    const simpleValidators = this._simpleValidators.get(uid)!
 
-    if (simpleValidators) {
-      const { validators, meta } = simpleValidators
+    const { validators, meta } = simpleValidators
 
-      if (force) {
-        return Promise.allSettled([
-          ...validators.map(v => v([meta.field.modelValue], true)),
-          ...this._getValidationResultsForKeys(meta.keys, true)
-        ])
-      }
-
-      return Promise.allSettled([
-        ...validators.map(v => v([meta.field.modelValue], false)),
-        ...this._getValidationResultsForKeys(meta.keys, false)
-      ])
-    }
+    return Promise.allSettled([
+      ...validators.map(v => v([meta.field.modelValue], force, false)),
+      ...this._getValidationResultsForKeys(meta.keys, force, false)
+    ])
   }
 
   async validateAll(names?: readonly n_domain.Key[]) {
@@ -161,25 +157,22 @@ export class Form {
   private _getValidationResultsForKeys(
     keys: string[] | IterableIterator<string>,
     force: boolean,
-    skipShouldValidate = false
+    submit: boolean,
+    skipTouchedCheck = false
   ) {
     const validationResults: ValidationResult[] = []
 
     for (const key of keys) {
-      this.tryGetKeyedValidators({
-        success: keyedValidators => {
-          if (
-            skipShouldValidate ||
-            this._shouldEveryFieldValidate(keyedValidators)
-          ) {
-            const values = [...keyedValidators.values()]
-            const modelValues = values.map(({ meta }) => meta.field.modelValue)
-            validationResults.push(
-              ...values.map(({ validator }) => validator(modelValues, force))
-            )
-          }
-        }
-      })(key)
+      const keyedValidators = this._keyedValidators.get(key)!
+      if (skipTouchedCheck || this._isEveryFieldTouched(keyedValidators)) {
+        const values = [...keyedValidators.values()]
+        const modelValues = values.map(({ meta }) => meta.field.modelValue)
+        validationResults.push(
+          ...values.map(({ validator }) =>
+            validator(modelValues, force, submit)
+          )
+        )
+      }
     }
 
     return validationResults
@@ -192,12 +185,13 @@ export class Form {
       for (const { validators, meta } of this._simpleValidators.values()) {
         meta.field.touched = true
         validationResults.push(
-          ...validators.map(v => v([meta.field.modelValue], true))
+          ...validators.map(v => v([meta.field.modelValue], true, true))
         )
       }
       validationResults.push(
         ...this._getValidationResultsForKeys(
           this._keyedValidators.keys(),
+          true,
           true,
           true
         )
@@ -208,10 +202,10 @@ export class Form {
         meta.field.touched = true
         if (uniqueNames.has(meta.field.name)) {
           validationResults.push(
-            ...validators.map(v => v([meta.field.modelValue], true))
+            ...validators.map(v => v([meta.field.modelValue], true, true))
           )
           validationResults.push(
-            ...this._getValidationResultsForKeys(meta.keys, true, true)
+            ...this._getValidationResultsForKeys(meta.keys, true, true, true)
           )
         }
       }
@@ -220,11 +214,9 @@ export class Form {
     return validationResults
   }
 
-  private _shouldEveryFieldValidate(keyedValidators: KeyedValidators) {
-    for (const {
-      meta: { field }
-    } of keyedValidators) {
-      if (!field.touched) {
+  private _isEveryFieldTouched(keyedValidators: KeyedValidators) {
+    for (const { meta } of keyedValidators) {
+      if (!meta.field.touched) {
         return false
       }
     }

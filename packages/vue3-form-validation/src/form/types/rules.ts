@@ -1,7 +1,7 @@
 import { UnwrapRef } from 'vue'
 import { FieldValidationBehavior } from './validationBehavior'
 
-export type SimpleRule<TParameter = any> = (...values: TParameter[]) => any
+export type SimpleRule<TParameter = any> = (...value: TParameter[]) => any
 export type KeyedRule<TParameters extends readonly any[] = any[]> = (
   ...values: [...TParameters]
 ) => any

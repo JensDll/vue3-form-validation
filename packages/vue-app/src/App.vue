@@ -14,7 +14,7 @@ import TheNavLinks from './components/layout/TheNavLinks.vue'
 @tailwind utilities;
 
 #app {
-  @apply container mx-auto mt-8 px-4 pb-8 font-body grid justify-items-center gap-y-16;
+  @apply mt-8 px-4 pb-8 font-body grid justify-items-center gap-y-16;
 }
 
 @screen xs {
@@ -25,7 +25,7 @@ import TheNavLinks from './components/layout/TheNavLinks.vue'
 
 @screen md {
   #app {
-    @apply px-8;
+    @apply px-8 container mx-auto;
   }
 }
 
@@ -78,6 +78,10 @@ import TheNavLinks from './components/layout/TheNavLinks.vue'
     &:hover {
       @apply text-red-600;
     }
+  }
+
+  .hide {
+    @apply opacity-0 pointer-events-none;
   }
 }
 </style>

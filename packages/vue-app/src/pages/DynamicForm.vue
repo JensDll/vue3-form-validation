@@ -16,6 +16,7 @@
       class="form-input input-a"
       :class="{ error: form.a.$hasError }"
     />
+    <MinusCircleIcon class="minus-circle hide" />
     <PlusCircleIcon class="plus-circle" @click="addX()" />
     <FormErrors :errors="form.a.$errors" class="errors-a" />
     <template v-for="(x, xi) in form.xs" :key="x.b.$uid">
@@ -89,12 +90,13 @@ const { form, submitting, validateFields, resetFields, add, remove } =
   useValidation<FormData>({
     a: {
       $value: '',
-      $rules: [rules.required('Please input some text'), rules.random()]
+      $rules: [rules.required('Please enter some text'), rules.random()]
     },
     xs: []
   })
 
 async function handleSubmit() {
+  console.log('SUBMIT')
   try {
     const formData = await validateFields()
     console.log(formData)
@@ -107,7 +109,7 @@ function addX() {
   add(['xs'], {
     b: {
       $value: '',
-      $rules: [rules.required('Please input some text'), rules.random()]
+      $rules: [rules.required('Please enter some text'), rules.random()]
     },
     ys: []
   })
@@ -123,29 +125,23 @@ function addY(xi: number) {
     c: {
       $value: '',
       $rules: [
-        rules.required('Please input some text'),
+        rules.required('Please enter some text'),
         rules.random(),
-        [
-          'error',
-          {
-            key: `key${++i}`,
-            rule: rules.equal('Please select matching values for C and D')
-          }
-        ]
+        {
+          key: `key${++i}`,
+          rule: rules.equal('Please enter matching values for C and D')
+        }
       ]
     },
     d: {
       $value: '',
       $rules: [
-        rules.required('Please input some text'),
+        rules.required('Please enter some text'),
         rules.random(),
-        [
-          'error',
-          {
-            key: `key${i}`,
-            rule: rules.equal('Please select matching values for C and D')
-          }
-        ]
+        {
+          key: `key${i}`,
+          rule: rules.equal('Please enter matching values for C and D')
+        }
       ]
     }
   })
@@ -202,6 +198,7 @@ function removeY(xi: number, yi: number) {
 .minus-circle {
   grid-column: minus-start / minus-end;
   margin-right: -1rem;
+  margin-left: 2rem;
   place-self: center end;
 }
 

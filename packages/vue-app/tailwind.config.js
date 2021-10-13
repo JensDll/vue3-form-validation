@@ -11,6 +11,9 @@ module.exports = {
       current: 'currentColor',
       ...colors
     },
+    area: {
+      test: 'grid-area: test'
+    },
     extend: {
       screens: {
         xs: '411px'

@@ -9,4 +9,11 @@ export { isArray, isDefined, isObject, isRecord } from './typeGuards'
 export { LinkedList } from './LinkedList'
 export { PromiseCancel } from './PromiseCancel'
 
-export { Key, DeepMaybeRef, MaybeRef, DeepIndex, Tuple } from './types'
+export {
+  Key,
+  DeepMaybeRef,
+  MaybeRef,
+  DeepIndex,
+  Tuple,
+  Optional
+} from './types'

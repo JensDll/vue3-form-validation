@@ -1,9 +1,12 @@
 <template>
-  <div class="text-red-500 text-sm" :class="{ '!m-0': errors.length === 0 }">
-    <p v-for="(error, i) in errors" :key="i">
+  <ul
+    class="text-red-500 text-sm break-words"
+    :class="{ '!m-0': errors.length === 0 }"
+  >
+    <li v-for="(error, i) in errors" :key="i">
       {{ error }}
-    </p>
-  </div>
+    </li>
+  </ul>
 </template>
 
 <script setup lang="ts">

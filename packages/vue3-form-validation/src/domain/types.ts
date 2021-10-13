@@ -37,3 +37,5 @@ type _Tuple<T, N extends number, R extends unknown[]> = R['length'] extends N
 export type Tuple<T, N extends number> = number extends N
   ? T[]
   : _Tuple<T, N, []>
+
+export type Optional<T, K extends keyof T> = Partial<Pick<T, K>> & Omit<T, K>

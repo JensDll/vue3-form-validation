@@ -3,7 +3,7 @@ import { Form } from './Form'
 import { Field, TransformedField } from './types/data'
 import { ValidationBehaviorRuleTupel } from './types/validationBehavior'
 import { isTransformedField, isField } from './typeGuards'
-import { CONFIG } from '../config'
+import { VALIDATION_CONFIG } from '../validationConfig'
 import * as n_domain from '../domain'
 
 export type DisposableMap = Map<number, (() => void)[]>
@@ -18,7 +18,9 @@ function registerField(
     | TransformedField<unknown>[K]
     | ComputedRef<TransformedField<unknown>[K]>
 } {
-  const defaultValidationBehavior = CONFIG.getDefaultValidationBehavior()
+  const defaultValidationBehavior =
+    VALIDATION_CONFIG.getDefaultValidationBehavior()
+
   const rules =
     field.$rules?.map<ValidationBehaviorRuleTupel>(fieldRule => {
       if (typeof fieldRule === 'function') {
@@ -31,7 +33,7 @@ function registerField(
         if (typeof fieldValidationBehavior === 'function') {
           return [fieldValidationBehavior, rule]
         } else {
-          const validationBehavior = CONFIG.validationBehavior.get(
+          const validationBehavior = VALIDATION_CONFIG.validationBehavior.get(
             fieldValidationBehavior
           )
           if (validationBehavior !== undefined) {
@@ -42,7 +44,7 @@ function registerField(
         return [defaultValidationBehavior, fieldRule]
       }
 
-      throw Error('Invalid rule provided')
+      throw Error('[useValidation] Invalid rule provided')
     }) ?? []
 
   const uid = n_domain.uid()
@@ -51,6 +53,7 @@ function registerField(
   const stop = watch(
     formField.modelValue,
     () => {
+      formField.dirty = true
       form.validate(uid)
     },
     { deep: true }
@@ -64,10 +67,10 @@ function registerField(
     $errors: formField.errors,
     $hasError: formField.hasError,
     $validating: formField.validating,
-    async $setTouched(forceValidation = true) {
-      formField.touched = true
-      if (forceValidation) {
-        await form.validate(uid, forceValidation)
+    async $setTouched(touched = true, forceValidate = true) {
+      formField.touched = touched
+      if (forceValidate) {
+        await form.validate(uid, forceValidate)
       }
     }
   }

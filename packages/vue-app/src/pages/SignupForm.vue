@@ -59,7 +59,7 @@
     <FormButtons
       :submitting="submitting"
       @reset="resetFields()"
-      class="col-span-full mt-4"
+      class="col-span-full mt-6"
     />
   </FormProvider>
 </template>
@@ -82,11 +82,11 @@ const { form, submitting, validateFields, resetFields } =
   useValidation<FormData>({
     name: {
       $value: '',
-      $rules: [rules.required('Please select a name')]
+      $rules: [rules.required('Please enter your name')]
     },
     email: {
       $value: '',
-      $rules: [rules.email('Please select a valid email address')]
+      $rules: [rules.email('Please enter a valid email address')]
     },
     password: {
       $value: '',
@@ -122,7 +122,7 @@ async function handleSubmit() {
 
 <style lang="postcss" scoped>
 :deep(.form) {
-  @apply grid max-w-2xl gap-x-8 gap-y-4;
+  @apply grid max-w-2xl gap-x-8 gap-y-6;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: auto auto auto;
   grid-template-areas:

@@ -21,10 +21,9 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import BaseButton from '~/components/base/BaseButton.vue'
 import PreFormData from '~/components/form/PreFormData.vue'
 
-defineEmits(['submit', 'reset'])
+defineEmits(['submit'])
 defineProps({
   title: {
     type: String,

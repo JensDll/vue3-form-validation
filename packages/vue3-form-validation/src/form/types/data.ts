@@ -13,7 +13,7 @@ export type TransformedField<T> = {
   $errors: string[]
   $hasError: boolean
   $validating: boolean
-  $setTouched(forceValidation?: boolean): Promise<void>
+  $setTouched(touched?: boolean, forceValidate?: boolean): Promise<void>
 }
 
 export type ResultFormData<FormData extends object> = FormData extends any

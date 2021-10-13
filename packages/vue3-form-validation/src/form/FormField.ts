@@ -18,6 +18,7 @@ export class FormField {
   initialModelValue: unknown
   name: string
   touched = false
+  dirty = false
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>
   errors = computed(() => this._errors.filter(n_domain.isDefined))
   validating = computed(() => this._rulesValidating.value > 0)
@@ -55,17 +56,22 @@ export class FormField {
     ruleNumber: number,
     modelValues: unknown[],
     form: Form,
-    force: boolean
+    force: boolean,
+    submit: boolean
   ) {
-    if (!(force || this._shouldValidate(ruleNumber, form))) {
-      return
-    }
-
-    const rule = this._rules[ruleNumber]
+    const shouldValidate = this.getValidationBehavior(ruleNumber)({
+      submitCount: form.submitCount.value,
+      hasError: this._errors[ruleNumber] !== null,
+      touched: this.touched,
+      dirty: this.dirty,
+      submit,
+      force
+    })
     const buffer = this._buffers[ruleNumber]
     let error: unknown
+    const rule = this._rules[ruleNumber]
 
-    if (!rule) {
+    if (!rule || !shouldValidate) {
       return
     }
 
@@ -103,6 +109,7 @@ export class FormField {
 
   reset(toDefaultValues: boolean) {
     this.touched = false
+    this.dirty = false
 
     if (toDefaultValues) {
       if (isRef(this.modelValue)) {
@@ -137,15 +144,6 @@ export class FormField {
 
   getValidationBehavior(ruleNumber: number) {
     return this._validationBehaviors[ruleNumber]
-  }
-
-  private _shouldValidate(ruleNumber: number, form: Form) {
-    return this.getValidationBehavior(ruleNumber)({
-      submitCount: form.submitCount.value,
-      errorMessages: this.errors.value,
-      hasError: this.errors.value.length > 0,
-      touched: this.touched
-    })
   }
 
   private _setError(ruleNumber: any, error: unknown) {

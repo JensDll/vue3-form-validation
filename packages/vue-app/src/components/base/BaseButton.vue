@@ -1,17 +1,12 @@
 <template>
   <button
-    class="
-      focus:outline-none
-      ring-offset-2
-      focus:ring-2
-      transition-colors
-      duration-200
-    "
+    class="focus:outline-none ring-offset-2 focus:ring-2 duration-150"
     :class="[
-      { 'opacity-40 cursor-not-allowed': disabled },
-      { 'opacity-40 cursor-wait': loading },
+      { 'opacity-40 cursor-not-allowed disabled duration-75': disabled },
+      { 'opacity-40 cursor-wait disabled': loading },
       reverse ? `reverse-${type}` : type
     ]"
+    :aria-disabled="disabled || loading"
     :type="htmlType"
     @click="onClick"
   >
@@ -22,6 +17,7 @@
 <script lang="ts" setup>
 import { PropType } from 'vue'
 
+const emit = defineEmits(['click', 'submit'])
 const props = defineProps({
   loading: {
     type: Boolean
@@ -42,8 +38,6 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['click'])
-
 const onClick = () => {
   if (!props.disabled || !props.loading) {
     emit('click')
@@ -52,6 +46,10 @@ const onClick = () => {
 </script>
 
 <style lang="postcss" scoped>
+button {
+  transition-property: colors opacity;
+}
+
 .basic,
 .reverse-basic {
   @apply border-2 border-gray-300;
@@ -64,7 +62,7 @@ const onClick = () => {
 }
 .primary {
   @apply bg-indigo-500 text-white;
-  &:hover {
+  &:not(.disabled):hover {
     @apply bg-indigo-400;
   }
   &:focus {
@@ -74,7 +72,7 @@ const onClick = () => {
 
 .secondary {
   @apply bg-emerald-500 text-white;
-  &:hover {
+  &:not(.disabled):hover {
     @apply bg-emerald-400;
   }
   &:focus {
@@ -84,7 +82,7 @@ const onClick = () => {
 
 .danger {
   @apply bg-red-500 text-white;
-  &:hover {
+  &:not(.disabled):hover {
     @apply bg-red-400;
   }
   &:focus {
@@ -94,7 +92,7 @@ const onClick = () => {
 
 .reverse-primary {
   @apply border-2 border-blue-500 text-blue-500;
-  &:hover {
+  &:not(.disabled):hover {
     @apply bg-blue-50;
   }
   &:focus {
@@ -104,7 +102,7 @@ const onClick = () => {
 
 .reverse-secondary {
   @apply border-2 border-emerald-500 text-emerald-500;
-  &:hover {
+  &:not(.disabled):hover {
     @apply bg-emerald-50;
   }
   &:focus {
@@ -114,7 +112,7 @@ const onClick = () => {
 
 .reverse-danger {
   @apply border-2 border-red-500 text-red-500;
-  &:hover {
+  &:not(.disabled):hover {
     @apply bg-red-50;
   }
   &:focus {

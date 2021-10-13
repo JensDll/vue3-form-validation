@@ -1,12 +1,18 @@
 import { SimpleRule, RuleWithKey } from './rules'
 
-export type ValidationBehaviorString = string
+export type DefaultValidationBehaviorString = 'aggresive' | 'lazy' | 'lazier'
+
+export type ValidationBehaviorString =
+  | DefaultValidationBehaviorString
+  | CustomValidationBehavior
 
 export type ValidationBehaviorInfo = {
   submitCount: number
-  errorMessages: string[]
   hasError: boolean
   touched: boolean
+  dirty: boolean
+  force: boolean
+  submit: boolean
 }
 
 export type ValidationBehavior = (

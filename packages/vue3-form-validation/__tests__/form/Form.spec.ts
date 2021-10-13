@@ -6,7 +6,7 @@ import {
   ValidationError
 } from '../../src/form'
 import { mockFactory } from '../utils'
-import { CONFIG } from '../../src/config'
+import { VALIDATION_CONFIG } from '../../src/validationConfig'
 
 let form: Form
 let asyncRules: Tuple<jest.Mock, 6>
@@ -47,9 +47,11 @@ type EachValidationBehavior = {
 }
 
 const EACH_VALIDATION_BEHAVIOR: EachValidationBehavior[] = [
-  { validationBehavior: CONFIG.validationBehavior.get('aggresive')! },
-  { validationBehavior: CONFIG.validationBehavior.get('lazy')! },
-  { validationBehavior: CONFIG.validationBehavior.get('lazier')! }
+  {
+    validationBehavior: VALIDATION_CONFIG.validationBehavior.get('aggresive')!
+  },
+  { validationBehavior: VALIDATION_CONFIG.validationBehavior.get('lazy')! },
+  { validationBehavior: VALIDATION_CONFIG.validationBehavior.get('lazier')! }
 ]
 
 describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(
@@ -88,6 +90,7 @@ describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(
           const field = form.registerField(1, 'name', '', [
             [validationBehavior, rule]
           ])
+          field.touched = true
 
           ms.value = 600
           form.validate(1, true)

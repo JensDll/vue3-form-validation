@@ -1,4 +1,5 @@
 import { RouteRecordRaw, createRouter, createWebHistory } from 'vue-router'
+import HomeForm from '~/pages/HomeForm.vue'
 import BasicForm from '~/pages/BasicForm.vue'
 import DynamicForm from '~/pages/DynamicForm.vue'
 import SignupForm from '~/pages/SignupForm.vue'
@@ -7,6 +8,11 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
+    component: HomeForm
+  },
+  {
+    path: '/basic',
+    name: 'basic',
     component: BasicForm
   },
   {

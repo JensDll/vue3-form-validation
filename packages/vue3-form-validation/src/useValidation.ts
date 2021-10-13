@@ -9,7 +9,6 @@ export type UseValidation<FormData extends object> = {
   validating: ComputedRef<boolean>
   hasError: ComputedRef<boolean>
   errors: ComputedRef<string[]>
-
   validateFields(
     names?: n_form.FieldNames<FormData>[] | string[]
   ): Promise<n_form.ResultFormData<FormData>>

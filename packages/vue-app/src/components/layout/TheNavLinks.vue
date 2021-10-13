@@ -50,7 +50,11 @@ function right() {
   @apply block w-6 h-6 rounded-full bg-indigo-500 ml-4 transition-transform;
 
   &:hover {
-    @apply scale-125 bg-indigo-400;
+    @apply outline-none scale-125 bg-indigo-400;
+  }
+
+  &:focus {
+    @apply outline-none scale-125;
   }
 
   &:first-of-type {

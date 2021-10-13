@@ -1,47 +1,41 @@
 <template>
   <div>
-    <label class="block">
-      <div class="form-label">
-        {{ label }}
-      </div>
-      <div
-        :class="[
-          'group relative py-10 form-input border-2 border-dashed rounded flex justify-center items-center',
-          { 'error bg-red-50 border': hasError }
-        ]"
-      >
-        <input
-          class="w-full h-full absolute opacity-0 cursor-pointer"
-          type="file"
-          :accept="accept"
-          :multiple="multiple"
-          @change="handleChange"
-        />
-        <div class="text-center">
-          <p>
-            <span
-              :class="[
-                'font-semibold text-indigo-500 group-hover:text-indigo-600',
-                { '!text-red-500 group-hover:!text-red-600': hasError }
-              ]"
-            >
-              Upload a file
-            </span>
-            or drag and drop
-          </p>
-          <slot></slot>
-          <div
-            v-if="image && isFileSelected"
-            class="flex flex-col items-center"
+    <label :for="`file-${label}`" class="form-label">{{ label }}</label>
+    <div
+      :class="[
+        'group relative py-10 form-input border-2 border-dashed rounded grid place-items-center',
+        { 'error bg-red-50': hasError }
+      ]"
+    >
+      <input
+        class="w-full h-full absolute opacity-0 cursor-pointer"
+        :id="`file-${label}`"
+        type="file"
+        :accept="accept"
+        :multiple="multiple"
+        @change="handleChange"
+      />
+      <div class="text-center">
+        <p>
+          <span
+            :class="[
+              'font-semibold text-indigo-500 group-hover:text-indigo-600',
+              { '!text-red-500 group-hover:!text-red-600': hasError }
+            ]"
           >
-            <template v-for="{ file, src } in fileHelpers" :key="src">
-              <img :src="src" class="w-32 h-32 mx-auto mb-2 mt-8" />
-              <p>{{ file.name }}</p>
-            </template>
-          </div>
+            Upload a file
+          </span>
+          or drag and drop
+        </p>
+        <slot></slot>
+        <div v-if="image && isFileSelected" class="flex flex-col items-center">
+          <template v-for="{ file, src } in fileHelpers" :key="src">
+            <img :src="src" class="w-32 h-32 mx-auto mb-2 mt-8" />
+            <p>{{ file.name }}</p>
+          </template>
         </div>
       </div>
-    </label>
+    </div>
     <FormErrors :errors="errors" class="mt-2" />
     <ul class="mt-4" v-if="files.length">
       <li
@@ -139,12 +133,4 @@ const handleChange = (e: Event) => {
 }
 </script>
 
-<style lang="postcss" scoped>
-.photo-icon {
-  @apply w-14 h-14 text-gray-400;
-}
-
-.photo-icon::v-deep(path) {
-  stroke-width: 1;
-}
-</style>
+<style lang="postcss" scoped></style>

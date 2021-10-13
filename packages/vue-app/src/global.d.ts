@@ -1,0 +1,1 @@
+type CustomValidationBehavior = 'force' | 'submit'
