@@ -17,7 +17,7 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
       - name: Latest npm
         run: |
-          run: npm i -g npm@7
+          npm i -g npm@7
           env
       - name: Install dependencies and build
         run: |
