@@ -1,1 +1,4 @@
-type CustomValidationBehavior = 'force' | 'submit'
+interface CustomValidationBehavior {
+  force: any
+  submit: any
+}

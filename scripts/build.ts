@@ -37,6 +37,33 @@ async function build(target: string) {
     })
 
     if (extractorResult.succeeded) {
+      const globalDtsPath = `${packageFolder}/src/global.d.ts`
+
+      const globalDtsBuffer = await fs.readFile(globalDtsPath)
+
+      await fs.appendFile(
+        `${packageFolder}/dist/${target}.d.ts`,
+        Buffer.concat([
+          Buffer.from('\ndeclare global {'),
+          globalDtsBuffer,
+          Buffer.from('}')
+        ])
+      )
+
+      await execa(
+        'npm exec --',
+        ['prettier', '--write', `${packageFolder}/dist/${target}.d.ts`],
+        {
+          stdio: 'inherit'
+        }
+      )
+
+      await fs.copy(
+        `${packageFolder}/dist/${target}.d.ts`,
+        `publish/dist/${target}.d.ts`,
+        { overwrite: true }
+      )
+
       await Promise.all([
         fs.copyFile('LICENSE', 'publish/LICENSE'),
         fs.copyFile('README.md', 'publish/README.md'),
@@ -47,7 +74,9 @@ async function build(target: string) {
             `${packageFolder}/dist/${bundel}`,
             `publish/dist/${bundel}`
           )
-        })
+        }),
+
+        fs.copyFile(globalDtsPath, 'test-dts/global.d.ts')
       ])
     }
 
