@@ -1,9 +1,9 @@
 <template>
   <div class="flex">
     <BaseButton
-      html-type="submit"
       class="px-4 py-2 rounded-md font-medium"
       :disabled="submitting"
+      @click="$emit('submit')"
     >
       Submit
     </BaseButton>
@@ -20,7 +20,7 @@
 <script setup lang="ts">
 import BaseButton from '~/components/base/BaseButton.vue'
 
-defineEmits(['reset'])
+defineEmits(['reset', 'submit'])
 
 defineProps({
   submitting: {

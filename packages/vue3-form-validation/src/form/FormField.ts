@@ -59,22 +59,27 @@ export class FormField {
     force: boolean,
     submit: boolean
   ) {
+    const rule = this._rules[ruleNumber]
+
+    if (!rule) {
+      return
+    }
+
     const shouldValidate = this.getValidationBehavior(ruleNumber)({
       submitCount: form.submitCount.value,
       hasError: this._errors[ruleNumber] !== null,
       touched: this.touched,
       dirty: this.dirty,
-      submit,
-      force
+      force,
+      submit
     })
-    const buffer = this._buffers[ruleNumber]
-    let error: unknown
-    const rule = this._rules[ruleNumber]
 
-    if (!rule || !shouldValidate) {
+    if (!shouldValidate) {
       return
     }
 
+    const buffer = this._buffers[ruleNumber]
+    let error: unknown
     const ruleResult = rule(...modelValues.map(unref))
 
     if (typeof ruleResult?.then === 'function') {

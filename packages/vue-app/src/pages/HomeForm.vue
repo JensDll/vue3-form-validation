@@ -1,10 +1,5 @@
 <template>
-  <FormProvider
-    title="Home Examples"
-    :form="form"
-    class="form"
-    @submit="handleSubmit()"
-  >
+  <FormProvider title="Home Examples" :form="form" class="form">
     <div class="date-range lg:w-2/3">
       <label for="start-date" class="form-label start-label">Start</label>
       <label for="end-date" class="form-label end-label">End</label>
@@ -28,7 +23,12 @@
       />
       <FormErrors :errors="form.endDate.$errors" class="mt-2 end-errors" />
     </div>
-    <FormButtons :submitting="submitting" @reset="resetFields()" class="mt-8" />
+    <FormButtons
+      :submitting="submitting"
+      @reset="resetFields()"
+      @submit="handleSubmit()"
+      class="mt-8"
+    />
   </FormProvider>
 </template>
 
@@ -50,18 +50,7 @@ const { form, submitting, validateFields, resetFields } =
       $value: '',
       $rules: [
         ['submit', rules.required('Please select a starting date')],
-        startDate => {
-          const now = new Date()
-          const start = new Date(startDate)
-
-          if (
-            start.getDate() < now.getDate() ||
-            start.getMonth() < now.getMonth() ||
-            start.getFullYear() < now.getFullYear()
-          ) {
-            return 'Please select a date in the future'
-          }
-        },
+        rules.inTheFuture('Please select a date in the future'),
         { key: 'date' }
       ]
     },
@@ -76,7 +65,7 @@ const { form, submitting, validateFields, resetFields } =
             const end = new Date(endDate)
 
             if (start > end) {
-              return 'Please select an end that is later than the starting date'
+              return 'Please select an ending date that is later than the starting date'
             }
           }
         }

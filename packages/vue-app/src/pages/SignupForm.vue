@@ -1,11 +1,5 @@
 <template>
-  <FormProvider
-    title="Signup Form"
-    class="form"
-    :form="form"
-    @submit="handleSubmit"
-    @reset="resetFields()"
-  >
+  <FormProvider title="Signup Form" class="form" :form="form">
     <div class="name">
       <label for="name" class="form-label">Name</label>
       <input
@@ -59,6 +53,7 @@
     <FormButtons
       :submitting="submitting"
       @reset="resetFields()"
+      @submit="handleSubmit()"
       class="col-span-full mt-6"
     />
   </FormProvider>

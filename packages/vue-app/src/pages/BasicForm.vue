@@ -1,11 +1,5 @@
 <template>
-  <FormProvider
-    title="Basic Form"
-    class="grid gap-y-6 max-w-2xl"
-    :form="form"
-    @submit="handleSubmit"
-    @reset="resetFields()"
-  >
+  <FormProvider title="Basic Form" class="grid gap-y-6 max-w-2xl" :form="form">
     <div>
       <label for="text" class="form-label">Enter some Text</label>
       <input
@@ -24,7 +18,12 @@
       multiple
     >
     </FormFileUpload>
-    <FormButtons :submitting="submitting" @reset="resetFields()" class="mt-2" />
+    <FormButtons
+      :submitting="submitting"
+      @reset="resetFields()"
+      @submit="handleSubmit()"
+      class="mt-2"
+    />
   </FormProvider>
 </template>
 
@@ -50,13 +49,7 @@ const { form, submitting, validateFields, resetFields } =
     text: {
       $value: '',
       $rules: [
-        rules.min(6)('Please enter some text that is longer than 5 characters'),
-        [
-          'aggresive',
-          x => {
-            console.log('aggresive', x)
-          }
-        ]
+        rules.min(6)('Please enter some text that is longer than 5 characters')
       ]
     }
   })

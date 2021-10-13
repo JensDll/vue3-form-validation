@@ -26,7 +26,7 @@ const props = defineProps({
     type: Boolean
   },
   htmlType: {
-    type: String as PropType<'button' | 'submit' | 'reset'>,
+    type: String as PropType<'button' | 'reset'>,
     default: 'button'
   },
   type: {
@@ -38,8 +38,9 @@ const props = defineProps({
   }
 })
 
-const onClick = () => {
-  if (!props.disabled || !props.loading) {
+const onClick = (e: MouseEvent) => {
+  const target = e.target as HTMLButtonElement
+  if (target.ariaDisabled === 'false') {
     emit('click')
   }
 }

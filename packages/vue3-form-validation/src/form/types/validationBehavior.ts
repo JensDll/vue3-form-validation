@@ -1,6 +1,10 @@
 import { SimpleRule, RuleWithKey } from './rules'
 
-export type DefaultValidationBehaviorString = 'aggresive' | 'lazy' | 'lazier'
+export type DefaultValidationBehaviorString =
+  | 'aggresive'
+  | 'lazy'
+  | 'lazier'
+  | 'submit'
 
 export type ValidationBehaviorString =
   | DefaultValidationBehaviorString

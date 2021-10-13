@@ -36,7 +36,7 @@ export const rules = {
     (...xs) =>
       xs.every(x => x === xs[0]) || msg,
   random:
-    (min = 100, max = 1500): SimpleRule =>
+    (min = 200, max = 2000): SimpleRule =>
     x =>
       new Promise<void | string>(resolve => {
         const ms = randomInt(min, max)
@@ -47,5 +47,19 @@ export const rules = {
             resolve()
           }
         }, ms)
-      })
+      }),
+  inTheFuture:
+    (msg: string): SimpleRule<string> =>
+    date => {
+      const now = new Date()
+      const start = new Date(date)
+
+      if (
+        start.getDate() < now.getDate() ||
+        start.getMonth() < now.getMonth() ||
+        start.getFullYear() < now.getFullYear()
+      ) {
+        return msg
+      }
+    }
 }

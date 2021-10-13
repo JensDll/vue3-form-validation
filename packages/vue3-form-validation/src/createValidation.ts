@@ -17,11 +17,11 @@ export type ConfigurationValidationBehavior = n_domain.Optional<
 export type Configuration =
   keyof UseValidation_CustomValidationBehavior extends never
     ? {
-        defaultValidationBehavior?: ValidationBehaviorString
+        defaultValidationBehavior: ValidationBehaviorString
         validationBehavior?: ConfigurationValidationBehavior
       }
     : {
-        defaultValidationBehavior?: ValidationBehaviorString
+        defaultValidationBehavior: ValidationBehaviorString
         validationBehavior: ConfigurationValidationBehavior
       }
 
@@ -42,11 +42,11 @@ export function createValidation(configuration: Configuration): Plugin {
 
       if (
         VALIDATION_CONFIG.validationBehavior.has(
-          configuration.defaultValidationBehavior as any
+          configuration.defaultValidationBehavior
         )
       ) {
         VALIDATION_CONFIG.defaultValidationBehavior =
-          configuration.defaultValidationBehavior ?? 'lazier'
+          configuration.defaultValidationBehavior
       } else {
         console.warn(
           `[useValidation] Default validation behavior is not valid. Valid values are`,

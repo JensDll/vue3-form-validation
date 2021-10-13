@@ -19,8 +19,8 @@
         <p>
           <span
             :class="[
-              'font-semibold text-indigo-500 group-hover:text-indigo-600',
-              { '!text-red-500 group-hover:!text-red-600': hasError }
+              'font-semibold text-indigo-500 group-hover:text-indigo-700',
+              { '!text-red-500 group-hover:!text-red-700': hasError }
             ]"
           >
             Upload a file

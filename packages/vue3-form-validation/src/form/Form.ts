@@ -118,7 +118,9 @@ export class Form {
     const { validators, meta } = simpleValidators
 
     return Promise.allSettled([
-      ...validators.map(v => v([meta.field.modelValue], force, false)),
+      ...validators.map(validator =>
+        validator([meta.field.modelValue], force, false)
+      ),
       ...this._getValidationResultsForKeys(meta.keys, force, false)
     ])
   }
@@ -185,13 +187,15 @@ export class Form {
       for (const { validators, meta } of this._simpleValidators.values()) {
         meta.field.touched = true
         validationResults.push(
-          ...validators.map(v => v([meta.field.modelValue], true, true))
+          ...validators.map(validator =>
+            validator([meta.field.modelValue], false, true)
+          )
         )
       }
       validationResults.push(
         ...this._getValidationResultsForKeys(
           this._keyedValidators.keys(),
-          true,
+          false,
           true,
           true
         )
@@ -202,10 +206,12 @@ export class Form {
         meta.field.touched = true
         if (uniqueNames.has(meta.field.name)) {
           validationResults.push(
-            ...validators.map(v => v([meta.field.modelValue], true, true))
+            ...validators.map(validator =>
+              validator([meta.field.modelValue], false, true)
+            )
           )
           validationResults.push(
-            ...this._getValidationResultsForKeys(meta.keys, true, true, true)
+            ...this._getValidationResultsForKeys(meta.keys, false, true, true)
           )
         }
       }

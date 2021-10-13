@@ -1,4 +1,2 @@
-interface UseValidation_CustomValidationBehavior {
-  force: any
-  submit: any
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface UseValidation_CustomValidationBehavior {}
