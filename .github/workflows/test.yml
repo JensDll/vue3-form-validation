@@ -8,7 +8,7 @@ jobs:
         node-version: [15.x, 16.x]
     steps:
       - run: |
-          npm
+          npm --version
           env
       - name: Checkout repository
         uses: actions/checkout@v2
