@@ -48,14 +48,14 @@ async function build(target: string) {
           Buffer.from('}')
         ])
       )
-
-      await execa(
-        'npm exec --',
-        ['prettier', '--write', `${packageFolder}/dist/${target}.d.ts`],
-        {
-          stdio: 'inherit'
-        }
-      )
+      console.log(`${packageFolder}/dist/${target}.d.ts`)
+      // await execa(
+      //   'npm exec --',
+      //   ['prettier', '--write', `${packageFolder}/dist/${target}.d.ts`],
+      //   {
+      //     stdio: 'inherit'
+      //   }
+      // )
 
       await Promise.all([
         fs.copyFile('LICENSE', 'publish/LICENSE'),
