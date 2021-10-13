@@ -21,9 +21,9 @@ jobs:
           env
       - name: Install dependencies and build
         run: |
-          npm i
+          npm ci
           npm run build
       - name: Run jest
         run: npm run test
       - name: Run tsd
-        run: npm run test-dts
+        run: npm run test-dts-only
