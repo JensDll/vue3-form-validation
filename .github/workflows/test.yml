@@ -9,15 +9,15 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-      - name: Latest npm
-        run: |
-          npm i -g npm@7
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
+      - name: Latest npm
+        run: |
+          npm i -g npm@7
       - name: Install dependencies and build
         run: |
           npm --version
