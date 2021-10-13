@@ -23,6 +23,7 @@ jobs:
           npm --version
           env
       - name: Install dependencies and build
+        run: |
           npm i
           npm run build
       - name: Run jest
