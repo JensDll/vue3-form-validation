@@ -38,7 +38,6 @@ async function build(target: string) {
 
     if (extractorResult.succeeded) {
       const globalDtsPath = `${packageFolder}/src/global.d.ts`
-
       const globalDtsBuffer = await fs.readFile(globalDtsPath)
 
       await fs.appendFile(
@@ -58,12 +57,6 @@ async function build(target: string) {
         }
       )
 
-      await fs.copy(
-        `${packageFolder}/dist/${target}.d.ts`,
-        `publish/dist/${target}.d.ts`,
-        { overwrite: true }
-      )
-
       await Promise.all([
         fs.copyFile('LICENSE', 'publish/LICENSE'),
         fs.copyFile('README.md', 'publish/README.md'),
@@ -75,9 +68,14 @@ async function build(target: string) {
             `publish/dist/${bundel}`
           )
         }),
-
         fs.copyFile(globalDtsPath, 'test-dts/global.d.ts')
       ])
+
+      await fs.copy(
+        `${packageFolder}/dist/${target}.d.ts`,
+        `publish/dist/${target}.d.ts`,
+        { overwrite: true }
+      )
     }
 
     console.log(`Build finished ! (success = ${extractorResult.succeeded})`)

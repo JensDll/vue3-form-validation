@@ -7,7 +7,8 @@
     "enabled": false
   },
   "dtsRollup": {
-    "enabled": true
+    "enabled": true,
+    "untrimmedFilePath": "<projectFolder>/publish/dist/<unscopedPackageName>.d.ts"
   },
   "tsdocMetadata": {
     "enabled": false

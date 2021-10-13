@@ -15,16 +15,17 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
-      - name: Latest npm
+      - name: Install npm@7
         run: |
           npm i -g npm@7
-      - name: Install dependencies and build
+      - name: Echo debug information
         run: |
           npm --version
           env
-      #     npm ci
-      #     npm run build
-      # - name: Run jest
-      #   run: npm run test
-      # - name: Run tsd
-      #   run: npm run test-dts
+      - name: Install dependencies and build
+          npm i
+          npm run build
+      - name: Run jest
+        run: npm run test
+      - name: Run tsd
+        run: npm run test-dts
