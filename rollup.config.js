@@ -1,39 +1,34 @@
-import { defineConfig } from 'rollup'
-import typescript from '@rollup/plugin-typescript'
-import dts from 'rollup-plugin-dts'
+import typescript from 'rollup-plugin-typescript2'
+import esbuild from 'rollup-plugin-esbuild'
 
-const PUBLISH_BASE = 'publish/dist/vue3-form-validation'
+const TARGETS = process.env.TARGETS.split(' ')
+const FORMATS = process.env.FORMATS.split(' ')
 
-const buildConfig = defineConfig({
-  input: 'packages/vue3-form-validation/src/index.ts',
-  output: [
-    {
-      file: `${PUBLISH_BASE}.esm.js`,
-      format: 'es'
-    },
-    {
-      file: `${PUBLISH_BASE}.cjs.js`,
-      format: 'cjs'
-    }
-  ],
-  plugins: [
-    typescript({
-      tsconfig: 'packages/vue3-form-validation/tsconfig.json'
-    })
-  ]
-})
+const configs = []
 
-const dtsConfig = defineConfig({
-  input: 'tmp/index.d.ts',
-  output: [
-    {
-      file: `${PUBLISH_BASE}.d.ts`,
-      format: 'es'
-    }
-  ],
-  plugins: [dts()]
-})
-
-export default async () => {
-  return [buildConfig, dtsConfig]
+const tsconfigOverride = {
+  exclude: ['**/__tests__', '**/__mocks__', 'scripts']
 }
+
+for (const target of TARGETS) {
+  const config = {
+    input: `packages/${target}/src/index.ts`,
+    external: ['vue'],
+    plugins: [
+      process.env.BUILD
+        ? typescript({ tsconfigOverride })
+        : esbuild(tsconfigOverride)
+    ]
+  }
+
+  const output = FORMATS.map(format => ({
+    file: `packages/${target}/dist/${target}.${format}.js`,
+    format
+  }))
+
+  config['output'] = output
+
+  configs.push(config)
+}
+
+export default configs

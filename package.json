@@ -3,70 +3,46 @@
   "workspaces": [
     "./packages/*"
   ],
-  "description": "Vue composition function for Form Validation",
-  "author": {
-    "name": "jens",
-    "email": "jens@doellmann.com"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/JensDll/vue3-form-validation"
-  },
+  "type": "module",
   "scripts": {
-    "lint-check": "npm exec -- eslint --rule=\"no-console:error\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
-    "build": "npm run lint-check && node ./scripts/build.mjs",
-    "dev": "npm run dev -w vue-test-app",
-    "watch": "npm exec -- tsc --project ./packages/vue3-form-validation --watch",
-    "test": "jest",
-    "test-dts": "npm exec -- tsc --project ./test-dts && npm exec -- tsd",
+    "build": "esmo scripts/build.ts",
+    "dev": "esmo scripts/dev.ts --targets vue3-form-validation",
+    "vue": "npm run dev --workspace=vue-app",
+    "lint": "npm exec -- eslint --rule=\"no-console: [\"error\", { allow: [\"warn\", \"error\"] }]\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
+    "test": "jest --runInBand",
+    "test-dts": "npm run build && npm exec -- tsd",
+    "test-dts-only": "npm exec -- tsd",
     "test-all": "npm run test-dts && npm test",
-    "postinstall": "husky install",
-    "publish": "cd publish && npm publish"
+    "postinstall": "husky install"
   },
-  "devDependencies": {
-    "@rollup/plugin-typescript": "^8.2.5",
-    "@types/jest": "^26.0.24",
-    "@types/node": "^16.4.13",
-    "@typescript-eslint/eslint-plugin": "^4.29.1",
-    "@typescript-eslint/parser": "^4.29.1",
-    "@vitejs/plugin-vue": "^1.4.0",
-    "@vue/compiler-sfc": "^3.1.5",
-    "autoprefixer": "^10.3.1",
-    "eslint": "^7.32.0",
-    "execa": "^5.1.1",
-    "fs-extra": "^10.0.0",
-    "husky": "^7.0.1",
-    "jest": "^27.0.6",
-    "lint-staged": "^11.1.2",
-    "pinst": "^2.1.6",
-    "postcss": "^8.3.6",
-    "postcss-nesting": "^8.0.1",
-    "prettier": "^2.3.2",
-    "rollup-plugin-dts": "^3.0.2",
-    "tailwindcss": "^2.2.7",
-    "ts-jest": "^27.0.4",
-    "ts-node": "^10.2.0",
-    "tsd": "^0.17.0",
-    "typescript": "^4.3.5",
-    "vite": "^2.4.4",
-    "vue": "^3.0.11",
-    "vue-router": "^4.0.4",
-    "vue-tsc": "^0.2.2"
-  },
-  "prettier": {
-    "singleQuote": true,
-    "arrowParens": "avoid",
-    "trailingComma": "none",
-    "semi": false,
-    "endOfLine": "crlf"
-  },
-  "types": "test-dts/dist/index.d.ts",
+  "types": "publish/dist/vue3-form-validation.d.ts",
   "tsd": {
     "directory": "test-dts"
   },
   "dependencies": {
-    "glob": "^7.1.7",
-    "rollup": "^2.56.2"
+    "@microsoft/api-extractor": "^7.18.16",
+    "@rollup/plugin-alias": "^3.1.5",
+    "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.10.9",
+    "@types/yargs": "^17.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "esbuild": "^0.13.6",
+    "eslint": "^8.0.1",
+    "esno": "^0.10.1",
+    "execa": "^5.1.1",
+    "fs-extra": "^10.0.0",
+    "husky": "^7.0.2",
+    "jest": "^27.2.5",
+    "prettier": "^2.4.1",
+    "rollup": "^2.58.0",
+    "rollup-plugin-esbuild": "^4.5.0",
+    "rollup-plugin-typescript2": "^0.30.0",
+    "ts-jest": "^27.0.5",
+    "tsd": "^0.18.0",
+    "typescript": "^4.4.4",
+    "vue": "^3.0.11",
+    "yargs": "^17.2.1"
   }
 }
