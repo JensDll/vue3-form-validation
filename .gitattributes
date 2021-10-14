@@ -1,2 +1,2 @@
 *.sh text eol=lf
-.huksy/* text eol=lf
+.huksy/*.sh text eol=lf

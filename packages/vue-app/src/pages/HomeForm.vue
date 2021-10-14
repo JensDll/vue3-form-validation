@@ -58,17 +58,20 @@ const { form, submitting, validateFields, resetFields } =
       $value: '',
       $rules: [
         ['submit', rules.required('Please select an ending date')],
-        {
-          key: 'date',
-          rule: (startDate: string, endDate: string) => {
-            const start = new Date(startDate)
-            const end = new Date(endDate)
+        [
+          'force',
+          {
+            key: 'date',
+            rule: (startDate: string, endDate: string) => {
+              const start = new Date(startDate)
+              const end = new Date(endDate)
 
-            if (start > end) {
-              return 'Please select an ending date that is later than the starting date'
+              if (start > end) {
+                return 'Please select an ending date that is later than the starting date'
+              }
             }
           }
-        }
+        ]
       ]
     }
   })
