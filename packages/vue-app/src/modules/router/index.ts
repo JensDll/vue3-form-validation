@@ -3,6 +3,7 @@ import HomeForm from '~/pages/HomeForm.vue'
 import BasicForm from '~/pages/BasicForm.vue'
 import DynamicForm from '~/pages/DynamicForm.vue'
 import SignupForm from '~/pages/SignupForm.vue'
+import DynamicObjectForm from '~/pages/DynamicObjectForm.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,6 +25,11 @@ const routes: RouteRecordRaw[] = [
     path: '/signup',
     name: 'signup',
     component: SignupForm
+  },
+  {
+    path: '/dynamic-object',
+    name: 'dynamic-object',
+    component: DynamicObjectForm
   }
 ]
 
