@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const colors = require('tailwindcss/colors')
 delete colors.lightBlue
 
@@ -10,9 +11,6 @@ module.exports = {
       transparent: 'transparent',
       current: 'currentColor',
       ...colors
-    },
-    area: {
-      test: 'grid-area: test'
     },
     extend: {
       screens: {
