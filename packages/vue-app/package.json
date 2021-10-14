@@ -22,5 +22,6 @@
     "vue-router": "^4.0.11",
     "vue-tsc": "^0.28.3",
     "vue3-form-validation": "5.0.0-beta.4"
-  }
+  },
+  "description": "Vue composition function for Form Validation"
 }
