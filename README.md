@@ -16,3 +16,4 @@ npm install vue3-form-validation
 
 ### :point_right: [Check out the Documentation](https://github.com/JensDll/vue3-form-validation/wiki/Documentation)
 ### :point_right: [Check out the example Project on StackBlitz](https://stackblitz.com/github/JensDll/vue3-form-validation/tree/main/packages/vue-app?file=src%2Fpages%2FHomeForm.vue)
+After StackBlitz is done installing the dependencies type `npm run dev` in the terminal to start the application.
