@@ -1,7 +1,7 @@
 {
   "private": true,
-  "name": "vue-app",
-  "description": "Vue composition function for Form Validation",
+  "name": "vue-examples",
+  "description": "Example Project - Vue composition function for Form Validation",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
