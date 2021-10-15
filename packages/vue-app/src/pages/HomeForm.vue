@@ -82,13 +82,7 @@ async function handleSubmit() {
     console.log(formData)
   } catch (e) {
     console.log(e)
-  } finally {
-    form.startDate.$setTouched(false, false)
-    form.endDate.$setTouched(false, false)
   }
-}
-function test() {
-  console.log('test')
 }
 </script>
 
