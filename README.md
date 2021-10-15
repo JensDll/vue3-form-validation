@@ -11,10 +11,10 @@ Vue composition function for Form Validation with async rules.
 - :fallen_leaf: **Light weight**
 
 ```bash
-npm install vue3-form-validation
+yarn add vue3-form-validation
 ```
 ```bash
-yarn add vue3-form-validation
+npm install vue3-form-validation
 ```
 
 ### :point_right: [Check out the Documentation](https://github.com/JensDll/vue3-form-validation/wiki/Documentation)
