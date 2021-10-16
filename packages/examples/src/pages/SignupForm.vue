@@ -60,11 +60,11 @@
 </template>
 
 <script setup lang="ts">
-import { Field, useValidation } from 'vue3-form-validation'
-import { rules } from '~/domain'
 import FormProvider from '~/components/layout/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
 import FormButtons from './components/FormButtons.vue'
+import { Field, useValidation } from 'vue3-form-validation'
+import { rules } from '~/domain'
 
 interface FormData {
   name: Field<string>

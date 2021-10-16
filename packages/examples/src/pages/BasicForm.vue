@@ -29,11 +29,11 @@
 
 <script setup lang="ts">
 import FormFileUpload from '~/components/form/FormFileUpload.vue'
-import { Field, useValidation } from 'vue3-form-validation'
-import { rules } from '~/domain'
 import FormProvider from '~/components/layout/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
 import FormButtons from './components/FormButtons.vue'
+import { Field, useValidation } from 'vue3-form-validation'
+import { rules } from '~/domain'
 
 interface FormData {
   files: Field<File[]>

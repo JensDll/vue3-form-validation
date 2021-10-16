@@ -11,7 +11,7 @@ import {
 } from '../../src/form'
 
 type FormData = {
-  a: Field<string>
+  a: Field<string, { extra: string }>
   b: Field<string>
   cs: {
     d: Field<string>
@@ -31,7 +31,7 @@ let transformedFormData: TransformedFormData<FormData>
 
 beforeEach(() => {
   formData = {
-    a: { $value: '' },
+    a: { $value: '', extra: 'extra' },
     b: { $value: '' },
     cs: [
       { d: { $value: '' }, e: { $value: '' } },
@@ -54,7 +54,8 @@ describe('transformFormData', () => {
         $errors: [],
         $hasError: false,
         $validating: false,
-        $setTouched: expect.any(Function)
+        $setTouched: expect.any(Function),
+        extra: 'extra'
       },
       b: {
         $uid: expect.any(Number),
@@ -164,7 +165,8 @@ describe('resetFields', () => {
         $errors: [],
         $hasError: false,
         $validating: false,
-        $setTouched: expect.any(Function)
+        $setTouched: expect.any(Function),
+        extra: 'extra'
       },
       b: {
         $uid: expect.any(Number),

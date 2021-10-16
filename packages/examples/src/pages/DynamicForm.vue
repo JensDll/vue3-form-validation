@@ -96,11 +96,11 @@
 <script setup lang="ts">
 import FormProvider from '~/components/layout/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
+import LoadingIcon from '~/components/icon/LoadingIcon.vue'
+import FormButtons from './components/FormButtons.vue'
 import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/outline'
 import { Field, useValidation } from 'vue3-form-validation'
 import { rules } from '~/domain'
-import FormButtons from './components/FormButtons.vue'
-import LoadingIcon from '~/components/icon/LoadingIcon.vue'
 
 type FormData = {
   a: Field<string>
@@ -121,14 +121,6 @@ const { form, submitting, validateFields, resetFields, add, remove } =
     },
     xs: []
   })
-
-async function handleSubmit() {
-  console.log('submit')
-  try {
-    const formData = await validateFields()
-    console.log(formData)
-  } catch (e) {}
-}
 
 function addX() {
   add(['xs'], {
@@ -159,6 +151,15 @@ function addY(xi: number) {
 
 function removeY(xi: number, yi: number) {
   remove(['xs', xi, 'ys', yi])
+}
+
+async function handleSubmit() {
+  try {
+    const formData = await validateFields()
+    console.log(formData)
+  } catch (e) {
+    console.log(e)
+  }
 }
 </script>
 

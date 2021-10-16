@@ -18,11 +18,13 @@ function registerField(
     | TransformedField<unknown>[K]
     | ComputedRef<TransformedField<unknown>[K]>
 } {
+  const { $value, $rules, ...fieldExtraProperties } = field
+
   const defaultValidationBehavior =
     VALIDATION_CONFIG.getDefaultValidationBehavior()
 
   const rules =
-    field.$rules?.map<ValidationBehaviorRuleTupel>(fieldRule => {
+    $rules?.map<ValidationBehaviorRuleTupel>(fieldRule => {
       if (typeof fieldRule === 'function') {
         return [defaultValidationBehavior, fieldRule]
       }
@@ -48,7 +50,7 @@ function registerField(
     }) ?? []
 
   const uid = n_domain.uid()
-  const formField = form.registerField(uid, name, field.$value, rules)
+  const formField = form.registerField(uid, name, $value, rules)
 
   const stop = watch(
     formField.modelValue,
@@ -62,6 +64,7 @@ function registerField(
   disposables.set(uid, [stop, formField.dispose.bind(formField)])
 
   return {
+    ...fieldExtraProperties,
     $uid: uid,
     $value: formField.modelValue,
     $errors: formField.errors,

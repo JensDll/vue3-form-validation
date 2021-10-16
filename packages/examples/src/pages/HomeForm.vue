@@ -33,11 +33,11 @@
 </template>
 
 <script setup lang="ts">
-import { useValidation, Field } from 'vue3-form-validation'
 import FormProvider from '~/components/layout/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
 import FormButtons from './components/FormButtons.vue'
 import { rules } from '~/domain'
+import { useValidation, Field } from 'vue3-form-validation'
 
 type FormData = {
   startDate: Field<string>
