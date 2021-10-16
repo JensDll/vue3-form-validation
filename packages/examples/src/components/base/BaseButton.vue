@@ -8,16 +8,20 @@
     ]"
     :aria-disabled="disabled || loading"
     :type="htmlType"
-    @click="onClick"
+    ref="button"
+    v-on="events"
   >
     <slot></slot>
   </button>
 </template>
 
 <script lang="ts" setup>
-import { PropType } from 'vue'
+import { ref, onMounted, PropType, Ref } from 'vue'
+
+import { guards } from '~/domain'
 
 const emit = defineEmits(['click', 'submit'])
+
 const props = defineProps({
   loading: {
     type: Boolean
@@ -26,7 +30,7 @@ const props = defineProps({
     type: Boolean
   },
   htmlType: {
-    type: String as PropType<'button' | 'reset'>,
+    type: String as PropType<'button' | 'reset' | 'submit'>,
     default: 'button'
   },
   type: {
@@ -38,11 +42,36 @@ const props = defineProps({
   }
 })
 
-const onClick = (e: MouseEvent) => {
+const button = ref() as Ref<HTMLButtonElement>
+let form: HTMLFormElement | null = null
+
+onMounted(() => {
+  for (let el: HTMLElement | null = button.value; el; el = el.parentElement) {
+    if (guards.isFormElement(el)) {
+      form = el
+    }
+  }
+})
+
+const handleClick = (e: MouseEvent) => {
   const target = e.target as HTMLButtonElement
+
   if (target.ariaDisabled === 'false') {
     emit('click')
   }
+}
+
+const handleSubmit = (e: MouseEvent) => {
+  e.preventDefault()
+  const target = e.target as HTMLButtonElement
+
+  if (target.ariaDisabled === 'false' && form) {
+    form.dispatchEvent(new SubmitEvent('submit', { submitter: button.value }))
+  }
+}
+
+const events = {
+  click: props.htmlType === 'submit' ? handleSubmit : handleClick
 }
 </script>
 

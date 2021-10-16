@@ -1,9 +1,7 @@
 import { expectType } from 'tsd'
 import { Ref } from 'vue'
-import {
-  DeepMaybeRef,
-  MaybeRef
-} from '../packages/vue3-form-validation/src/domain'
+import { MaybeRef } from '../packages/vue3-form-validation/src/domain'
+import { DeepMaybeRef } from '../packages/vue3-form-validation/src/form'
 
 expectType<DeepMaybeRef<{ a: string }>>({} as { a: MaybeRef<string> })
 
@@ -26,6 +24,40 @@ expectType<
     b: {
       c: MaybeRef<number>
     }
+  }
+)
+
+expectType<
+  DeepMaybeRef<{
+    a: string
+    b?: {
+      c: number
+    }
+  }>
+>(
+  {} as {
+    a: MaybeRef<string>
+    b?: {
+      c: MaybeRef<number>
+    }
+  }
+)
+
+expectType<
+  DeepMaybeRef<{
+    a: string
+    b: {
+      c: number
+    }[]
+  }>
+>(
+  {} as {
+    a: MaybeRef<string>
+    b: MaybeRef<
+      {
+        c: number
+      }[]
+    >
   }
 )
 

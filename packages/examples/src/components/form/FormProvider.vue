@@ -2,9 +2,9 @@
   <section class="w-full xl:w-3/4" v-bind="attrsRest">
     <h1 class="font-semibold text-2xl mb-8">{{ title }}</h1>
     <form
-      @submit.prevent="$emit('submit')"
       :class="attrsClass"
       autocomplete="off"
+      @submit.prevent="$emit('submit')"
     >
       <slot></slot>
     </form>
@@ -21,7 +21,10 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
+import { ref, onMounted, Ref } from 'vue'
 import PreFormData from '~/components/form/PreFormData.vue'
+
+const formRef = ref() as Ref<HTMLFormElement>
 
 defineEmits(['submit'])
 defineProps({

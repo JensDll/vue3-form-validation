@@ -23,5 +23,6 @@ export {
   TransformedField,
   TransformedFormData,
   FieldNames,
-  ResultFormData
+  ResultFormData,
+  DeepMaybeRef
 } from './types/data'

@@ -18,11 +18,13 @@ function registerField(
     | TransformedField<unknown>[K]
     | ComputedRef<TransformedField<unknown>[K]>
 } {
+  const { $value, $rules, ...fieldExtraProperties } = field
+
   const defaultValidationBehavior =
     VALIDATION_CONFIG.getDefaultValidationBehavior()
 
   const rules =
-    field.$rules?.map<ValidationBehaviorRuleTupel>(fieldRule => {
+    $rules?.map<ValidationBehaviorRuleTupel>(fieldRule => {
       if (typeof fieldRule === 'function') {
         return [defaultValidationBehavior, fieldRule]
       }
@@ -48,7 +50,7 @@ function registerField(
     }) ?? []
 
   const uid = n_domain.uid()
-  const formField = form.registerField(uid, name, field.$value, rules)
+  const formField = form.registerField(uid, name, $value, rules)
 
   const stop = watch(
     formField.modelValue,
@@ -62,6 +64,7 @@ function registerField(
   disposables.set(uid, [stop, formField.dispose.bind(formField)])
 
   return {
+    ...fieldExtraProperties,
     $uid: uid,
     $value: formField.modelValue,
     $errors: formField.errors,
@@ -89,14 +92,17 @@ export function transformFormData(form: Form, formData: object) {
   return disposables
 }
 
-export function getResultFormData(transformedFormData: any): any {
+export function getResultFormData(
+  transformedFormData: any,
+  predicate: (value: any) => unknown = () => true
+): any {
   const result = {}
 
   for (const { value, path, isLeaf } of n_domain.deepIterator(
     transformedFormData,
     isTransformedField
   )) {
-    if (isLeaf) {
+    if (isLeaf && predicate(value) === true) {
       const unpackedValue = isTransformedField(value) ? value.$value : value
       // Value is reactive -> value is an object or array
       // Make sure to do a deep clone to loose the reactive reference

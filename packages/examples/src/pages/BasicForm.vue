@@ -1,5 +1,10 @@
 <template>
-  <FormProvider title="Basic Form" class="grid gap-y-6 max-w-2xl" :form="form">
+  <FormProvider
+    title="Basic Form"
+    class="grid gap-y-6 max-w-2xl"
+    :form="form"
+    @submit="handleSubmit()"
+  >
     <div>
       <label for="text" class="form-label">Enter some Text</label>
       <input
@@ -18,22 +23,18 @@
       multiple
     >
     </FormFileUpload>
-    <FormButtons
-      :submitting="submitting"
-      @reset="resetFields()"
-      @submit="handleSubmit()"
-      class="mt-2"
-    />
+    <FormButtons :submitting="submitting" @reset="resetFields()" class="mt-2" />
   </FormProvider>
 </template>
 
 <script setup lang="ts">
-import FormFileUpload from '~/components/form/FormFileUpload.vue'
 import { Field, useValidation } from 'vue3-form-validation'
-import { rules } from '~/domain'
-import FormProvider from '~/components/layout/FormProvider.vue'
+
+import FormFileUpload from '~/components/form/FormFileUpload.vue'
+import FormProvider from '~/components/form/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
-import FormButtons from './components/FormButtons.vue'
+import FormButtons from '~/components/form/FormButtons.vue'
+import { rules } from '~/domain'
 
 interface FormData {
   files: Field<File[]>
