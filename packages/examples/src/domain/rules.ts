@@ -1,5 +1,6 @@
-import { Lengthy } from './types'
 import { KeyedRule, SimpleRule } from 'vue3-form-validation'
+
+import { Lengthy } from './types'
 
 const randomInt = (min: number, max: number) => {
   min = Math.ceil(min)

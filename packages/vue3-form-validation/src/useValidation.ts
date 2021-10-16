@@ -9,9 +9,10 @@ export type UseValidation<FormData extends object> = {
   validating: ComputedRef<boolean>
   hasError: ComputedRef<boolean>
   errors: ComputedRef<string[]>
-  validateFields(
+  validateFields(options?: {
     names?: n_form.FieldNames<FormData>[] | string[]
-  ): Promise<n_form.ResultFormData<FormData>>
+    predicate?: (value: any) => unknown
+  }): Promise<n_form.ResultFormData<FormData>>
   resetFields(formData?: Partial<n_form.ResultFormData<FormData>>): void
   add<Ks extends readonly n_domain.Key[]>(
     path: readonly [...Ks],
@@ -59,11 +60,12 @@ export function useValidation<FormData extends object>(
     hasError: form.hasError,
     errors: form.errors,
 
-    async validateFields(names) {
+    async validateFields({ names, predicate } = {}) {
       form.submitting.value = true
 
       const resultFormData = n_form.getResultFormData(
-        transformedFormData
+        transformedFormData,
+        predicate
       ) as n_form.ResultFormData<FormData>
 
       try {

@@ -73,7 +73,7 @@ export type TransformedFormData<FormData extends object | undefined> =
             ? undefined
             : TransformedField<
                 UnwrapRef<TValue>,
-                Omit<FormData[K], '$value' | '$rules'>
+                Omit<Exclude<FormData[K], undefined>, '$value' | '$rules'>
               >
           : FormData[K] extends object | undefined
           ? TransformedFormData<FormData[K]>

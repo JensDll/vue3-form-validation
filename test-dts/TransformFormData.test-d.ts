@@ -48,13 +48,15 @@ expectAssignable<
     as?: {
       b?: {
         $value: MaybeRef<10>
+        extra: ''
+        stuff: ''
       }
     }[]
   }>
 >(
   {} as {
     as?: {
-      b?: TransformedField<10>
+      b?: TransformedField<10, { extra: ''; stuff: '' }>
     }[]
   }
 )

@@ -1,5 +1,10 @@
 <template>
-  <FormProvider title="Dynamic Form" class="form max-w-3xl" :form="form">
+  <FormProvider
+    title="Dynamic Form"
+    class="form max-w-3xl"
+    :form="form"
+    @submit="handleSubmit"
+  >
     <label for="a" class="form-label label-a">A</label>
     <div class="relative flex items-center input-a">
       <LoadingIcon
@@ -83,7 +88,6 @@
     </template>
     <FormButtons
       :submitting="submitting"
-      @submit="handleSubmit"
       @reset="resetFields()"
       class="col-span-full mt-12"
     />
@@ -94,12 +98,13 @@
 </template>
 
 <script setup lang="ts">
-import FormProvider from '~/components/layout/FormProvider.vue'
-import FormErrors from '~/components/form/FormErrors.vue'
-import LoadingIcon from '~/components/icon/LoadingIcon.vue'
-import FormButtons from './components/FormButtons.vue'
 import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/outline'
 import { Field, useValidation } from 'vue3-form-validation'
+
+import FormProvider from '~/components/form/FormProvider.vue'
+import FormErrors from '~/components/form/FormErrors.vue'
+import LoadingIcon from '~/components/icon/LoadingIcon.vue'
+import FormButtons from '~/components/form/FormButtons.vue'
 import { rules } from '~/domain'
 
 type FormData = {

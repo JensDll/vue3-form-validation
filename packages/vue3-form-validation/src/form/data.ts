@@ -92,14 +92,17 @@ export function transformFormData(form: Form, formData: object) {
   return disposables
 }
 
-export function getResultFormData(transformedFormData: any): any {
+export function getResultFormData(
+  transformedFormData: any,
+  predicate: (value: any) => unknown = () => true
+): any {
   const result = {}
 
   for (const { value, path, isLeaf } of n_domain.deepIterator(
     transformedFormData,
     isTransformedField
   )) {
-    if (isLeaf) {
+    if (isLeaf && predicate(value) === true) {
       const unpackedValue = isTransformedField(value) ? value.$value : value
       // Value is reactive -> value is an object or array
       // Make sure to do a deep clone to loose the reactive reference

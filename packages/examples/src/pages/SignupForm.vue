@@ -1,5 +1,10 @@
 <template>
-  <FormProvider title="Signup Form" class="form" :form="form">
+  <FormProvider
+    title="Signup Form"
+    class="form"
+    :form="form"
+    @submit="handleSubmit()"
+  >
     <div class="name">
       <label for="name" class="form-label">Name</label>
       <input
@@ -53,17 +58,17 @@
     <FormButtons
       :submitting="submitting"
       @reset="resetFields()"
-      @submit="handleSubmit()"
       class="col-span-full mt-6"
     />
   </FormProvider>
 </template>
 
 <script setup lang="ts">
-import FormProvider from '~/components/layout/FormProvider.vue'
-import FormErrors from '~/components/form/FormErrors.vue'
-import FormButtons from './components/FormButtons.vue'
 import { Field, useValidation } from 'vue3-form-validation'
+
+import FormProvider from '~/components/form/FormProvider.vue'
+import FormErrors from '~/components/form/FormErrors.vue'
+import FormButtons from '~/components/form/FormButtons.vue'
 import { rules } from '~/domain'
 
 interface FormData {

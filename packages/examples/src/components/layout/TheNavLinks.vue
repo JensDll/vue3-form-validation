@@ -12,9 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline'
-import { guards } from '~/domain'
 import { RouteRecordName, useRoute, useRouter } from 'vue-router'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline'
+
+import { guards } from '~/domain'
 
 const route = useRoute()
 const router = useRouter()

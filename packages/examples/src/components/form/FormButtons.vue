@@ -2,8 +2,8 @@
   <div class="flex">
     <BaseButton
       class="px-4 py-2 rounded-md font-medium"
+      html-type="submit"
       :disabled="submitting"
-      @click="$emit('submit')"
     >
       Submit
     </BaseButton>

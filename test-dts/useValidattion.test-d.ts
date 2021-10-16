@@ -160,17 +160,19 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 // example with optional fields
 {
   const { form, validateFields, add } = useValidation<{
-    a: Field<string>
-    b?: Field<boolean>
+    a: Field<string, { extra: string }>
+    b?: Field<boolean, { stuff: '' }>
     c?: Field<number>
   }>({
     a: {
       $value: '',
-      $rules: [x => expect<string>(x)]
+      $rules: [x => expect<string>(x)],
+      extra: ''
     },
     b: {
       $value: false,
-      $rules: [x => expect<boolean>(x)]
+      $rules: [x => expect<boolean>(x)],
+      stuff: ''
     },
     c: {
       $value: 0,
@@ -179,8 +181,8 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
   })
 
   expectType<{
-    a: TransformedField<string>
-    b?: TransformedField<boolean>
+    a: TransformedField<string, { extra: string }>
+    b?: TransformedField<boolean, { stuff: '' }>
     c?: TransformedField<number>
   }>(form)
 
@@ -192,10 +194,10 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
     }>
   >(validateFields())
 
-  add(['a'], { $value: '' })
-  add(['b'], { $value: false })
+  add(['a'], { $value: '', extra: '' })
+  add(['b'], { $value: false, stuff: '' })
   add(['c'], { $value: 0 })
-  expectError(add(['a'], { $value: null }))
-  expectError(add(['b'], { $value: null }))
+  expectError(add(['a'], { $value: null, extra: '' }))
+  expectError(add(['b'], { $value: null, stuff: '' }))
   expectError(add(['c'], { $value: null }))
 }

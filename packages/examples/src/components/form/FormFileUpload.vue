@@ -56,6 +56,7 @@
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
 import { MinusCircleIcon } from '@heroicons/vue/outline'
+
 import FormErrors from './FormErrors.vue'
 
 type FileHelper = {

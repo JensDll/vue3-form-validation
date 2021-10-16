@@ -1,5 +1,10 @@
 <template>
-  <FormProvider title="Home Examples" :form="form" class="form">
+  <FormProvider
+    title="Home Examples"
+    :form="form"
+    class="form"
+    @submit="handleSubmit()"
+  >
     <div class="date-range lg:w-2/3">
       <label for="start-date" class="form-label start-label">Start</label>
       <label for="end-date" class="form-label end-label">End</label>
@@ -23,21 +28,17 @@
       />
       <FormErrors :errors="form.endDate.$errors" class="mt-2 end-errors" />
     </div>
-    <FormButtons
-      :submitting="submitting"
-      @reset="resetFields()"
-      @submit="handleSubmit()"
-      class="mt-8"
-    />
+    <FormButtons :submitting="submitting" @reset="resetFields()" class="mt-8" />
   </FormProvider>
 </template>
 
 <script setup lang="ts">
-import FormProvider from '~/components/layout/FormProvider.vue'
-import FormErrors from '~/components/form/FormErrors.vue'
-import FormButtons from './components/FormButtons.vue'
-import { rules } from '~/domain'
 import { useValidation, Field } from 'vue3-form-validation'
+
+import FormProvider from '~/components/form/FormProvider.vue'
+import FormErrors from '~/components/form/FormErrors.vue'
+import FormButtons from '~/components/form/FormButtons.vue'
+import { rules } from '~/domain'
 
 type FormData = {
   startDate: Field<string>
