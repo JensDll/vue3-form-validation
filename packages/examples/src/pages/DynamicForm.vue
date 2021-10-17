@@ -86,8 +86,34 @@
         <FormErrors class="errors-d" :errors="y.d.$errors" />
       </template>
     </template>
+    <div class="col-span-full mt-12">
+      <label class="form-label mb-0 capitalize" for="box-a">
+        Validate Fields
+      </label>
+      <div class="flex">
+        <div
+          v-for="name in ['a', 'b', 'c', 'd']"
+          :key="name"
+          class="ml-4 first:ml-0"
+        >
+          <label
+            :for="`box-${name}`"
+            class="form-label font-normal mb-0 capitalize"
+          >
+            {{ name }}
+          </label>
+          <input
+            type="checkbox"
+            :id="`box-${name}`"
+            class="form-input"
+            v-model="fieldNames"
+            :value="name"
+          />
+        </div>
+      </div>
+    </div>
     <FormButtons
-      class="col-span-full mt-12"
+      class="col-span-full mt-6"
       :submitting="submitting"
       @reset="resetFields()"
     />
@@ -95,8 +121,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/outline'
-import { Field, useValidation } from 'vue3-form-validation'
+import { Field, FieldNames, useValidation } from 'vue3-form-validation'
 
 import FormProvider from '~/components/form/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
@@ -114,6 +141,8 @@ type FormData = {
     }[]
   }[]
 }
+
+const fieldNames = ref<FieldNames<FormData>[]>(['a', 'b', 'c', 'd'])
 
 const { form, submitting, validateFields, resetFields, add, remove } =
   useValidation<FormData>({
@@ -157,7 +186,9 @@ function removeY(xi: number, yi: number) {
 
 async function handleSubmit() {
   try {
-    const formData = await validateFields()
+    const formData = await validateFields({
+      names: fieldNames.value
+    })
     console.log(formData)
   } catch (e) {
     console.log(e)
@@ -218,9 +249,5 @@ async function handleSubmit() {
 .plus-circle {
   grid-column: plus-start / plus-end;
   place-self: center end;
-}
-
-.buttons {
-  grid-column: 1 / -1;
 }
 </style>

@@ -46,6 +46,10 @@ const button = ref() as Ref<HTMLButtonElement>
 let form: HTMLFormElement | null = null
 
 onMounted(() => {
+  if (props.htmlType !== 'submit') {
+    return
+  }
+
   for (let el: HTMLElement | null = button.value; el; el = el.parentElement) {
     if (guards.isFormElement(el)) {
       form = el
@@ -90,6 +94,7 @@ button {
     @apply ring-gray-300;
   }
 }
+
 .primary {
   @apply bg-indigo-500 text-white;
   &:not(.disabled):hover {

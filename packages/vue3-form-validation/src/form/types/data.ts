@@ -1,4 +1,4 @@
-import { UnwrapRef, Ref, DeepReadonly } from 'vue'
+import { UnwrapRef, Ref } from 'vue'
 import { FieldRule } from './rules'
 import * as n_domain from '../../domain'
 
@@ -36,12 +36,10 @@ export type TransformedField<
   $uid: number
   $value: TValue
   $errors: string[]
+  $rawErrors: (string | null)[]
   $hasError: boolean
   $validating: boolean
   $setTouched(touched?: boolean, forceValidate?: boolean): Promise<void>
-  $: DeepReadonly<{
-    rawErrors: (string | null)[]
-  }>
 } & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
 
 export type ResultFormData<FormData extends object | undefined> =

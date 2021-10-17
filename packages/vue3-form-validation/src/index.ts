@@ -7,4 +7,10 @@ export type {
   Configuration,
   ConfigurationValidationBehavior
 } from './createValidation'
-export type { Field, TransformedField, SimpleRule, KeyedRule } from './form'
+export type {
+  Field,
+  TransformedField,
+  SimpleRule,
+  KeyedRule,
+  FieldNames
+} from './form'

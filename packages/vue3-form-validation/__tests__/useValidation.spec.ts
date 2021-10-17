@@ -147,9 +147,7 @@ describe('reset fields', () => {
           $uid: expect.any(Number),
           $value: '',
           $errors: [],
-          $: {
-            rawErrors: [null]
-          },
+          $rawErrors: [null],
           $hasError: false,
           $validating: false,
           $setTouched: expect.any(Function)
@@ -158,9 +156,7 @@ describe('reset fields', () => {
           $uid: expect.any(Number),
           $value: '',
           $errors: [],
-          $: {
-            rawErrors: [null]
-          },
+          $rawErrors: [null],
           $hasError: false,
           $validating: false,
           $setTouched: expect.any(Function)
@@ -169,9 +165,7 @@ describe('reset fields', () => {
           $uid: expect.any(Number),
           $value: [1, 2, 3],
           $errors: [],
-          $: {
-            rawErrors: [null]
-          },
+          $rawErrors: [null],
           $hasError: false,
           $validating: false,
           $setTouched: expect.any(Function)
@@ -180,9 +174,7 @@ describe('reset fields', () => {
           $uid: expect.any(Number),
           $value: { a: '' },
           $errors: [],
-          $: {
-            rawErrors: [null]
-          },
+          $rawErrors: [null],
           $hasError: false,
           $validating: false,
           $setTouched: expect.any(Function)
@@ -193,9 +185,7 @@ describe('reset fields', () => {
               $uid: expect.any(Number),
               $value: '',
               $errors: [],
-              $: {
-                rawErrors: [null]
-              },
+              $rawErrors: [null],
               $hasError: false,
               $validating: false,
               $setTouched: expect.any(Function)
@@ -207,9 +197,7 @@ describe('reset fields', () => {
               $uid: expect.any(Number),
               $value: '',
               $errors: [],
-              $: {
-                rawErrors: [null]
-              },
+              $rawErrors: [null],
               $hasError: false,
               $validating: false,
               $setTouched: expect.any(Function)
@@ -226,9 +214,7 @@ describe('reset fields', () => {
                     }
                   },
                   $errors: [],
-                  $: {
-                    rawErrors: [null]
-                  },
+                  $rawErrors: [null],
                   $hasError: false,
                   $validating: false,
                   $setTouched: expect.any(Function)
@@ -271,9 +257,7 @@ describe('reset fields', () => {
           $value: 'foo',
           $errors: [],
           $hasError: false,
-          $: {
-            rawErrors: [null]
-          },
+          $rawErrors: [null],
           $validating: false,
           $setTouched: expect.any(Function)
         },
@@ -281,9 +265,7 @@ describe('reset fields', () => {
           $uid: expect.any(Number),
           $value: 'foo',
           $errors: [],
-          $: {
-            rawErrors: [null]
-          },
+          $rawErrors: [null],
           $hasError: false,
           $validating: false,
           $setTouched: expect.any(Function)
@@ -292,9 +274,7 @@ describe('reset fields', () => {
           $uid: expect.any(Number),
           $value: [42, 42, 42],
           $errors: [],
-          $: {
-            rawErrors: [null]
-          },
+          $rawErrors: [null],
           $hasError: false,
           $validating: false,
           $setTouched: expect.any(Function)
@@ -303,9 +283,7 @@ describe('reset fields', () => {
           $uid: expect.any(Number),
           $value: { a: 'foo' },
           $errors: [],
-          $: {
-            rawErrors: [null]
-          },
+          $rawErrors: [null],
           $hasError: false,
           $validating: false,
           $setTouched: expect.any(Function)
@@ -316,9 +294,7 @@ describe('reset fields', () => {
               $uid: expect.any(Number),
               $value: 'foo',
               $errors: [],
-              $: {
-                rawErrors: [null]
-              },
+              $rawErrors: [null],
               $hasError: false,
               $validating: false,
               $setTouched: expect.any(Function)
@@ -330,9 +306,7 @@ describe('reset fields', () => {
               $uid: expect.any(Number),
               $value: 'foo',
               $errors: [],
-              $: {
-                rawErrors: [null]
-              },
+              $rawErrors: [null],
               $hasError: false,
               $validating: false,
               $setTouched: expect.any(Function)
@@ -349,9 +323,7 @@ describe('reset fields', () => {
                     }
                   },
                   $errors: [],
-                  $: {
-                    rawErrors: [null]
-                  },
+                  $rawErrors: [null],
                   $hasError: false,
                   $validating: false,
                   $setTouched: expect.any(Function)
@@ -394,9 +366,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: 'foo',
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -405,9 +375,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: 'foo',
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -416,9 +384,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: [42, 42, 42],
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -427,9 +393,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: { a: 'foo' },
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -440,9 +404,7 @@ describe('reset fields', () => {
                 $uid: expect.any(Number),
                 $value: 'foo',
                 $errors: [],
-                $: {
-                  rawErrors: [null]
-                },
+                $rawErrors: [null],
                 $hasError: false,
                 $validating: false,
                 $setTouched: expect.any(Function)
@@ -454,9 +416,7 @@ describe('reset fields', () => {
                 $uid: expect.any(Number),
                 $value: 'foo',
                 $errors: [],
-                $: {
-                  rawErrors: [null]
-                },
+                $rawErrors: [null],
                 $hasError: false,
                 $validating: false,
                 $setTouched: expect.any(Function)
@@ -473,9 +433,7 @@ describe('reset fields', () => {
                       }
                     },
                     $errors: [],
-                    $: {
-                      rawErrors: [null]
-                    },
+                    $rawErrors: [null],
                     $hasError: false,
                     $validating: false,
                     $setTouched: expect.any(Function)
@@ -494,9 +452,7 @@ describe('reset fields', () => {
             $value: '',
             $errors: [],
             $hasError: false,
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $validating: false,
             $setTouched: expect.any(Function)
           },
@@ -504,9 +460,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -515,9 +469,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: [1, 2, 3],
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -526,9 +478,7 @@ describe('reset fields', () => {
             $uid: expect.any(Number),
             $value: { a: '' },
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -539,9 +489,7 @@ describe('reset fields', () => {
                 $uid: expect.any(Number),
                 $value: '',
                 $errors: [],
-                $: {
-                  rawErrors: [null]
-                },
+                $rawErrors: [null],
                 $hasError: false,
                 $validating: false,
                 $setTouched: expect.any(Function)
@@ -553,9 +501,7 @@ describe('reset fields', () => {
                 $uid: expect.any(Number),
                 $value: '',
                 $errors: [],
-                $: {
-                  rawErrors: [null]
-                },
+                $rawErrors: [null],
                 $hasError: false,
                 $validating: false,
                 $setTouched: expect.any(Function)
@@ -572,9 +518,7 @@ describe('reset fields', () => {
                       }
                     },
                     $errors: [],
-                    $: {
-                      rawErrors: [null]
-                    },
+                    $rawErrors: [null],
                     $hasError: false,
                     $validating: false,
                     $setTouched: expect.any(Function)
@@ -605,9 +549,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $: {
-          rawErrors: [null]
-        },
+        $rawErrors: [null],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -616,9 +558,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $: {
-          rawErrors: [null]
-        },
+        $rawErrors: [null],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -627,9 +567,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: [1, 2, 3],
         $errors: [],
-        $: {
-          rawErrors: [null]
-        },
+        $rawErrors: [null],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -638,9 +576,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: { a: '' },
         $errors: [],
-        $: {
-          rawErrors: [null]
-        },
+        $rawErrors: [null],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -651,9 +587,7 @@ describe('add and remove', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -665,9 +599,7 @@ describe('add and remove', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -684,9 +616,7 @@ describe('add and remove', () => {
                   }
                 },
                 $errors: [],
-                $: {
-                  rawErrors: [null]
-                },
+                $rawErrors: [null],
                 $hasError: false,
                 $validating: false,
                 $setTouched: expect.any(Function)
@@ -699,9 +629,7 @@ describe('add and remove', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -722,9 +650,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $: {
-          rawErrors: [null]
-        },
+        $rawErrors: [null],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -733,9 +659,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $: {
-          rawErrors: [null]
-        },
+        $rawErrors: [null],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -744,9 +668,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: [1, 2, 3],
         $errors: [],
-        $: {
-          rawErrors: [null]
-        },
+        $rawErrors: [null],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -755,9 +677,7 @@ describe('add and remove', () => {
         $uid: expect.any(Number),
         $value: { a: '' },
         $errors: [],
-        $: {
-          rawErrors: [null]
-        },
+        $rawErrors: [null],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -768,9 +688,7 @@ describe('add and remove', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: [null]
-            },
+            $rawErrors: [null],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)

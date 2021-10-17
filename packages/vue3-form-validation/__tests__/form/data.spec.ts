@@ -52,9 +52,7 @@ describe('transformFormData', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $: {
-          rawErrors: []
-        },
+        $rawErrors: [],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function),
@@ -64,9 +62,7 @@ describe('transformFormData', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $: {
-          rawErrors: []
-        },
+        $rawErrors: [],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -77,9 +73,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -88,9 +82,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -101,9 +93,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -112,9 +102,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -125,9 +113,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -136,9 +122,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -187,9 +171,7 @@ describe('resetFields', () => {
         $uid: expect.any(Number),
         $value: 'a',
         $errors: [],
-        $: {
-          rawErrors: []
-        },
+        $rawErrors: [],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function),
@@ -199,9 +181,7 @@ describe('resetFields', () => {
         $uid: expect.any(Number),
         $value: 'b',
         $errors: [],
-        $: {
-          rawErrors: []
-        },
+        $rawErrors: [],
         $hasError: false,
         $validating: false,
         $setTouched: expect.any(Function)
@@ -212,9 +192,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'd1',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -223,9 +201,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'e1',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -236,9 +212,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'd2',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -247,9 +221,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'e2',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -260,9 +232,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'd3',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
@@ -271,9 +241,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'e3',
             $errors: [],
-            $: {
-              rawErrors: []
-            },
+            $rawErrors: [],
             $hasError: false,
             $validating: false,
             $setTouched: expect.any(Function)
