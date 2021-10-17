@@ -10,11 +10,11 @@
         <label :for="key" class="form-label capitalize">{{ key }}</label>
         <div class="flex items-center">
           <input
+            class="form-input"
+            :class="{ error: field.$hasError }"
             type="text"
             v-model="field.$value"
             @blur="field.$setTouched()"
-            class="form-input"
-            :class="{ error: field.$hasError }"
           />
           <MinusCircleIcon
             v-if="key !== 'a'"
@@ -22,11 +22,11 @@
             @click="removeField(key)"
           />
         </div>
-        <FormErrors :errors="field.$errors" class="mt-2" />
+        <FormErrors class="mt-2" :errors="field.$errors" />
       </div>
       <PlusCircleIcon v-else class="plus-circle" @click="addField(key)" />
     </template>
-    <FormButtons @reset="resetFields()" class="mt-6" />
+    <FormButtons class="mt-6" @reset="resetFields()" />
   </FormProvider>
 </template>
 

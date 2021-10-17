@@ -9,7 +9,7 @@
     :aria-disabled="disabled || loading"
     :type="htmlType"
     ref="button"
-    v-on="events"
+    v-on="eventListeners"
   >
     <slot></slot>
   </button>
@@ -70,7 +70,7 @@ const handleSubmit = (e: MouseEvent) => {
   }
 }
 
-const events = {
+const eventListeners = {
   click: props.htmlType === 'submit' ? handleSubmit : handleClick
 }
 </script>

@@ -1,16 +1,16 @@
 <template>
   <FormProvider
-    title="Signup Form"
     class="form"
+    title="Signup Form"
     :form="form"
     @submit="handleSubmit()"
   >
     <div class="name">
       <label for="name" class="form-label">Name</label>
       <input
-        type="text"
         id="name"
         :class="['text-sm form-input w-full', { error: form.name.$hasError }]"
+        type="text"
         v-model="form.name.$value"
         @blur="form.name.$setTouched()"
       />
@@ -19,9 +19,9 @@
     <div class="email">
       <label for="email" class="form-label">Email</label>
       <input
-        type="email"
         id="email"
         :class="['text-sm form-input w-full', { error: form.email.$hasError }]"
+        type="email"
         v-model="form.email.$value"
         @blur="form.email.$setTouched()"
       />
@@ -30,12 +30,12 @@
     <div class="password">
       <label for="password" class="form-label">Password</label>
       <input
-        type="password"
         id="password"
         :class="[
           'text-sm form-input w-full',
           { error: form.password.$hasError }
         ]"
+        type="password"
         v-model="form.password.$value"
         @blur="form.password.$setTouched()"
       />
@@ -44,21 +44,21 @@
     <div class="confirm-password">
       <label for="confirm-password" class="form-label">Confirm Password</label>
       <input
-        type="password"
         id="confirm-password"
         :class="[
           'text-sm form-input w-full',
           { error: form.confirmPassword.$hasError }
         ]"
+        type="password"
         v-model="form.confirmPassword.$value"
         @blur="form.confirmPassword.$setTouched()"
       />
       <FormErrors :errors="form.confirmPassword.$errors" class="mt-2" />
     </div>
     <FormButtons
+      class="col-span-full mt-6"
       :submitting="submitting"
       @reset="resetFields()"
-      class="col-span-full mt-6"
     />
   </FormProvider>
 </template>

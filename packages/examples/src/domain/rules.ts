@@ -36,6 +36,15 @@ export const rules = {
     (msg: string): KeyedRule =>
     (...xs) =>
       xs.every(x => x === xs[0]) || msg,
+  allRequired:
+    (msg: string): KeyedRule =>
+    (...xs) => {
+      for (const x of xs) {
+        if (!x) {
+          return msg
+        }
+      }
+    },
   random:
     (min = 200, max = 2000): SimpleRule =>
     x =>
@@ -51,15 +60,10 @@ export const rules = {
       }),
   inTheFuture:
     (msg: string): SimpleRule<string> =>
-    date => {
-      const now = new Date()
-      const start = new Date(date)
+    startDate => {
+      const now = new Date().toLocaleDateString('en-CA')
 
-      if (
-        start.getDate() < now.getDate() ||
-        start.getMonth() < now.getMonth() ||
-        start.getFullYear() < now.getFullYear()
-      ) {
+      if (startDate && startDate < now) {
         return msg
       }
     }

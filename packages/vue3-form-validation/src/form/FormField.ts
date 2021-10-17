@@ -12,7 +12,6 @@ export class FormField {
   private _rules: (SimpleRule | undefined)[]
   private _validationBehaviors: ValidationBehavior[]
   private _buffers: n_domain.LinkedList<boolean>[]
-  private _errors: (string | null)[]
   private _rulesValidating = ref(0)
 
   initialModelValue: unknown
@@ -20,7 +19,8 @@ export class FormField {
   touched = false
   dirty = false
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>
-  errors = computed(() => this._errors.filter(n_domain.isDefined))
+  rawErrors: (string | null)[]
+  errors = computed(() => this.rawErrors.filter(n_domain.isDefined))
   validating = computed(() => this._rulesValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
 
@@ -36,7 +36,7 @@ export class FormField {
       ([validationBehavior]) => validationBehavior
     )
     this._buffers = rules.map(() => new n_domain.LinkedList())
-    this._errors = reactive(rules.map(() => null))
+    this.rawErrors = reactive(rules.map(() => null))
 
     this.name = name
 
@@ -67,7 +67,7 @@ export class FormField {
 
     const shouldValidate = this.getValidationBehavior(ruleNumber)({
       submitCount: form.submitCount.value,
-      hasError: this._errors[ruleNumber] !== null,
+      hasError: this.rawErrors[ruleNumber] !== null,
       touched: this.touched,
       dirty: this.dirty,
       force,
@@ -136,8 +136,8 @@ export class FormField {
     }
 
     Object.assign(
-      this._errors,
-      this._errors.map(() => null)
+      this.rawErrors,
+      this.rawErrors.map(() => null)
     )
   }
 
@@ -153,10 +153,10 @@ export class FormField {
 
   private _setError(ruleNumber: any, error: unknown) {
     if (typeof error === 'string') {
-      this._errors[ruleNumber] = error
+      this.rawErrors[ruleNumber] = error
       throw error
     } else {
-      this._errors[ruleNumber] = null
+      this.rawErrors[ruleNumber] = null
     }
   }
 }

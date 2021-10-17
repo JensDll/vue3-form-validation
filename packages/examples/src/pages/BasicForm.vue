@@ -8,22 +8,22 @@
     <div>
       <label for="text" class="form-label">Enter some Text</label>
       <input
-        type="text"
         id="text"
         :class="['text-sm form-input', { error: form.text.$hasError }]"
-        @blur="form.text.$setTouched()"
+        type="text"
         v-model="form.text.$value"
+        @blur="form.text.$setTouched()"
       />
-      <FormErrors :errors="form.text.$errors" class="mt-2" />
+      <FormErrors class="mt-2" :errors="form.text.$errors" />
     </div>
     <FormFileUpload
       label="Select some Files"
-      v-model="form.files.$value"
       :errors="form.files.$errors"
       multiple
+      v-model="form.files.$value"
     >
     </FormFileUpload>
-    <FormButtons :submitting="submitting" @reset="resetFields()" class="mt-2" />
+    <FormButtons class="mt-2" :submitting="submitting" @reset="resetFields()" />
   </FormProvider>
 </template>
 

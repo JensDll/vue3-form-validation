@@ -21,10 +21,7 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
-import { ref, onMounted, Ref } from 'vue'
 import PreFormData from '~/components/form/PreFormData.vue'
-
-const formRef = ref() as Ref<HTMLFormElement>
 
 defineEmits(['submit'])
 defineProps({

@@ -1,4 +1,4 @@
-import { isReactive, ComputedRef, watch } from 'vue'
+import { isReactive, ComputedRef, watch, readonly } from 'vue'
 import { Form } from './Form'
 import { Field, TransformedField } from './types/data'
 import { ValidationBehaviorRuleTupel } from './types/validationBehavior'
@@ -75,7 +75,10 @@ function registerField(
       if (forceValidate) {
         await form.validate(uid, forceValidate)
       }
-    }
+    },
+    $: readonly({
+      rawErrors: formField.rawErrors
+    })
   }
 }
 

@@ -1,34 +1,63 @@
 <template>
   <FormProvider
+    class="form"
     title="Home Examples"
     :form="form"
-    class="form"
     @submit="handleSubmit()"
   >
-    <div class="date-range lg:w-2/3">
-      <label for="start-date" class="form-label start-label">Start</label>
-      <label for="end-date" class="form-label end-label">End</label>
+    <div class="date-range-container lg:w-2/3">
+      <label for="start-date" class="form-label start-date-label">Starts</label>
+      <label for="end-date" class="form-label end-date-label">Ends By</label>
       <input
-        type="date"
         id="start-date"
         class="form-input"
         :class="{ error: form.startDate.$hasError }"
+        type="date"
         v-model="form.startDate.$value"
         @blur="form.startDate.$setTouched()"
       />
-      <FormErrors :errors="form.startDate.$errors" class="mt-2 start-errors" />
-      <span class="hyphen">-</span>
       <input
-        type="date"
         id="end-date"
         class="form-input"
         :class="{ error: form.endDate.$hasError }"
+        type="date"
         v-model="form.endDate.$value"
         @blur="form.endDate.$setTouched()"
       />
-      <FormErrors :errors="form.endDate.$errors" class="mt-2 end-errors" />
+      <FormErrors
+        class="mt-2 start-date-errors"
+        :errors="form.startDate.$errors"
+      />
+      <FormErrors class="mt-2 end-date-errors" :errors="form.endDate.$errors" />
+      <span class="hyphen">-</span>
     </div>
-    <FormButtons :submitting="submitting" @reset="resetFields()" class="mt-8" />
+    <div class="time-range-container">
+      <label for="start-time" class="form-label start-time-label">
+        Time Range
+      </label>
+      <input
+        type="time"
+        id="start-time"
+        class="form-input"
+        :class="{ error: form.startTime.$hasError }"
+        v-model="form.startTime.$value"
+        @blur="form.startTime.$setTouched()"
+      />
+      <span class="hyphen">-</span>
+      <input
+        type="time"
+        id="end-time"
+        class="form-input"
+        :class="{ error: form.startTime.$hasError }"
+        v-model="form.endTime.$value"
+        @blur="form.endTime.$setTouched()"
+      />
+      <FormErrors
+        class="mt-2 time-errors"
+        :errors="[...form.startTime.$errors, ...form.endTime.$errors]"
+      />
+    </div>
+    <FormButtons class="mt-4" :submitting="submitting" @reset="resetFields()" />
   </FormProvider>
 </template>
 
@@ -43,6 +72,8 @@ import { rules } from '~/domain'
 type FormData = {
   startDate: Field<string>
   endDate: Field<string>
+  startTime: Field<string>
+  endTime: Field<string>
 }
 
 const { form, submitting, validateFields, resetFields } =
@@ -64,16 +95,26 @@ const { form, submitting, validateFields, resetFields } =
           {
             key: 'date',
             rule: (startDate: string, endDate: string) => {
-              const start = new Date(startDate)
-              const end = new Date(endDate)
-
-              if (start > end) {
+              if (endDate && endDate < startDate) {
                 return 'Please select an ending date that is later than the starting date'
               }
             }
           }
         ]
       ]
+    },
+    startTime: {
+      $value: '',
+      $rules: [
+        {
+          key: 'time',
+          rule: rules.allRequired('Please select a time range')
+        }
+      ]
+    },
+    endTime: {
+      $value: '',
+      $rules: [{ key: 'time' }]
     }
   })
 
@@ -89,23 +130,23 @@ async function handleSubmit() {
 
 <style lang="postcss" scoped>
 :deep(.form) {
-  display: grid;
+  @apply grid gap-y-6;
 }
 
-.date-range {
+.date-range-container {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: auto auto;
+  grid-template-rows: auto auto auto;
   grid-template-areas:
     'start-label . end-label'
     'start-input hyphen end-input'
     'start-errors . end-errors';
 
-  & .start-label {
+  & .start-date-label {
     grid-area: start-label;
   }
 
-  & .end-label {
+  & .end-date-label {
     grid-area: end-label;
   }
 
@@ -113,21 +154,47 @@ async function handleSubmit() {
     grid-area: start-input;
   }
 
-  & .hyphen {
-    @apply px-4 self-center;
-    grid-area: hyphen;
-  }
-
   & #end-date {
     grid-area: end-input;
   }
 
-  & .start-errors {
+  & .start-date-errors {
     grid-area: start-errors;
   }
 
-  & .end-errors {
+  & .end-date-errors {
     grid-area: end-errors;
   }
+}
+
+.time-range-container {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    'label label label label'
+    'start-time hyphen end-time .'
+    'errors errors errors errors';
+
+  & .start-time-label {
+    grid-area: label;
+  }
+
+  & #start-time {
+    grid-area: start-time;
+  }
+
+  & #end-time {
+    grid-area: end-time;
+  }
+
+  & .time-errors {
+    grid-area: errors;
+  }
+}
+
+.hyphen {
+  @apply px-4 self-center justify-self-start;
+  grid-area: hyphen;
 }
 </style>

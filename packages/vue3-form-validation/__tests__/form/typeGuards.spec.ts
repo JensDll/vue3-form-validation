@@ -29,6 +29,9 @@ describe('isTransformedField', () => {
         $validating: false,
         async $setTouched() {
           // empty
+        },
+        $: {
+          rawErrors: []
         }
       } as TransformedField<unknown>)
     ).toBe(true)

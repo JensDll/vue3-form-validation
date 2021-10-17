@@ -8,8 +8,8 @@
       ]"
     >
       <input
-        class="w-full h-full absolute opacity-0 cursor-pointer"
         :id="`file-${label}`"
+        class="w-full h-full absolute opacity-0 cursor-pointer"
         type="file"
         :accept="accept"
         :multiple="multiple"
@@ -37,10 +37,10 @@
       </div>
     </div>
     <FormErrors :errors="errors" class="mt-2" />
-    <ul class="mt-4" v-if="files.length">
+    <ul v-if="files.length" class="mt-4">
       <li
-        class="flex items-center cursor-pointer group"
         v-for="(file, i) in files"
+        class="flex items-center cursor-pointer group"
         :key="file.name"
         @click="removeFile(i)"
       >

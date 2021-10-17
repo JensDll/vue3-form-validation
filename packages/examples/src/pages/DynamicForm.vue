@@ -8,93 +8,90 @@
     <label for="a" class="form-label label-a">A</label>
     <div class="relative flex items-center input-a">
       <LoadingIcon
-        spin
+        v-show="form.a.$validating"
         class="w-5 h-5 absolute right-4 text-indigo-600"
         :class="{ '!text-red-500': form.a.$hasError }"
-        v-show="form.a.$validating"
+        spin
       />
       <input
         id="a"
+        class="form-input w-full"
+        :class="{ error: form.a.$hasError }"
         type="text"
         v-model="form.a.$value"
         @blur="form.a.$setTouched()"
-        class="form-input w-full"
-        :class="{ error: form.a.$hasError }"
       />
     </div>
     <MinusCircleIcon class="minus-circle hide" />
     <PlusCircleIcon class="plus-circle" @click="addX()" />
-    <FormErrors :errors="form.a.$errors" class="errors-a" />
+    <FormErrors class="errors-a" :errors="form.a.$errors" />
     <template v-for="(x, xi) in form.xs" :key="x.b.$uid">
       <label for="b" class="form-label label-b">B</label>
       <div class="relative flex items-center input-a">
         <LoadingIcon
-          spin
+          v-show="x.b.$validating"
           class="w-5 h-5 absolute right-4 text-indigo-600"
           :class="{ '!text-red-500': x.b.$hasError }"
-          v-show="x.b.$validating"
+          spin
         />
         <input
           id="b"
+          class="form-input w-full"
+          :class="{ error: x.b.$hasError }"
           type="text"
           v-model="x.b.$value"
           @blur="x.b.$setTouched()"
-          class="form-input w-full"
-          :class="{ error: x.b.$hasError }"
         />
       </div>
       <MinusCircleIcon class="minus-circle" @click="removeX(xi)" />
       <PlusCircleIcon class="plus-circle" @click="addY(xi)" />
-      <FormErrors :errors="x.b.$errors" class="errors-b" />
+      <FormErrors class="errors-b" :errors="x.b.$errors" />
       <template v-for="(y, yi) in x.ys" :key="y.c.$uid">
         <label for="c" class="form-label label-c">C</label>
         <label for="D" class="form-label label-d">D</label>
         <div class="relative flex items-center input-c">
           <LoadingIcon
-            spin
+            v-show="y.c.$validating"
             class="w-5 h-5 absolute right-4 text-indigo-600"
             :class="{ '!text-red-500': y.c.$hasError }"
-            v-show="y.c.$validating"
+            spin
           />
           <input
             id="c"
+            class="form-input w-full"
+            :class="{ error: y.c.$hasError }"
             type="text"
             v-model="y.c.$value"
             @blur="y.c.$setTouched()"
-            class="form-input w-full"
-            :class="{ error: y.c.$hasError }"
           />
         </div>
         <div class="relative flex items-center input-d">
           <LoadingIcon
-            spin
+            v-show="y.d.$validating"
             class="w-5 h-5 absolute right-4 text-indigo-600"
             :class="{ '!text-red-500': y.d.$hasError }"
-            v-show="y.d.$validating"
+            spin
           />
           <input
             id="d"
+            class="form-input w-full"
+            :class="{ error: y.d.$hasError }"
             type="text"
             v-model="y.d.$value"
             @blur="y.d.$setTouched()"
-            class="form-input w-full"
-            :class="{ error: y.d.$hasError }"
           />
         </div>
         <MinusCircleIcon class="minus-circle" @click="removeY(xi, yi)" />
-        <FormErrors :errors="y.c.$errors" class="errors-c" />
-        <FormErrors :errors="y.d.$errors" class="errors-d" />
+        <FormErrors class="errors-c" :errors="y.c.$errors" />
+        <FormErrors class="errors-d" :errors="y.d.$errors" />
       </template>
     </template>
     <FormButtons
+      class="col-span-full mt-12"
       :submitting="submitting"
       @reset="resetFields()"
-      class="col-span-full mt-12"
     />
   </FormProvider>
-  <div>
-    <label class="form-label"></label>
-  </div>
 </template>
 
 <script setup lang="ts">
