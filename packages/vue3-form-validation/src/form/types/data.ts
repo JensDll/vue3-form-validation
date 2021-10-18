@@ -1,5 +1,7 @@
 import { UnwrapRef, Ref } from 'vue'
 import { FieldRule } from './rules'
+import { SimpleRule, RuleWithKey } from './rules'
+import { ValidationBehavior } from './validationBehavior'
 import * as n_domain from '../../domain'
 
 type DeepMaybeRefRecord<T extends Record<n_domain.Key, unknown> | undefined> =
@@ -39,7 +41,7 @@ export type TransformedField<
   $rawErrors: (string | null)[]
   $hasError: boolean
   $validating: boolean
-  $setTouched(touched?: boolean, forceValidate?: boolean): Promise<void>
+  $setTouched(touched?: boolean, forceValidate?: boolean): void
 } & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
 
 export type ResultFormData<FormData extends object | undefined> =
@@ -80,3 +82,9 @@ export type TransformedFormData<FormData extends object | undefined> =
           ? TransformedFormData<FormData[K]>
           : FormData[K]
       }
+
+export type RuleInformation = {
+  validationBehavior: ValidationBehavior
+  rule: SimpleRule | RuleWithKey
+  debounce?: number
+}

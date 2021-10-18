@@ -15,8 +15,7 @@ export {
   ValidationBehavior,
   ValidationBehaviorInfo,
   DefaultValidationBehaviorString,
-  ValidationBehaviorString,
-  ValidationBehaviorRuleTupel
+  ValidationBehaviorString
 } from './types/validationBehavior'
 export {
   Field,

@@ -1,9 +1,7 @@
 import { computed, isReactive, isRef, reactive, ref, unref } from 'vue'
 import { Form } from './Form'
-import {
-  ValidationBehavior,
-  ValidationBehaviorRuleTupel
-} from './types/validationBehavior'
+import { ValidationBehavior } from './types/validationBehavior'
+import { RuleInformation } from './types/data'
 import { SimpleRule } from './types/rules'
 import { isSimpleRule } from './typeGuards'
 import * as n_domain from '../domain'
@@ -12,8 +10,8 @@ export class FormField {
   private _rules: (SimpleRule | undefined)[]
   private _validationBehaviors: ValidationBehavior[]
   private _buffers: n_domain.LinkedList<boolean>[]
-  private _rulesValidating = ref(0)
 
+  rulesValidating = ref(0)
   initialModelValue: unknown
   name: string
   touched = false
@@ -21,22 +19,16 @@ export class FormField {
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>
   rawErrors: (string | null)[]
   errors = computed(() => this.rawErrors.filter(n_domain.isDefined))
-  validating = computed(() => this._rulesValidating.value > 0)
+  validating = computed(() => this.rulesValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
 
-  constructor(
-    name: string,
-    modelValue: any,
-    rules: ValidationBehaviorRuleTupel[]
-  ) {
-    this._rules = rules.map(([, rule]) =>
+  constructor(name: string, modelValue: any, ruleInfos: RuleInformation[]) {
+    this._rules = ruleInfos.map(({ rule }) =>
       isSimpleRule(rule) ? rule : rule.rule
     )
-    this._validationBehaviors = rules.map(
-      ([validationBehavior]) => validationBehavior
-    )
-    this._buffers = rules.map(() => new n_domain.LinkedList())
-    this.rawErrors = reactive(rules.map(() => null))
+    this._validationBehaviors = ruleInfos.map(info => info.validationBehavior)
+    this._buffers = ruleInfos.map(() => new n_domain.LinkedList())
+    this.rawErrors = reactive(ruleInfos.map(() => null))
 
     this.name = name
 
@@ -57,7 +49,8 @@ export class FormField {
     modelValues: unknown[],
     form: Form,
     force: boolean,
-    submit: boolean
+    submit: boolean,
+    noThrow: boolean
   ) {
     const rule = this._rules[ruleNumber]
 
@@ -83,7 +76,7 @@ export class FormField {
     const ruleResult = rule(...modelValues.map(unref))
 
     if (typeof ruleResult?.then === 'function') {
-      this._rulesValidating.value++
+      this.rulesValidating.value++
       form.ruleValidating.value++
 
       const shouldSetError = buffer.addLast(true)
@@ -101,14 +94,14 @@ export class FormField {
       buffer.remove(shouldSetError)
 
       form.ruleValidating.value--
-      this._rulesValidating.value--
+      this.rulesValidating.value--
 
       if (shouldSetError.value) {
-        this._setError(ruleNumber, error)
+        this._setError(ruleNumber, error, noThrow)
       }
     } else {
       error = ruleResult
-      this._setError(ruleNumber, error)
+      this._setError(ruleNumber, error, noThrow)
     }
   }
 
@@ -151,10 +144,12 @@ export class FormField {
     return this._validationBehaviors[ruleNumber]
   }
 
-  private _setError(ruleNumber: any, error: unknown) {
+  private _setError(ruleNumber: any, error: unknown, noThrow: boolean) {
     if (typeof error === 'string') {
       this.rawErrors[ruleNumber] = error
-      throw error
+      if (!noThrow) {
+        throw error
+      }
     } else {
       this.rawErrors[ruleNumber] = null
     }

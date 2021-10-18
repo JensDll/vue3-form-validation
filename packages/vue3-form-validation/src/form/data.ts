@@ -1,12 +1,57 @@
 import { isReactive, ComputedRef, watch } from 'vue'
 import { Form } from './Form'
-import { Field, TransformedField } from './types/data'
-import { ValidationBehaviorRuleTupel } from './types/validationBehavior'
+import { Field, TransformedField, RuleInformation } from './types/data'
+import { FieldRule } from './types/rules'
 import { isTransformedField, isField } from './typeGuards'
 import { VALIDATION_CONFIG } from '../validationConfig'
 import * as n_domain from '../domain'
 
 export type DisposableMap = Map<number, (() => void)[]>
+
+function mapFieldRules(fieldRules: FieldRule<unknown>[]): RuleInformation[] {
+  const defaultValidationBehavior =
+    VALIDATION_CONFIG.getDefaultValidationBehavior()
+
+  return fieldRules.map<RuleInformation>(fieldRule => {
+    if (typeof fieldRule === 'function') {
+      return {
+        validationBehavior: defaultValidationBehavior,
+        rule: fieldRule
+      }
+    }
+
+    if (Array.isArray(fieldRule)) {
+      const [fieldValidationBehavior, rule, debounce] = fieldRule
+
+      if (typeof fieldValidationBehavior === 'function') {
+        return {
+          validationBehavior: fieldValidationBehavior,
+          rule,
+          debounce
+        }
+      } else {
+        const validationBehavior = VALIDATION_CONFIG.validationBehavior.get(
+          fieldValidationBehavior
+        )
+        if (validationBehavior !== undefined) {
+          return { validationBehavior, rule, debounce }
+        } else {
+          console.warn(
+            `[useValidation] Validation behavior with name '${fieldValidationBehavior}' does not exist. Valid valuea are`,
+            VALIDATION_CONFIG.validationBehavior.keys()
+          )
+        }
+      }
+    } else {
+      return {
+        validationBehavior: defaultValidationBehavior,
+        rule: fieldRule
+      }
+    }
+
+    throw Error('[useValidation] Invalid rule provided')
+  })
+}
 
 function registerField(
   form: Form,
@@ -19,36 +64,7 @@ function registerField(
     | ComputedRef<TransformedField<unknown>[K]>
 } {
   const { $value, $rules, ...fieldExtraProperties } = field
-
-  const defaultValidationBehavior =
-    VALIDATION_CONFIG.getDefaultValidationBehavior()
-
-  const rules =
-    $rules?.map<ValidationBehaviorRuleTupel>(fieldRule => {
-      if (typeof fieldRule === 'function') {
-        return [defaultValidationBehavior, fieldRule]
-      }
-
-      if (Array.isArray(fieldRule)) {
-        const [fieldValidationBehavior, rule] = fieldRule
-
-        if (typeof fieldValidationBehavior === 'function') {
-          return [fieldValidationBehavior, rule]
-        } else {
-          const validationBehavior = VALIDATION_CONFIG.validationBehavior.get(
-            fieldValidationBehavior
-          )
-          if (validationBehavior !== undefined) {
-            return [validationBehavior, rule]
-          }
-        }
-      } else {
-        return [defaultValidationBehavior, fieldRule]
-      }
-
-      throw Error('[useValidation] Invalid rule provided')
-    }) ?? []
-
+  const rules = $rules ? mapFieldRules($rules) : []
   const uid = n_domain.uid()
   const formField = form.registerField(uid, name, $value, rules)
 
@@ -71,10 +87,10 @@ function registerField(
     $hasError: formField.hasError,
     $rawErrors: formField.rawErrors,
     $validating: formField.validating,
-    async $setTouched(touched = true, forceValidate = true) {
+    $setTouched(touched = true, forceValidate = true) {
       formField.touched = touched
       if (forceValidate) {
-        await form.validate(uid, forceValidate)
+        form.validate(uid, forceValidate)
       }
     }
   }

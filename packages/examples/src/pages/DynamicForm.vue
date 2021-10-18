@@ -148,7 +148,7 @@ const { form, submitting, validateFields, resetFields, add, remove } =
   useValidation<FormData>({
     a: {
       $value: '',
-      $rules: [rules.required('Please enter some text'), rules.random()]
+      $rules: [['aggresive', rules.random(), 500]]
     },
     xs: []
   })
