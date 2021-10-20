@@ -35,7 +35,7 @@
         "logLevel": "warning"
       },
       "tsdoc-undefined-tag": {
-        "logLevel": "warning"
+        "logLevel": "none"
       }
     }
   }
