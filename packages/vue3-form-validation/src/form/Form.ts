@@ -4,15 +4,9 @@ import { ValidationError } from './ValidationError'
 import { isSimpleRule, RuleInformation } from './rules'
 import * as n_domain from '../domain'
 
-type ValidatorResult = Promise<void | string>
+type ValidatorResult = Promise<void | string> | void
 
 type Validator = (
-  modelValues: unknown[],
-  force: boolean,
-  submit: boolean
-) => ValidatorResult | void
-
-type ValidatorNotDebounced = (
   modelValues: unknown[],
   force: boolean,
   submit: boolean
@@ -20,7 +14,7 @@ type ValidatorNotDebounced = (
 
 type SimpleValidators = {
   validators: Validator[]
-  validatorsNotDebounced: ValidatorNotDebounced[]
+  validatorsNotDebounced: Validator[]
   meta: {
     field: FormField
     keys: string[]
@@ -30,7 +24,7 @@ type SimpleValidators = {
 
 type KeyedValidator = {
   validator: Validator
-  validatorNotDebounced: ValidatorNotDebounced
+  validatorNotDebounced: Validator
   meta: {
     field: FormField
   }
@@ -48,19 +42,12 @@ export class Form {
   tryGetKeyedValidators = n_domain.tryGet(this._keyedValidators)
 
   ruleValidating = ref(0)
-  submitCount = ref(0)
   submitting = ref(false)
   validating = computed(() => this.ruleValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
-  errors = computed(() => {
-    const errors: string[] = []
-
-    for (const formField of this._reactiveFieldMap.values()) {
-      errors.push(...formField.errors.value)
-    }
-
-    return errors
-  })
+  errors = computed(() =>
+    [...this._reactiveFieldMap.values()].map(field => field.errors.value)
+  )
 
   registerField(
     uid: number,
@@ -81,13 +68,9 @@ export class Form {
     }
 
     ruleInfos.forEach(({ rule, debounce }, ruleNumber) => {
-      const validatorNotDebounced: ValidatorNotDebounced = async (
-        modelValues,
-        force,
-        submit
-      ) => {
+      const validatorNotDebounced: Validator = (modelValues, force, submit) => {
         if (field.shouldValidate(ruleNumber, force, submit) === true) {
-          await field.validate(ruleNumber, modelValues, false)
+          return field.validate(ruleNumber, modelValues, false)
         }
       }
 
@@ -154,10 +137,6 @@ export class Form {
     return field
   }
 
-  getField(uid: number) {
-    return this._simpleValidators.get(uid)
-  }
-
   validate(uid: number, force = false) {
     const simpleValidators = this._simpleValidators.get(uid)!
 
@@ -170,8 +149,6 @@ export class Form {
   }
 
   async validateAll(names?: readonly n_domain.Key[]) {
-    this.submitCount.value++
-
     const settledResults = await Promise.allSettled(
       this._collectValidatorResultsForNames(names)
     )
@@ -183,9 +160,10 @@ export class Form {
     }
   }
 
-  onDelete(uid: number): void {
+  dispose(uid: number): void {
     this.tryGetSimpleValidators({
       success: ({ meta }) => {
+        meta.field.dispose()
         meta.rollbacks.forEach(r => r())
       }
     })(uid)
@@ -194,9 +172,16 @@ export class Form {
     this._reactiveFieldMap.delete(uid)
   }
 
-  resetFields(toDefaultValues: boolean): void {
+  resetFields(): void {
     for (const { meta } of this._simpleValidators.values()) {
-      meta.field.reset(toDefaultValues)
+      meta.field.reset()
+    }
+  }
+
+  getField(uid: number): FormField | undefined {
+    const simpleValidators = this._simpleValidators.get(uid)
+    if (simpleValidators) {
+      return simpleValidators.meta.field
     }
   }
 

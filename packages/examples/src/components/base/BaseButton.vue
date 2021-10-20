@@ -70,7 +70,7 @@ const handleClick = (e: MouseEvent) => {
 const handleSubmit = (e: MouseEvent) => {
   e.preventDefault()
   const target = e.target as HTMLButtonElement
-  console.log(target.disabled)
+
   if (!target.disabled && form) {
     form.dispatchEvent(new SubmitEvent('submit', { submitter: button.value }))
   }

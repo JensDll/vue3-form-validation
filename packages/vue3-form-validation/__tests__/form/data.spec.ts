@@ -7,7 +7,7 @@ import {
   TransformedFormData,
   transformFormData,
   resetFields,
-  cleanupForm
+  disposeForm
 } from '../../src/form'
 
 type FormData = {
@@ -167,8 +167,9 @@ describe('getResultFormData', () => {
 })
 
 describe('resetFields', () => {
-  it.skip('should reset fields to passed values', done => {
+  it('should reset fields to passed values', done => {
     resetFields(
+      form,
       {
         a: 'a',
         b: 'b',
@@ -290,14 +291,14 @@ describe('resetFields', () => {
   })
 })
 
-describe('cleanupForm', () => {
-  it('should call onDelete on form for every field', () => {
-    cleanupForm(form, formData, new Map())
-    expect(form.onDelete).toHaveBeenCalledTimes(8)
+describe('disposeForm', () => {
+  it('should call dispose on form for every field', () => {
+    disposeForm(form, formData)
+    expect(form.dispose).toHaveBeenCalledTimes(8)
   })
 
-  it('should call onDelete on form for a subset of fields', () => {
-    cleanupForm(form, formData.cs, new Map())
-    expect(form.onDelete).toHaveBeenCalledTimes(6)
+  it('should call dispose on form for a subset of fields', () => {
+    disposeForm(form, formData.cs)
+    expect(form.dispose).toHaveBeenCalledTimes(6)
   })
 })

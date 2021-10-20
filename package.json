@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@microsoft/api-extractor": "^7.18.16",
-    "@rollup/plugin-alias": "^3.1.5",
+    "@rollup/plugin-alias": "^3.1.8",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.1",

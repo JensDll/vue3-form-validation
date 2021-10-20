@@ -1,11 +1,10 @@
 export {
-  cleanupForm,
+  disposeForm,
   getResultFormData,
   resetFields,
   transformFormData,
   isField,
-  isTransformedField,
-  DisposeMap
+  isTransformedField
 } from './data'
 export { Form } from './Form'
 export { FormField } from './FormField'

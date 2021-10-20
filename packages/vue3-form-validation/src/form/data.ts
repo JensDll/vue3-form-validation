@@ -39,12 +39,14 @@ export type Field<
 
 export type ValidateOptions = {
   /**
-   * Implicitly set the field touched?
+   * Set this field touched when called.
+   *
    * @default true
    */
   setTouched?: boolean
   /**
    * Validate with the `force` flag set.
+   *
    * @default true
    */
   force?: boolean
@@ -79,17 +81,22 @@ export type TransformedField<
    */
   $validating: boolean
   /**
-   * Set this to `true` when the field has been blurred.
+   * Should be `True` when the field has been touched.
+   *
+   * @remarks
+   * In most cases set this value together with the `blur` event.
    */
   $touched: boolean
   /**
-   * `True` after this field's `$value` has been changed at least once.
+   * `True` after this field's `$value` property has been changed at least once.
    */
   $dirty: boolean
   /**
-   * @description
+   *
    * Validate this field.
+   *
    * @param options - Validation options to use.
+   * @default { setTouched: true, force: true }
    */
   $validate(options?: ValidateOptions): void
 } & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
@@ -132,8 +139,6 @@ export type TransformedFormData<FormData extends object | undefined> =
           ? TransformedFormData<FormData[K]>
           : FormData[K]
       }
-
-export type DisposeMap = Map<number, () => void>
 
 export const isField = <T>(x: unknown): x is Field<T> =>
   n_domain.isRecord(x) ? '$value' in x : false
@@ -198,8 +203,7 @@ function mapFieldRules(fieldRules: FieldRule<unknown>[]): RuleInformation[] {
 function registerField(
   form: Form,
   name: string,
-  field: Field<unknown>,
-  disposeMap: DisposeMap
+  field: Field<unknown>
 ): {
   [K in keyof TransformedField<unknown>]:
     | TransformedField<unknown>[K]
@@ -210,8 +214,6 @@ function registerField(
   const rules = $rules ? mapFieldRules($rules) : []
   const uid = n_domain.uid()
   const formField = form.registerField(uid, name, $value, rules)
-
-  disposeMap.set(uid, formField.dispose.bind(formField))
 
   return {
     ...fieldExtraProperties,
@@ -237,16 +239,12 @@ function registerField(
 }
 
 export function transformFormData(form: Form, formData: object) {
-  const disposeMap: DisposeMap = new Map()
-
   for (const { key, value, parent } of n_domain.deepIterator(formData)) {
     if (isField(value)) {
-      const transformedField = registerField(form, key, value, disposeMap)
+      const transformedField = registerField(form, key, value)
       parent[key] = transformedField
     }
   }
-
-  return disposeMap
 }
 
 export function getResultFormData(
@@ -274,53 +272,29 @@ export function getResultFormData(
   return result
 }
 
-export function cleanupForm(
-  form: Form,
-  deletedFormData: any,
-  disposeMap: DisposeMap
-) {
-  const dispose = n_domain.tryGet(disposeMap)({
-    success: dispose => dispose()
-  })
-
-  if (isTransformedField(deletedFormData)) {
-    dispose(deletedFormData.$uid)
-    form.onDelete(deletedFormData.$uid)
-    disposeMap.delete(deletedFormData.$uid)
-    return
-  }
-
+export function disposeForm(form: Form, deletedFormData: any) {
   for (const { value } of n_domain.deepIterator(
-    deletedFormData,
+    { box: deletedFormData },
     isTransformedField
   )) {
     if (isTransformedField(value)) {
-      dispose(value.$uid)
-      form.onDelete(value.$uid)
-      disposeMap.delete(value.$uid)
+      form.dispose(value.$uid)
     }
   }
 }
 
-export function resetFields(data: any, transformedFormData: any) {
+export function resetFields(form: Form, data: any, transformedFormData: any) {
   Object.entries(data).forEach(([key, value]) => {
     const transformedValue = transformedFormData[key]
 
     if (isTransformedField(transformedValue)) {
-      if (n_domain.isArray(transformedValue.$value)) {
-        transformedValue.$value = n_domain.deepCopy(value)
-      } else if (n_domain.isRecord(transformedValue.$value)) {
-        const copy = n_domain.deepCopy(value)
-        Object.assign(transformedValue.$value, copy)
-      } else {
-        transformedValue.$value = value
-      }
-
+      const field = form.getField(transformedValue.$uid)!
+      field.reset(value)
       return
     }
 
     if (n_domain.isObject(value)) {
-      resetFields(value, transformedFormData[key])
+      resetFields(form, value, transformedFormData[key])
     }
   })
 }

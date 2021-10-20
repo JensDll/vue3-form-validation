@@ -8,19 +8,15 @@ export type UseValidation<FormData extends object> = {
    */
   form: n_form.TransformedFormData<FormData>
   /**
-   * `True` after calling `validateFields`.
+   * `True` after calling `validateFields` when there are async rules.
    */
   submitting: Ref<boolean>
-  /**
-   * Incremented whenever `validateFields` is called.
-   */
-  submitCount: Ref<number>
   /**
    * `True` while there is at least one async rule validating.
    */
   validating: ComputedRef<boolean>
   /**
-   * `True` while there is at least one field which has an error.
+   * `True` while there is at least one field that has an error.
    */
   hasError: ComputedRef<boolean>
   /**
@@ -29,18 +25,21 @@ export type UseValidation<FormData extends object> = {
   errors: ComputedRef<string[]>
   /**
    * Validate all fields and return a `Promise` containing the resulting form data.
-   * @param options - Options to use for validation.
+   *
+   * @param options - Options to use for validation
    * @throws `ValidationError`
    */
   validateFields(options?: {
     /**
-     * Only validate the fields with these names.
-     * @default undefined // meaning all
+     * A list of field names to validate.
+     *
+     * @default undefined // meaning validate all
      */
     names?: n_form.FieldNames<FormData>[] | string[]
     /**
-     * Filter which values to keep in resulting form data. Used like `Array.prototype.filter`.
-     * @default () => true
+     * Filter which values to keep in the resulting form data. Used like `Array.prototype.filter`.
+     *
+     * @default () => true // meaning keep all
      */
     predicate?: (value: any) => unknown
   }): Promise<n_form.ResultFormData<FormData>>
@@ -56,14 +55,15 @@ export type UseValidation<FormData extends object> = {
 
 /**
  *
- * @param formData - The structure of your Form data.
- * @description
  * Vue composition function for Form validation.
  *
- * [Documentation and examples](https://github.com/JensDll/vue3-form-validation)
- *
+ * @remarks
  * For better type inference, consider defining the structure
- * of your `formData` upfront and pass it as the generic parameter `FormData`:
+ * of your `formData` upfront and pass it as the generic parameter `FormData`.
+ *
+ * @param formData - The structure of your Form data
+ *
+ * @example
  * ```
  * type FormData = {
  *   name: Field<string>,
@@ -79,14 +79,13 @@ export function useValidation<FormData extends object>(
   const form = new n_form.Form()
   const promiseCancel = new n_domain.PromiseCancel<n_form.ValidationError>()
 
-  const disposeMap = n_form.transformFormData(form, formData)
+  n_form.transformFormData(form, formData)
 
   const transformedFormData: any = reactive(formData)
 
   return {
     form: transformedFormData as n_form.TransformedFormData<FormData>,
     submitting: form.submitting,
-    submitCount: form.submitCount,
     validating: form.validating,
     hasError: form.hasError,
     errors: form.errors,
@@ -114,10 +113,9 @@ export function useValidation<FormData extends object>(
       }
 
       if (formData === undefined) {
-        form.resetFields(true)
+        form.resetFields()
       } else {
-        form.resetFields(false)
-        n_form.resetFields(formData, transformedFormData)
+        n_form.resetFields(form, formData, transformedFormData)
       }
     },
 
@@ -126,9 +124,7 @@ export function useValidation<FormData extends object>(
 
       if (lastKey !== undefined) {
         const box = { [lastKey]: value }
-        n_form.transformFormData(form, box).forEach((dispose, uid) => {
-          disposeMap.set(uid, dispose)
-        })
+        n_form.transformFormData(form, box)
         const transformedField = box[lastKey]
         const valueAtPath = n_domain.path(path, transformedFormData)
         if (Array.isArray(valueAtPath)) {
@@ -144,15 +140,15 @@ export function useValidation<FormData extends object>(
 
       if (lastKey !== undefined) {
         if (path.length === 0) {
-          n_form.cleanupForm(form, transformedFormData[lastKey], disposeMap)
+          n_form.disposeForm(form, transformedFormData[lastKey])
           delete transformedFormData[lastKey]
         } else {
           const valueAtPath = n_domain.path(path, transformedFormData)
           if (Array.isArray(valueAtPath)) {
             const deletedFormData = valueAtPath.splice(+lastKey, 1)
-            n_form.cleanupForm(form, deletedFormData, disposeMap)
+            n_form.disposeForm(form, deletedFormData)
           } else {
-            n_form.cleanupForm(form, valueAtPath[lastKey], disposeMap)
+            n_form.disposeForm(form, valueAtPath[lastKey])
             delete valueAtPath[lastKey]
           }
         }

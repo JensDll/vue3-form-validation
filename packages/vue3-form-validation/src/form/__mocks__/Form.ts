@@ -1,14 +1,17 @@
 import { FormField } from '../FormField'
 
 export const Form = jest.fn<any, any>().mockImplementation(() => {
-  const mock: any = {
-    validate: jest.fn(),
-    onDelete: jest.fn(),
-    registerField: jest.fn((uid, name, modelValue, rules) => {
-      const field = new FormField(mock, uid, name, modelValue, rules)
+  class MockForm {
+    fields = new Map<number, FormField>()
+    dispose = jest.fn()
+    validate = jest.fn()
+    registerField = jest.fn((uid, name, modelValue, rules) => {
+      const field = new FormField(this as any, uid, name, modelValue, rules)
+      this.fields.set(uid, field)
       return field
     })
+    getField = jest.fn(uid => this.fields.get(uid))
   }
 
-  return mock
+  return new MockForm()
 })

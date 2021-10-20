@@ -113,21 +113,20 @@ export class FormField {
     }
   }
 
-  reset(toDefaultValues: boolean) {
+  reset(resetValue = this.initialModelValue) {
+    this._watchStopHandle()
     this.touched.value = false
     this.dirty.value = false
 
-    if (toDefaultValues) {
-      if (isRef(this.modelValue)) {
-        if (n_domain.isArray(this.modelValue.value)) {
-          this.modelValue.value = n_domain.deepCopy(this.initialModelValue)
-        } else {
-          this.modelValue.value = this.initialModelValue
-        }
+    if (isRef(this.modelValue)) {
+      if (n_domain.isArray(this.modelValue.value)) {
+        this.modelValue.value = n_domain.deepCopy(resetValue)
       } else {
-        const copy = n_domain.deepCopy(this.initialModelValue)
-        Object.assign(this.modelValue, copy)
+        this.modelValue.value = resetValue
       }
+    } else {
+      const copy = n_domain.deepCopy(resetValue)
+      Object.assign(this.modelValue, copy)
     }
 
     for (const buffer of this._buffers) {
@@ -141,7 +140,6 @@ export class FormField {
       this.rawErrors.map(() => null)
     )
 
-    this._watchStopHandle()
     this._watchStopHandle = watch(
       this.modelValue,
       () => {
@@ -159,12 +157,8 @@ export class FormField {
     this._watchStopHandle()
   }
 
-  getValidationBehavior(ruleNumber: number) {
-    return this._validationBehaviors[ruleNumber]
-  }
-
   shouldValidate(ruleNumber: number, force: boolean, submit: boolean) {
-    return this.getValidationBehavior(ruleNumber)({
+    return this._validationBehaviors[ruleNumber]({
       hasError: this.rawErrors[ruleNumber] !== null,
       touched: this.touched.value,
       dirty: this.dirty.value,
