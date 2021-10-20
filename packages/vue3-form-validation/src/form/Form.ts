@@ -45,9 +45,15 @@ export class Form {
   submitting = ref(false)
   validating = computed(() => this.ruleValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
-  errors = computed(() =>
-    [...this._reactiveFieldMap.values()].map(field => field.errors.value)
-  )
+  errors = computed(() => {
+    const errors: string[] = []
+
+    for (const field of this._reactiveFieldMap.values()) {
+      errors.push(...field.errors.value)
+    }
+
+    return errors
+  })
 
   registerField(
     uid: number,
