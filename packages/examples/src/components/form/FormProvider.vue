@@ -1,5 +1,5 @@
 <template>
-  <section class="w-full xl:w-3/4" v-bind="attrsRest">
+  <section class="w-full max-w-2xl" v-bind="attrsRest">
     <h1 class="font-semibold text-2xl mb-8">{{ title }}</h1>
     <form
       :class="attrsClass"
@@ -8,7 +8,7 @@
     >
       <slot></slot>
     </form>
-    <PreFormData :form="form" />
+    <PreFormData v-if="form" :form="form" />
   </section>
 </template>
 
@@ -30,8 +30,7 @@ defineProps({
     required: true
   },
   form: {
-    type: Object,
-    required: true
+    type: Object
   },
   submitting: {
     type: Boolean

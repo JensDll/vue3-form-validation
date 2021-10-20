@@ -2,7 +2,7 @@ import { Tuple } from '../../src/domain'
 import {
   Form,
   FormField,
-  ValidationBehavior,
+  ValidationBehaviorFunction,
   ValidationError
 } from '../../src/form'
 import { mockFactory } from '../utils'
@@ -13,7 +13,7 @@ let asyncRules: Tuple<jest.Mock, 6>
 let syncRules: Tuple<jest.Mock, 6>
 let fields: [FormField, FormField, FormField]
 
-function assignFields(validationBehavior: ValidationBehavior) {
+function assignFields(validationBehavior: ValidationBehaviorFunction) {
   fields = [
     form.registerField(1, 'field_1', '', [
       { validationBehavior, rule: syncRules[0] },
@@ -43,7 +43,7 @@ beforeEach(() => {
 })
 
 type EachValidationBehavior = {
-  validationBehavior: ValidationBehavior
+  validationBehavior: ValidationBehaviorFunction
 }
 
 const EACH_VALIDATION_BEHAVIOR: EachValidationBehavior[] = [
@@ -90,7 +90,7 @@ describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(
           const field = form.registerField(1, 'name', '', [
             { validationBehavior, rule }
           ])
-          field.touched = true
+          field.touched.value = true
 
           ms.value = 600
           form.validate(1, true)

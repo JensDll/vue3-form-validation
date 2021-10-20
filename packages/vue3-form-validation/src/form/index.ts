@@ -1,22 +1,30 @@
 export {
-  DisposableMap,
   cleanupForm,
   getResultFormData,
   resetFields,
-  transformFormData
+  transformFormData,
+  isField,
+  isTransformedField,
+  DisposeMap
 } from './data'
 export { Form } from './Form'
 export { FormField } from './FormField'
 export { ValidationError } from './ValidationError'
-export { isField, isSimpleRule, isTransformedField } from './typeGuards'
 
-export { FieldRule, KeyedRule, SimpleRule, RuleWithKey } from './types/rules'
+export {
+  isSimpleRule,
+  FieldRule,
+  KeyedRule,
+  SimpleRule,
+  RuleWithKey
+} from './rules'
 export {
   ValidationBehavior,
-  ValidationBehaviorInfo,
+  ValidationBehaviorFunction,
   DefaultValidationBehaviorString,
+  ValidationBehaviorInfo,
   ValidationBehaviorString
-} from './types/validationBehavior'
+} from './validationBehavior'
 export {
   Field,
   TransformedField,
@@ -24,4 +32,4 @@ export {
   FieldNames,
   ResultFormData,
   DeepMaybeRef
-} from './types/data'
+} from './data'

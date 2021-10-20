@@ -1,36 +1,54 @@
-import { computed, isReactive, isRef, reactive, ref, unref } from 'vue'
+import {
+  computed,
+  isReactive,
+  isRef,
+  reactive,
+  ref,
+  unref,
+  watch,
+  WatchStopHandle
+} from 'vue'
 import { Form } from './Form'
-import { ValidationBehavior } from './types/validationBehavior'
-import { RuleInformation } from './types/data'
-import { SimpleRule } from './types/rules'
-import { isSimpleRule } from './typeGuards'
+import { ValidationBehaviorFunction } from './validationBehavior'
+import { isSimpleRule, SimpleRule, RuleInformation } from './rules'
 import * as n_domain from '../domain'
 
 export class FormField {
   private _rules: (SimpleRule | undefined)[]
-  private _validationBehaviors: ValidationBehavior[]
+  private _validationBehaviors: ValidationBehaviorFunction[]
   private _buffers: n_domain.LinkedList<boolean>[]
+  private _watchStopHandle: WatchStopHandle
+  private _form: Form
 
+  uid: number
   rulesValidating = ref(0)
   initialModelValue: unknown
   name: string
-  touched = false
-  dirty = false
+  touched = ref(false)
+  dirty = ref(false)
   modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>
   rawErrors: (string | null)[]
   errors = computed(() => this.rawErrors.filter(n_domain.isDefined))
   validating = computed(() => this.rulesValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
 
-  constructor(name: string, modelValue: any, ruleInfos: RuleInformation[]) {
+  constructor(
+    form: Form,
+    uid: number,
+    name: string,
+    modelValue: any,
+    ruleInfos: RuleInformation[]
+  ) {
     this._rules = ruleInfos.map(({ rule }) =>
       isSimpleRule(rule) ? rule : rule.rule
     )
     this._validationBehaviors = ruleInfos.map(info => info.validationBehavior)
     this._buffers = ruleInfos.map(() => new n_domain.LinkedList())
-    this.rawErrors = reactive(ruleInfos.map(() => null))
+    this._form = form
 
+    this.rawErrors = reactive(ruleInfos.map(() => null))
     this.name = name
+    this.uid = uid
 
     if (isRef(modelValue) || isReactive(modelValue)) {
       this.modelValue = modelValue
@@ -42,32 +60,21 @@ export class FormField {
       this.modelValue = ref(modelValue)
       this.initialModelValue = n_domain.deepCopy(unref(modelValue))
     }
+
+    this._watchStopHandle = watch(
+      this.modelValue,
+      () => {
+        this.dirty.value = true
+        this._form.validate(this.uid)
+      },
+      { deep: true }
+    )
   }
 
-  async validate(
-    ruleNumber: number,
-    modelValues: unknown[],
-    form: Form,
-    force: boolean,
-    submit: boolean,
-    noThrow: boolean
-  ) {
+  async validate(ruleNumber: number, modelValues: unknown[], noThrow: boolean) {
     const rule = this._rules[ruleNumber]
 
     if (!rule) {
-      return
-    }
-
-    const shouldValidate = this.getValidationBehavior(ruleNumber)({
-      submitCount: form.submitCount.value,
-      hasError: this.rawErrors[ruleNumber] !== null,
-      touched: this.touched,
-      dirty: this.dirty,
-      force,
-      submit
-    })
-
-    if (!shouldValidate) {
       return
     }
 
@@ -77,12 +84,14 @@ export class FormField {
 
     if (typeof ruleResult?.then === 'function') {
       this.rulesValidating.value++
-      form.ruleValidating.value++
+      this._form.ruleValidating.value++
 
       const shouldSetError = buffer.addLast(true)
 
       if (shouldSetError.prev) {
         shouldSetError.prev.value = false
+        this._form.ruleValidating.value--
+        this.rulesValidating.value--
       }
 
       try {
@@ -93,10 +102,9 @@ export class FormField {
 
       buffer.remove(shouldSetError)
 
-      form.ruleValidating.value--
-      this.rulesValidating.value--
-
       if (shouldSetError.value) {
+        this.rulesValidating.value--
+        this._form.ruleValidating.value--
         this._setError(ruleNumber, error, noThrow)
       }
     } else {
@@ -106,8 +114,8 @@ export class FormField {
   }
 
   reset(toDefaultValues: boolean) {
-    this.touched = false
-    this.dirty = false
+    this.touched.value = false
+    this.dirty.value = false
 
     if (toDefaultValues) {
       if (isRef(this.modelValue)) {
@@ -132,16 +140,37 @@ export class FormField {
       this.rawErrors,
       this.rawErrors.map(() => null)
     )
+
+    this._watchStopHandle()
+    this._watchStopHandle = watch(
+      this.modelValue,
+      () => {
+        this.dirty.value = true
+        this._form.validate(this.uid)
+      },
+      { deep: true }
+    )
   }
 
   dispose() {
     this.errors.effect.stop()
     this.validating.effect.stop()
     this.hasError.effect.stop()
+    this._watchStopHandle()
   }
 
   getValidationBehavior(ruleNumber: number) {
     return this._validationBehaviors[ruleNumber]
+  }
+
+  shouldValidate(ruleNumber: number, force: boolean, submit: boolean) {
+    return this.getValidationBehavior(ruleNumber)({
+      hasError: this.rawErrors[ruleNumber] !== null,
+      touched: this.touched.value,
+      dirty: this.dirty.value,
+      force,
+      submit
+    })
   }
 
   private _setError(ruleNumber: any, error: unknown, noThrow: boolean) {

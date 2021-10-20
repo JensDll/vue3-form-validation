@@ -1,6 +1,5 @@
 import {
   Field,
-  TransformedField,
   isField,
   isTransformedField,
   isSimpleRule
@@ -24,14 +23,8 @@ describe('isTransformedField', () => {
       isTransformedField({
         $uid: 1,
         $value: '',
-        $errors: [],
-        $hasError: false,
-        $validating: false,
-        async $setTouched() {
-          // empty
-        },
-        $rawErrors: []
-      } as TransformedField<unknown>)
+        $errors: []
+      })
     ).toBe(true)
   })
 })

@@ -14,7 +14,7 @@
         :class="{ error: form.startDate.$hasError }"
         type="date"
         v-model="form.startDate.$value"
-        @blur="form.startDate.$setTouched()"
+        @blur="form.startDate.$validate()"
       />
       <input
         id="end-date"
@@ -22,7 +22,7 @@
         :class="{ error: form.endDate.$hasError }"
         type="date"
         v-model="form.endDate.$value"
-        @blur="form.endDate.$setTouched()"
+        @blur="form.endDate.$validate()"
       />
       <FormErrors
         class="mt-2 start-date-errors"
@@ -41,7 +41,7 @@
         class="form-input"
         :class="{ error: form.startTime.$hasError }"
         v-model="form.startTime.$value"
-        @blur="form.startTime.$setTouched()"
+        @blur="form.startTime.$validate()"
       />
       <span class="hyphen">-</span>
       <input
@@ -50,7 +50,7 @@
         class="form-input"
         :class="{ error: form.startTime.$hasError }"
         v-model="form.endTime.$value"
-        @blur="form.endTime.$setTouched()"
+        @blur="form.endTime.$validate()"
       />
       <FormErrors
         class="mt-2 time-errors"

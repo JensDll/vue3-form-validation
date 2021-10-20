@@ -14,7 +14,7 @@
             :class="{ error: field.$hasError }"
             type="text"
             v-model="field.$value"
-            @blur="field.$setTouched()"
+            @blur="field.$validate()"
           />
           <MinusCircleIcon
             v-if="key !== 'a'"

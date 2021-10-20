@@ -1,7 +1,7 @@
 import { Plugin } from 'vue'
 import { VALIDATION_CONFIG } from './validationConfig'
 import {
-  ValidationBehavior,
+  ValidationBehaviorFunction,
   ValidationBehaviorString,
   DefaultValidationBehaviorString
 } from './form'
@@ -9,7 +9,7 @@ import * as n_domain from './domain'
 
 export type ConfigurationValidationBehavior = n_domain.Optional<
   {
-    [K in ValidationBehaviorString]: ValidationBehavior
+    [K in ValidationBehaviorString]: ValidationBehaviorFunction
   },
   DefaultValidationBehaviorString
 >
@@ -36,7 +36,7 @@ export function createValidation(configuration: Configuration): Plugin {
     install() {
       for (const [key, validationBehavior] of Object.entries(
         configuration.validationBehavior ?? {}
-      ) as [ValidationBehaviorString, ValidationBehavior][]) {
+      ) as [ValidationBehaviorString, ValidationBehaviorFunction][]) {
         VALIDATION_CONFIG.validationBehavior.set(key, validationBehavior)
       }
 

@@ -1,5 +1,8 @@
 import { UnwrapRef } from 'vue'
-import { FieldValidationBehavior } from './validationBehavior'
+import {
+  ValidationBehavior,
+  ValidationBehaviorFunction
+} from './validationBehavior'
 
 export type SimpleRule<TParameter = any> = (...value: TParameter[]) => any
 export type KeyedRule<TParameters extends readonly any[] = any[]> = (
@@ -13,17 +16,21 @@ export type RuleWithKey<T extends readonly any[] = any[]> = {
 export type FieldSimpleRule<TParameter = any> =
   | SimpleRule<TParameter>
   | [
-      validationBehavior: FieldValidationBehavior,
+      validationBehavior: ValidationBehavior,
       rule: SimpleRule<TParameter>,
       debounce?: number
     ]
+  | [rule: SimpleRule<TParameter>, debounce: number]
+
 export type FieldRuleWithKey<TParameters extends readonly any[]> =
   | RuleWithKey<TParameters>
   | [
-      validationBehavior: FieldValidationBehavior,
+      validationBehavior: ValidationBehavior,
       rule: RuleWithKey<TParameters>,
-      debounce?: number
+      debounce: number
     ]
+  | [validationBehavior: ValidationBehavior, rule: RuleWithKey<TParameters>]
+  | [rule: RuleWithKey<TParameters>, debounce: number]
 
 export type FieldRule<
   TSimpleParameter,
@@ -35,3 +42,13 @@ export type FieldRule<
         : UnwrapRef<TSimpleParameter>
     >
   | FieldRuleWithKey<TKeyedParameters>
+
+export type RuleInformation = {
+  validationBehavior: ValidationBehaviorFunction
+  rule: SimpleRule | RuleWithKey
+  debounce?: number
+}
+
+export const isSimpleRule = (
+  rule: SimpleRule | RuleWithKey
+): rule is SimpleRule => typeof rule === 'function'

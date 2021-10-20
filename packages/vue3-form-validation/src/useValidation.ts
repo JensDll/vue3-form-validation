@@ -3,14 +3,45 @@ import * as n_form from './form'
 import * as n_domain from './domain'
 
 export type UseValidation<FormData extends object> = {
+  /**
+   * The reactive form data.
+   */
   form: n_form.TransformedFormData<FormData>
+  /**
+   * `True` after calling `validateFields`.
+   */
   submitting: Ref<boolean>
+  /**
+   * Incremented whenever `validateFields` is called.
+   */
   submitCount: Ref<number>
+  /**
+   * `True` while there is at least one async rule validating.
+   */
   validating: ComputedRef<boolean>
+  /**
+   * `True` while there is at least one field which has an error.
+   */
   hasError: ComputedRef<boolean>
+  /**
+   * All current validation error messages.
+   */
   errors: ComputedRef<string[]>
+  /**
+   * Validate all fields and return a `Promise` containing the resulting form data.
+   * @param options - Options to use for validation.
+   * @throws `ValidationError`
+   */
   validateFields(options?: {
+    /**
+     * Only validate the fields with these names.
+     * @default undefined // meaning all
+     */
     names?: n_form.FieldNames<FormData>[] | string[]
+    /**
+     * Filter which values to keep in resulting form data. Used like `Array.prototype.filter`.
+     * @default () => true
+     */
     predicate?: (value: any) => unknown
   }): Promise<n_form.ResultFormData<FormData>>
   resetFields(formData?: Partial<n_form.ResultFormData<FormData>>): void
@@ -48,7 +79,7 @@ export function useValidation<FormData extends object>(
   const form = new n_form.Form()
   const promiseCancel = new n_domain.PromiseCancel<n_form.ValidationError>()
 
-  const disposables = n_form.transformFormData(form, formData)
+  const disposeMap = n_form.transformFormData(form, formData)
 
   const transformedFormData: any = reactive(formData)
 
@@ -95,8 +126,8 @@ export function useValidation<FormData extends object>(
 
       if (lastKey !== undefined) {
         const box = { [lastKey]: value }
-        n_form.transformFormData(form, box).forEach((fs, uid) => {
-          disposables.set(uid, fs)
+        n_form.transformFormData(form, box).forEach((dispose, uid) => {
+          disposeMap.set(uid, dispose)
         })
         const transformedField = box[lastKey]
         const valueAtPath = n_domain.path(path, transformedFormData)
@@ -113,15 +144,15 @@ export function useValidation<FormData extends object>(
 
       if (lastKey !== undefined) {
         if (path.length === 0) {
-          n_form.cleanupForm(form, transformedFormData[lastKey], disposables)
+          n_form.cleanupForm(form, transformedFormData[lastKey], disposeMap)
           delete transformedFormData[lastKey]
         } else {
           const valueAtPath = n_domain.path(path, transformedFormData)
           if (Array.isArray(valueAtPath)) {
             const deletedFormData = valueAtPath.splice(+lastKey, 1)
-            n_form.cleanupForm(form, deletedFormData, disposables)
+            n_form.cleanupForm(form, deletedFormData, disposeMap)
           } else {
-            n_form.cleanupForm(form, valueAtPath[lastKey], disposables)
+            n_form.cleanupForm(form, valueAtPath[lastKey], disposeMap)
             delete valueAtPath[lastKey]
           }
         }

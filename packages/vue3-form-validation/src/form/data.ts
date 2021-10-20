@@ -1,12 +1,145 @@
-import { isReactive, ComputedRef, watch } from 'vue'
+import { isReactive, ComputedRef, Ref, UnwrapRef } from 'vue'
 import { Form } from './Form'
-import { Field, TransformedField, RuleInformation } from './types/data'
-import { FieldRule } from './types/rules'
-import { isTransformedField, isField } from './typeGuards'
+import { FieldRule, RuleInformation } from './rules'
 import { VALIDATION_CONFIG } from '../validationConfig'
 import * as n_domain from '../domain'
 
-export type DisposableMap = Map<number, (() => void)[]>
+type DeepMaybeRefRecord<T extends Record<n_domain.Key, unknown> | undefined> =
+  T extends undefined
+    ? undefined
+    : {
+        [K in keyof T]: T[K] extends Ref
+          ? T[K] | UnwrapRef<T[K]>
+          : T[K] extends any[]
+          ? n_domain.MaybeRef<T[K]>
+          : T[K] extends Record<string, unknown> | undefined
+          ? DeepMaybeRefRecord<T[K]>
+          : n_domain.MaybeRef<T[K]>
+      }
+
+export type DeepMaybeRef<T> = T extends Ref
+  ? T | UnwrapRef<T>
+  : T extends Record<string, unknown>
+  ? DeepMaybeRefRecord<T>
+  : n_domain.MaybeRef<T>
+
+export type Field<
+  TValue,
+  TExtra extends Record<n_domain.Key, unknown> = Record<string, never>
+> = {
+  /**
+   * The field's default value.
+   */
+  $value: DeepMaybeRef<TValue>
+  /**
+   * List of rules to use for validation.
+   */
+  $rules?: FieldRule<TValue>[]
+} & (TExtra extends Record<string, never> ? unknown : TExtra)
+
+export type ValidateOptions = {
+  /**
+   * Implicitly set the field touched?
+   * @default true
+   */
+  setTouched?: boolean
+  /**
+   * Validate with the `force` flag set.
+   * @default true
+   */
+  force?: boolean
+}
+
+export type TransformedField<
+  TValue,
+  TExtra extends Record<n_domain.Key, unknown> = Record<string, never>
+> = {
+  /**
+   * The unique id of this field.
+   */
+  $uid: number
+  /**
+   * The current field's value.
+   */
+  $value: TValue
+  /**
+   * The field's error messages.
+   */
+  $errors: string[]
+  /**
+   * The field's raw error messages, one for each rule, `null` if there is no error.
+   */
+  $rawErrors: (string | null)[]
+  /**
+   * `True` if this field has any error.
+   */
+  $hasError: boolean
+  /**
+   * `True` if there is at least one async rule validating.
+   */
+  $validating: boolean
+  /**
+   * Set this to `true` when the field has been blurred.
+   */
+  $touched: boolean
+  /**
+   * `True` after this field's `$value` has been changed at least once.
+   */
+  $dirty: boolean
+  /**
+   * @description
+   * Validate this field.
+   * @param options - Validation options to use.
+   */
+  $validate(options?: ValidateOptions): void
+} & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
+
+export type ResultFormData<FormData extends object | undefined> =
+  FormData extends undefined
+    ? undefined
+    : {
+        [K in keyof FormData]: FormData[K] extends
+          | { $value: infer TValue }
+          | undefined
+          ? UnwrapRef<TValue>
+          : FormData[K] extends object | undefined
+          ? ResultFormData<FormData[K]>
+          : FormData[K]
+      }
+
+export type FieldNames<T> = T extends (infer TArray)[]
+  ? FieldNames<TArray>
+  : {
+      [K in keyof T]-?: T[K] extends { $value: any } | undefined
+        ? K
+        : FieldNames<T[K]>
+    }[keyof T]
+
+export type TransformedFormData<FormData extends object | undefined> =
+  FormData extends undefined
+    ? undefined
+    : {
+        [K in keyof FormData]: FormData[K] extends
+          | { $value: infer TValue }
+          | undefined
+          ? FormData[K] extends undefined
+            ? undefined
+            : TransformedField<
+                UnwrapRef<TValue>,
+                Omit<Exclude<FormData[K], undefined>, '$value' | '$rules'>
+              >
+          : FormData[K] extends object | undefined
+          ? TransformedFormData<FormData[K]>
+          : FormData[K]
+      }
+
+export type DisposeMap = Map<number, () => void>
+
+export const isField = <T>(x: unknown): x is Field<T> =>
+  n_domain.isRecord(x) ? '$value' in x : false
+
+export const isTransformedField = <T>(x: unknown): x is TransformedField<T> =>
+  n_domain.isRecord(x) ? '$uid' in x && '$value' in x : false
 
 function mapFieldRules(fieldRules: FieldRule<unknown>[]): RuleInformation[] {
   const defaultValidationBehavior =
@@ -21,26 +154,35 @@ function mapFieldRules(fieldRules: FieldRule<unknown>[]): RuleInformation[] {
     }
 
     if (Array.isArray(fieldRule)) {
-      const [fieldValidationBehavior, rule, debounce] = fieldRule
+      const [first, second, third] = fieldRule
 
-      if (typeof fieldValidationBehavior === 'function') {
+      if (typeof second === 'number') {
         return {
-          validationBehavior: fieldValidationBehavior,
-          rule,
-          debounce
+          validationBehavior: defaultValidationBehavior,
+          rule: first as any,
+          debounce: second
         }
+      }
+
+      if (typeof first === 'function') {
+        return {
+          validationBehavior: first,
+          rule: second,
+          debounce: third
+        }
+      }
+
+      const validationBehavior = VALIDATION_CONFIG.validationBehavior.get(
+        first as any
+      )
+
+      if (validationBehavior !== undefined) {
+        return { validationBehavior, rule: second, debounce: third }
       } else {
-        const validationBehavior = VALIDATION_CONFIG.validationBehavior.get(
-          fieldValidationBehavior
+        console.warn(
+          `[useValidation] Validation behavior with name '${first}' does not exist. Valid valuea are`,
+          VALIDATION_CONFIG.validationBehavior.keys()
         )
-        if (validationBehavior !== undefined) {
-          return { validationBehavior, rule, debounce }
-        } else {
-          console.warn(
-            `[useValidation] Validation behavior with name '${fieldValidationBehavior}' does not exist. Valid valuea are`,
-            VALIDATION_CONFIG.validationBehavior.keys()
-          )
-        }
       }
     } else {
       return {
@@ -57,27 +199,19 @@ function registerField(
   form: Form,
   name: string,
   field: Field<unknown>,
-  disposables: DisposableMap
+  disposeMap: DisposeMap
 ): {
   [K in keyof TransformedField<unknown>]:
     | TransformedField<unknown>[K]
     | ComputedRef<TransformedField<unknown>[K]>
+    | Ref<TransformedField<unknown>[K]>
 } {
   const { $value, $rules, ...fieldExtraProperties } = field
   const rules = $rules ? mapFieldRules($rules) : []
   const uid = n_domain.uid()
   const formField = form.registerField(uid, name, $value, rules)
 
-  const stop = watch(
-    formField.modelValue,
-    () => {
-      formField.dirty = true
-      form.validate(uid)
-    },
-    { deep: true }
-  )
-
-  disposables.set(uid, [stop, formField.dispose.bind(formField)])
+  disposeMap.set(uid, formField.dispose.bind(formField))
 
   return {
     ...fieldExtraProperties,
@@ -87,26 +221,32 @@ function registerField(
     $hasError: formField.hasError,
     $rawErrors: formField.rawErrors,
     $validating: formField.validating,
-    $setTouched(touched = true, forceValidate = true) {
-      formField.touched = touched
-      if (forceValidate) {
-        form.validate(uid, forceValidate)
+    $dirty: formField.dirty,
+    $touched: formField.touched,
+    $validate({ setTouched, force } = {}) {
+      setTouched ??= true
+      force ??= true
+
+      if (setTouched) {
+        formField.touched.value = true
       }
+
+      form.validate(uid, force)
     }
   }
 }
 
 export function transformFormData(form: Form, formData: object) {
-  const disposables: DisposableMap = new Map()
+  const disposeMap: DisposeMap = new Map()
 
   for (const { key, value, parent } of n_domain.deepIterator(formData)) {
     if (isField(value)) {
-      const transformedField = registerField(form, key, value, disposables)
+      const transformedField = registerField(form, key, value, disposeMap)
       parent[key] = transformedField
     }
   }
 
-  return disposables
+  return disposeMap
 }
 
 export function getResultFormData(
@@ -137,16 +277,16 @@ export function getResultFormData(
 export function cleanupForm(
   form: Form,
   deletedFormData: any,
-  disposables: DisposableMap
+  disposeMap: DisposeMap
 ) {
-  const dispose = n_domain.tryGet(disposables)({
-    success: fs => fs.forEach(f => f())
+  const dispose = n_domain.tryGet(disposeMap)({
+    success: dispose => dispose()
   })
 
   if (isTransformedField(deletedFormData)) {
     dispose(deletedFormData.$uid)
     form.onDelete(deletedFormData.$uid)
-    disposables.delete(deletedFormData.$uid)
+    disposeMap.delete(deletedFormData.$uid)
     return
   }
 
@@ -157,7 +297,7 @@ export function cleanupForm(
     if (isTransformedField(value)) {
       dispose(value.$uid)
       form.onDelete(value.$uid)
-      disposables.delete(value.$uid)
+      disposeMap.delete(value.$uid)
     }
   }
 }

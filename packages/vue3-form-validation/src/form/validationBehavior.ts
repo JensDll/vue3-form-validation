@@ -9,7 +9,6 @@ export type ValidationBehaviorString =
   | keyof UseValidation_CustomValidationBehavior
 
 export type ValidationBehaviorInfo = {
-  submitCount: number
   hasError: boolean
   touched: boolean
   dirty: boolean
@@ -17,10 +16,10 @@ export type ValidationBehaviorInfo = {
   submit: boolean
 }
 
-export type ValidationBehavior = (
+export type ValidationBehaviorFunction = (
   info: ValidationBehaviorInfo
 ) => boolean | void
 
-export type FieldValidationBehavior =
+export type ValidationBehavior =
   | ValidationBehaviorString
-  | ValidationBehavior
+  | ValidationBehaviorFunction

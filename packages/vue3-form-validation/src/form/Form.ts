@@ -1,8 +1,7 @@
 import { computed, ref, shallowReactive } from 'vue'
 import { FormField } from './FormField'
 import { ValidationError } from './ValidationError'
-import { RuleInformation } from './types/data'
-import { isSimpleRule } from './typeGuards'
+import { isSimpleRule, RuleInformation } from './rules'
 import * as n_domain from '../domain'
 
 type ValidatorResult = Promise<void | string>
@@ -69,7 +68,7 @@ export class Form {
     modelValue: unknown,
     ruleInfos: RuleInformation[]
   ) {
-    const field = new FormField(name, modelValue, ruleInfos)
+    const field = new FormField(this, uid, name, modelValue, ruleInfos)
 
     const simpleValidators: SimpleValidators = {
       validators: [],
@@ -82,30 +81,40 @@ export class Form {
     }
 
     ruleInfos.forEach(({ rule, debounce }, ruleNumber) => {
-      const validatorNotDebounced: ValidatorNotDebounced = (
+      const validatorNotDebounced: ValidatorNotDebounced = async (
         modelValues,
         force,
         submit
-      ) => field.validate(ruleNumber, modelValues, this, force, submit, false)
+      ) => {
+        if (field.shouldValidate(ruleNumber, force, submit) === true) {
+          await field.validate(ruleNumber, modelValues, false)
+        }
+      }
 
-      let incrementedTimes = 0
+      let incremenetedTimes = 0
       const validator: Validator = debounce
         ? n_domain.debounce(
-            (modelValues, force, submit) => {
-              field.validate(ruleNumber, modelValues, this, force, submit, true)
-              field.rulesValidating.value -= incrementedTimes
-              incrementedTimes = 0
+            modelValues => {
+              field.validate(ruleNumber, modelValues, true)
+              field.rulesValidating.value -= incremenetedTimes
+              incremenetedTimes = 0
             },
             {
               wait: debounce,
-              sideEffect() {
-                field.rulesValidating.value++
-                incrementedTimes++
+              shouldInvoke(modelValues, force, submit) {
+                if (field.shouldValidate(ruleNumber, force, submit) === true) {
+                  field.rulesValidating.value++
+                  incremenetedTimes++
+                  return true
+                }
               }
             }
           )
-        : (modelValues, force, submit) =>
-            field.validate(ruleNumber, modelValues, this, force, submit, true)
+        : (modelValues, force, submit) => {
+            if (field.shouldValidate(ruleNumber, force, submit) === true) {
+              field.validate(ruleNumber, modelValues, true)
+            }
+          }
 
       if (isSimpleRule(rule)) {
         simpleValidators.validators.push(validator)
@@ -145,6 +154,10 @@ export class Form {
     return field
   }
 
+  getField(uid: number) {
+    return this._simpleValidators.get(uid)
+  }
+
   validate(uid: number, force = false) {
     const simpleValidators = this._simpleValidators.get(uid)!
 
@@ -181,7 +194,7 @@ export class Form {
     this._reactiveFieldMap.delete(uid)
   }
 
-  resetFields(toDefaultValues: boolean) {
+  resetFields(toDefaultValues: boolean): void {
     for (const { meta } of this._simpleValidators.values()) {
       meta.field.reset(toDefaultValues)
     }
@@ -227,7 +240,7 @@ export class Form {
         validatorsNotDebounced,
         meta
       } of this._simpleValidators.values()) {
-        meta.field.touched = true
+        meta.field.touched.value = true
         for (const validator of validatorsNotDebounced) {
           yield validator([meta.field.modelValue], false, true)
         }
@@ -245,7 +258,7 @@ export class Form {
         meta
       } of this._simpleValidators.values()) {
         if (uniqueNames.has(meta.field.name)) {
-          meta.field.touched = true
+          meta.field.touched.value = true
           for (const validator of validatorsNotDebounced) {
             yield validator([meta.field.modelValue], false, true)
           }
@@ -259,9 +272,9 @@ export class Form {
     }
   }
 
-  private _isEveryFieldTouched(keyedValidators: KeyedValidators) {
+  private _isEveryFieldTouched(keyedValidators: KeyedValidators): boolean {
     for (const { meta } of keyedValidators) {
-      if (!meta.field.touched) {
+      if (!meta.field.touched.value) {
         return false
       }
     }

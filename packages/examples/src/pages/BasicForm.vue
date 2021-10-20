@@ -12,7 +12,7 @@
         :class="['text-sm form-input', { error: form.text.$hasError }]"
         type="text"
         v-model="form.text.$value"
-        @blur="form.text.$setTouched()"
+        @blur="form.text.$validate()"
       />
       <FormErrors class="mt-2" :errors="form.text.$errors" />
     </div>

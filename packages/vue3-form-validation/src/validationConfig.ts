@@ -1,15 +1,19 @@
-import { ValidationBehavior, ValidationBehaviorString } from './form'
+import { ValidationBehaviorFunction, ValidationBehaviorString } from './form'
 
 export class ValidationConfig {
   defaultValidationBehavior: ValidationBehaviorString
-  validationBehavior: Map<ValidationBehaviorString, ValidationBehavior>
+  validationBehavior: Map<ValidationBehaviorString, ValidationBehaviorFunction>
 
   constructor() {
-    const aggresive: ValidationBehavior = () => true
-    const lazy: ValidationBehavior = ({ touched }) => touched
-    const lazier: ValidationBehavior = ({ force, touched, submit, hasError }) =>
-      force || submit || (touched && hasError)
-    const submit: ValidationBehavior = ({ submit, hasError }) =>
+    const aggresive: ValidationBehaviorFunction = () => true
+    const lazy: ValidationBehaviorFunction = ({ touched }) => touched
+    const lazier: ValidationBehaviorFunction = ({
+      force,
+      touched,
+      submit,
+      hasError
+    }) => force || submit || (touched && hasError)
+    const submit: ValidationBehaviorFunction = ({ submit, hasError }) =>
       submit || hasError
 
     this.defaultValidationBehavior = 'lazier'

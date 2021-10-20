@@ -35,6 +35,7 @@ export function mockFactory<Amount extends number>(
 ) {
   const mapping = (_: never, i: number) => {
     const ret = returnCallback(i)
+
     return timeout
       ? jest.fn(() => promiseFactory(ret, timeout + i * increasing, mode))
       : jest.fn(() => ret)

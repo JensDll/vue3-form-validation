@@ -19,7 +19,7 @@
         :class="{ error: form.a.$hasError }"
         type="text"
         v-model="form.a.$value"
-        @blur="form.a.$setTouched()"
+        @blur="form.a.$validate()"
       />
     </div>
     <MinusCircleIcon class="minus-circle hide" />
@@ -40,7 +40,7 @@
           :class="{ error: x.b.$hasError }"
           type="text"
           v-model="x.b.$value"
-          @blur="x.b.$setTouched()"
+          @blur="x.b.$validate()"
         />
       </div>
       <MinusCircleIcon class="minus-circle" @click="removeX(xi)" />
@@ -62,7 +62,7 @@
             :class="{ error: y.c.$hasError }"
             type="text"
             v-model="y.c.$value"
-            @blur="y.c.$setTouched()"
+            @blur="y.c.$validate()"
           />
         </div>
         <div class="relative flex items-center input-d">
@@ -78,7 +78,7 @@
             :class="{ error: y.d.$hasError }"
             type="text"
             v-model="y.d.$value"
-            @blur="y.d.$setTouched()"
+            @blur="y.d.$validate()"
           />
         </div>
         <MinusCircleIcon class="minus-circle" @click="removeY(xi, yi)" />
@@ -148,7 +148,7 @@ const { form, submitting, validateFields, resetFields, add, remove } =
   useValidation<FormData>({
     a: {
       $value: '',
-      $rules: [['aggresive', rules.random(), 500]]
+      $rules: [rules.required('Please enter some text'), rules.random()]
     },
     xs: []
   })
