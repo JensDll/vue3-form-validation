@@ -32,7 +32,7 @@ const { form, submitting, validateFields, resetFields } =
                 } else {
                   resolve(`Name '${name}' is not available`)
                 }
-              }, 600)
+              }, 1500)
             })
           },
           200
@@ -88,6 +88,7 @@ async function handleSubmit() {
         placeholder="Alice, Bob or Oscar"
         :label="{ value: 'Name', for: 'name' }"
         :errors="form.name.$errors"
+        :validating="form.name.$validating"
         v-model="form.name.$value"
         @blur="form.name.$validate()"
       />

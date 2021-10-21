@@ -82,11 +82,11 @@ export class FormField {
     let error: unknown
     const ruleResult = rule(...modelValues.map(unref))
 
+    const shouldSetError = buffer.addLast(true)
+
     if (typeof ruleResult?.then === 'function') {
       this.rulesValidating.value++
       this._form.ruleValidating.value++
-
-      const shouldSetError = buffer.addLast(true)
 
       if (shouldSetError.prev) {
         shouldSetError.prev.value = false
@@ -108,6 +108,14 @@ export class FormField {
         this._setError(ruleNumber, error, noThrow)
       }
     } else {
+      if (shouldSetError.prev) {
+        shouldSetError.prev.value = false
+        this.rulesValidating.value--
+        this._form.ruleValidating.value--
+      }
+
+      buffer.removeLast()
+
       error = ruleResult
       this._setError(ruleNumber, error, noThrow)
     }
@@ -128,6 +136,9 @@ export class FormField {
       const copy = n_domain.deepCopy(resetValue)
       Object.assign(this.modelValue, copy)
     }
+
+    this.rulesValidating.value = 0
+    this._form.ruleValidating.value = 0
 
     for (const buffer of this._buffers) {
       for (const shouldSetError of buffer.nodesForwards()) {
