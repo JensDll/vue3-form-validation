@@ -86,12 +86,12 @@ export class FormField {
 
     if (typeof ruleResult?.then === 'function') {
       this.rulesValidating.value++
-      this._form.ruleValidating.value++
+      this._form.rulesValidating.value++
 
       if (shouldSetError.prev) {
         shouldSetError.prev.value = false
         this.rulesValidating.value--
-        this._form.ruleValidating.value--
+        this._form.rulesValidating.value--
       }
 
       try {
@@ -104,14 +104,14 @@ export class FormField {
 
       if (shouldSetError.value) {
         this.rulesValidating.value--
-        this._form.ruleValidating.value--
+        this._form.rulesValidating.value--
         this._setError(ruleNumber, error, noThrow)
       }
     } else {
       if (shouldSetError.prev) {
         shouldSetError.prev.value = false
         this.rulesValidating.value--
-        this._form.ruleValidating.value--
+        this._form.rulesValidating.value--
       }
 
       buffer.removeLast()
@@ -138,7 +138,7 @@ export class FormField {
     }
 
     this.rulesValidating.value = 0
-    this._form.ruleValidating.value = 0
+    this._form.rulesValidating.value = 0
 
     for (const buffer of this._buffers) {
       for (const shouldSetError of buffer.nodesForwards()) {

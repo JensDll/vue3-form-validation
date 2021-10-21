@@ -1,7 +1,10 @@
+import { ref } from 'vue'
+
 import { FormField } from '../FormField'
 
 export const Form = jest.fn<any, any>().mockImplementation(() => {
   class MockForm {
+    rulesValidating = ref(0)
     fields = new Map<number, FormField>()
     dispose = jest.fn()
     validate = jest.fn()

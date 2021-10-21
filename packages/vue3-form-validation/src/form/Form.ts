@@ -41,9 +41,9 @@ export class Form {
   trySetKeyedValidators = n_domain.trySet(this._keyedValidators)
   tryGetKeyedValidators = n_domain.tryGet(this._keyedValidators)
 
-  ruleValidating = ref(0)
+  rulesValidating = ref(0)
   submitting = ref(false)
-  validating = computed(() => this.ruleValidating.value > 0)
+  validating = computed(() => this.rulesValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
   errors = computed(() => {
     const errors: string[] = []
