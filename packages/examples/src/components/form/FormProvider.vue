@@ -1,17 +1,3 @@
-<template>
-  <section class="w-full max-w-2xl" v-bind="attrsRest">
-    <h1 class="font-semibold text-2xl mb-8">{{ title }}</h1>
-    <form
-      :class="attrsClass"
-      autocomplete="off"
-      @submit.prevent="$emit('submit')"
-    >
-      <slot></slot>
-    </form>
-    <PreFormData v-if="form" :form="form" />
-  </section>
-</template>
-
 <script lang="ts">
 import { defineComponent, useAttrs } from 'vue'
 
@@ -39,5 +25,19 @@ defineProps({
 
 const { class: attrsClass, onSubmit, ...attrsRest } = useAttrs()
 </script>
+
+<template>
+  <section class="w-full max-w-2xl" v-bind="attrsRest">
+    <h1 class="font-semibold text-2xl mb-8">{{ title }}</h1>
+    <form
+      :class="attrsClass"
+      autocomplete="off"
+      @submit.prevent="$emit('submit')"
+    >
+      <slot></slot>
+    </form>
+    <PreFormData v-if="form" :form="form" />
+  </section>
+</template>
 
 <style lang="postcss" scoped></style>

@@ -1,72 +1,10 @@
-<template>
-  <FormProvider
-    class="form"
-    title="Home Examples"
-    :form="form"
-    @submit="handleSubmit()"
-  >
-    <div class="date-range-container lg:w-2/3">
-      <label for="start-date" class="form-label start-date-label">Starts</label>
-      <label for="end-date" class="form-label end-date-label">Ends By</label>
-      <input
-        id="start-date"
-        class="form-input"
-        :class="{ error: form.startDate.$hasError }"
-        type="date"
-        v-model="form.startDate.$value"
-        @blur="form.startDate.$validate()"
-      />
-      <input
-        id="end-date"
-        class="form-input"
-        :class="{ error: form.endDate.$hasError }"
-        type="date"
-        v-model="form.endDate.$value"
-        @blur="form.endDate.$validate()"
-      />
-      <FormErrors
-        class="mt-2 start-date-errors"
-        :errors="form.startDate.$errors"
-      />
-      <FormErrors class="mt-2 end-date-errors" :errors="form.endDate.$errors" />
-      <span class="hyphen">-</span>
-    </div>
-    <div class="time-range-container">
-      <label for="start-time" class="form-label start-time-label">
-        Time Range
-      </label>
-      <input
-        type="time"
-        id="start-time"
-        class="form-input"
-        :class="{ error: form.startTime.$hasError }"
-        v-model="form.startTime.$value"
-        @blur="form.startTime.$validate()"
-      />
-      <span class="hyphen">-</span>
-      <input
-        type="time"
-        id="end-time"
-        class="form-input"
-        :class="{ error: form.startTime.$hasError }"
-        v-model="form.endTime.$value"
-        @blur="form.endTime.$validate()"
-      />
-      <FormErrors
-        class="mt-2 time-errors"
-        :errors="[...form.startTime.$errors, ...form.endTime.$errors]"
-      />
-    </div>
-    <FormButtons class="mt-4" :submitting="submitting" @reset="resetFields()" />
-  </FormProvider>
-</template>
-
 <script setup lang="ts">
 import { useValidation, Field } from 'vue3-form-validation'
 
 import FormProvider from '~/components/form/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
 import FormButtons from '~/components/form/FormButtons.vue'
+import FormInput from '~/components/form/FormInput.vue'
 import { rules } from '~/domain'
 
 type FormData = {
@@ -128,6 +66,71 @@ async function handleSubmit() {
 }
 </script>
 
+<template>
+  <FormProvider class="form" title="Home Examples" @submit="handleSubmit()">
+    <div class="date-range-container lg:w-2/3">
+      <FormInput
+        type="date"
+        :label="{
+          value: 'Starts',
+          for: 'start-date'
+        }"
+        :classes="{
+          label: 'start-date-label',
+          input: 'start-date-input',
+          error: 'start-date-errors'
+        }"
+        :errors="form.startDate.$errors"
+        v-model="form.startDate.$value"
+        @blur="form.startDate.$validate()"
+      />
+      <FormInput
+        type="date"
+        :label="{
+          value: 'Ends By',
+          for: 'end-date'
+        }"
+        :classes="{
+          label: 'end-date-label',
+          input: 'end-date-input',
+          error: 'end-date-errors'
+        }"
+        :errors="form.endDate.$errors"
+        v-model="form.endDate.$value"
+        @blur="form.endDate.$validate()"
+      />
+      <span class="hyphen">-</span>
+    </div>
+    <div class="time-range-container">
+      <label for="start-time" class="form-label start-time-label">
+        Time Range
+      </label>
+      <FormInput
+        type="time"
+        :classes="{
+          input: 'start-time-input'
+        }"
+        :has-error="form.startTime.$hasError"
+        v-model="form.startTime.$value"
+      />
+      <FormInput
+        type="time"
+        :classes="{
+          input: 'end-time-input'
+        }"
+        :has-error="form.startTime.$hasError"
+        v-model="form.endTime.$value"
+      />
+      <span class="hyphen">-</span>
+      <FormErrors
+        class="mt-2 time-errors"
+        :errors="[...form.startTime.$errors, ...form.endTime.$errors]"
+      />
+    </div>
+    <FormButtons class="mt-4" :submitting="submitting" @reset="resetFields()" />
+  </FormProvider>
+</template>
+
 <style lang="postcss" scoped>
 :deep(.form) {
   @apply grid gap-y-6;
@@ -142,27 +145,27 @@ async function handleSubmit() {
     'start-input hyphen end-input'
     'start-errors . end-errors';
 
-  & .start-date-label {
+  & :deep(.start-date-label) {
     grid-area: start-label;
   }
 
-  & .end-date-label {
+  & :deep(.end-date-label) {
     grid-area: end-label;
   }
 
-  & #start-date {
+  & :deep(.start-date-input) {
     grid-area: start-input;
   }
 
-  & #end-date {
+  & :deep(.end-date-input) {
     grid-area: end-input;
   }
 
-  & .start-date-errors {
+  & :deep(.start-date-errors) {
     grid-area: start-errors;
   }
 
-  & .end-date-errors {
+  & :deep(.end-date-errors) {
     grid-area: end-errors;
   }
 }
@@ -180,11 +183,11 @@ async function handleSubmit() {
     grid-area: label;
   }
 
-  & #start-time {
+  & :deep(.start-time-input) {
     grid-area: start-time;
   }
 
-  & #end-time {
+  & :deep(.end-time-input) {
     grid-area: end-time;
   }
 

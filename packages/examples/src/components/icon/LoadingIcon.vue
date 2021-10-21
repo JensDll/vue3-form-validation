@@ -1,3 +1,11 @@
+<script setup lang="ts">
+defineProps({
+  spin: {
+    type: Boolean
+  }
+})
+</script>
+
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -20,14 +28,6 @@
     ></path>
   </svg>
 </template>
-
-<script setup lang="ts">
-defineProps({
-  spin: {
-    type: Boolean
-  }
-})
-</script>
 
 <style lang="postcss" scoped>
 @keyframes spin {

@@ -25,7 +25,7 @@
     "@rollup/plugin-alias": "^3.1.8",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.2",
-    "@types/node": "^16.11.1",
+    "@types/node": "^16.11.2",
     "@types/yargs": "^17.0.4",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",

@@ -1,16 +1,3 @@
-<template>
-  <nav class="flex">
-    <ChevronLeftIcon class="chevron-left" @click="left" />
-    <router-link
-      class="router-link"
-      v-for="name in routeRecordNames"
-      :key="name"
-      :to="{ name }"
-    ></router-link>
-    <ChevronRightIcon class="chevron-right" @click="right" />
-  </nav>
-</template>
-
 <script setup lang="ts">
 import { RouteRecordName, useRoute, useRouter } from 'vue-router'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline'
@@ -45,6 +32,19 @@ function right() {
   }
 }
 </script>
+
+<template>
+  <nav class="flex">
+    <ChevronLeftIcon class="chevron-left" @click="left" />
+    <router-link
+      class="router-link"
+      v-for="name in routeRecordNames"
+      :key="name"
+      :to="{ name }"
+    ></router-link>
+    <ChevronRightIcon class="chevron-right" @click="right" />
+  </nav>
+</template>
 
 <style lang="postcss" scoped>
 .router-link {

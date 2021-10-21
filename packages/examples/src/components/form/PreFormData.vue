@@ -1,9 +1,3 @@
-<template>
-  <div>
-    <pre class="mt-8">{{ formJson }}</pre>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 
@@ -36,5 +30,9 @@ const formJson = computed(() =>
   )
 )
 </script>
+
+<template>
+  <pre class="mt-8">{{ formJson }}</pre>
+</template>
 
 <style lang="postcss" scoped></style>

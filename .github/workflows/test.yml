@@ -17,10 +17,11 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
       - name: Echo debug information
         run: |
+          node --version
           npm --version
           env
       - name: Install dependencies
-        run: npm install
+        run: npm ci
       - name: Build the project
         run: npm run build
       - name: Run jest

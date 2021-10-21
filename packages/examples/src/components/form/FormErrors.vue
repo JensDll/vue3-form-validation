@@ -1,11 +1,3 @@
-<template>
-  <ul class="text-red-500 text-sm break-words" :class="{ '!m-0': hasNoError }">
-    <li v-for="(error, i) in errors" :key="i">
-      {{ error }}
-    </li>
-  </ul>
-</template>
-
 <script setup lang="ts">
 import { computed, PropType } from 'vue'
 
@@ -23,5 +15,13 @@ const hasNoError = computed<boolean>(() => {
   return props.errors.length === 0
 })
 </script>
+
+<template>
+  <ul class="text-red-500 text-sm break-words" :class="{ '!m-0': hasNoError }">
+    <li v-for="(error, i) in errors" :key="i">
+      {{ error }}
+    </li>
+  </ul>
+</template>
 
 <style lang="postcss" scoped></style>

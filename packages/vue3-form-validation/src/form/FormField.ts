@@ -90,8 +90,8 @@ export class FormField {
 
       if (shouldSetError.prev) {
         shouldSetError.prev.value = false
-        this._form.ruleValidating.value--
         this.rulesValidating.value--
+        this._form.ruleValidating.value--
       }
 
       try {
@@ -163,7 +163,8 @@ export class FormField {
       touched: this.touched.value,
       dirty: this.dirty.value,
       force,
-      submit
+      submit,
+      value: unref(this.modelValue)
     })
   }
 

@@ -1,12 +1,25 @@
 type ShouldInvokeResult = boolean | void
-type DebounceOptions = {
-  wait: number
-  shouldInvoke?: (...args: any[]) => ShouldInvokeResult
-}
+
+export function debounce<TArgs extends unknown[]>(
+  target: (...args: [...TArgs]) => void,
+  {
+    wait,
+    shouldInvoke
+  }: {
+    wait: number
+    shouldInvoke?: (...args: [...TArgs]) => ShouldInvokeResult
+  }
+): (...args: [...TArgs]) => void
 
 export function debounce(
-  target: (...args: any[]) => any,
-  { wait, shouldInvoke }: DebounceOptions
+  target: (...args: any[]) => void,
+  {
+    wait,
+    shouldInvoke
+  }: {
+    wait: number
+    shouldInvoke?: (...args: any[]) => ShouldInvokeResult
+  }
 ) {
   let timerId: NodeJS.Timeout | null = null
   let shouldInvokeResult: ShouldInvokeResult = true
@@ -31,5 +44,5 @@ export function debounce(
     }
   }
 
-  return debounced
+  return debounced as any
 }
