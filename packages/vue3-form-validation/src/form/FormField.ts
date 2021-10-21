@@ -84,15 +84,15 @@ export class FormField {
 
     const shouldSetError = buffer.addLast(true)
 
+    if (shouldSetError.prev) {
+      shouldSetError.prev.value = false
+      this.rulesValidating.value--
+      this._form.rulesValidating.value--
+    }
+
     if (typeof ruleResult?.then === 'function') {
       this.rulesValidating.value++
       this._form.rulesValidating.value++
-
-      if (shouldSetError.prev) {
-        shouldSetError.prev.value = false
-        this.rulesValidating.value--
-        this._form.rulesValidating.value--
-      }
 
       try {
         error = await ruleResult
@@ -108,14 +108,7 @@ export class FormField {
         this._setError(ruleNumber, error, noThrow)
       }
     } else {
-      if (shouldSetError.prev) {
-        shouldSetError.prev.value = false
-        this.rulesValidating.value--
-        this._form.rulesValidating.value--
-      }
-
       buffer.removeLast()
-
       error = ruleResult
       this._setError(ruleNumber, error, noThrow)
     }
