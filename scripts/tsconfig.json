@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "CommonJS",
     "useDefineForClassFields": true,
     "allowJs": false,
     "checkJs": false,

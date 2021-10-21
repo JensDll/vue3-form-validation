@@ -19,10 +19,10 @@ jobs:
         run: |
           npm --version
           env
-      - name: Install dependencies and build
-        run: |
-          npm ci
-          npm run build
+      - name: Install dependencies
+        run: npm install
+      - name: Build the project
+        run: npm run build
       - name: Run jest
         run: npm run test
       - name: Run tsd
