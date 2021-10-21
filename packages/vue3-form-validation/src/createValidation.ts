@@ -49,7 +49,7 @@ export function createValidation(configuration: Configuration): Plugin {
           configuration.defaultValidationBehavior
       } else {
         console.warn(
-          `[useValidation] Default validation behavior is not valid. Valid values are`,
+          `[useValidation] Default validation behavior '${configuration.defaultValidationBehavior}' is not valid. Valid values are`,
           VALIDATION_CONFIG.validationBehavior.keys()
         )
       }

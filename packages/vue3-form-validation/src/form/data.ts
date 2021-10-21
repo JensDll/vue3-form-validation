@@ -28,10 +28,12 @@ export type Field<
   TExtra extends Record<n_domain.Key, unknown> = Record<string, never>
 > = {
   /**
+   *
    * The field's default value.
    */
   $value: DeepMaybeRef<TValue>
   /**
+   *
    * List of rules to use for validation.
    */
   $rules?: FieldRule<TValue>[]
@@ -39,12 +41,14 @@ export type Field<
 
 export type ValidateOptions = {
   /**
+   *
    * Set this field touched when called.
    *
    * @default true
    */
   setTouched?: boolean
   /**
+   *
    * Validate with the `force` flag set.
    *
    * @default true
@@ -57,22 +61,27 @@ export type TransformedField<
   TExtra extends Record<n_domain.Key, unknown> = Record<string, never>
 > = {
   /**
+   *
    * The unique id of this field.
    */
   $uid: number
   /**
+   *
    * The current field's value.
    */
   $value: TValue
   /**
+   *
    * The field's error messages.
    */
   $errors: string[]
   /**
-   * The field's raw error messages, one for each rule, `null` if there is no error.
+   *
+   * The field's raw error messages one for each rule `null` if there is no error.
    */
   $rawErrors: (string | null)[]
   /**
+   *
    * `True` if this field has any error.
    */
   $hasError: boolean
@@ -81,22 +90,28 @@ export type TransformedField<
    */
   $validating: boolean
   /**
-   * Should be `True` when the field has been touched.
+   *
+   * `True` after this field was touched.
    *
    * @remarks
-   * In most cases set this value together with the `blur` event.
+   * In most cases, this value should be set together with the `blur` event.
+   * Either through `$validate` or manually.
    */
   $touched: boolean
   /**
-   * `True` after this field's `$value` property has been changed at least once.
+   *
+   * `True` after this `$value` property was changed at least once.
    */
   $dirty: boolean
   /**
    *
    * Validate this field.
    *
-   * @param options - Validation options to use.
-   * @default { setTouched: true, force: true }
+   * @param options - Validation options to use
+   * @default
+   * ```
+   * { setTouched: true, force: true }
+   * ```
    */
   $validate(options?: ValidateOptions): void
 } & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
