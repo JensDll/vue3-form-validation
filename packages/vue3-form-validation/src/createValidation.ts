@@ -15,7 +15,7 @@ export type ConfigurationValidationBehavior = n_domain.Optional<
 >
 
 export type Configuration =
-  keyof UseValidation_CustomValidationBehavior extends never
+  keyof UseValidation_CustomValidationBehaviorFunctions extends never
     ? {
         defaultValidationBehavior: ValidationBehaviorString
         validationBehavior?: ConfigurationValidationBehavior

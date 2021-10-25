@@ -12,5 +12,9 @@ export type {
   TransformedField,
   SimpleRule,
   KeyedRule,
-  FieldNames
+  FieldNames,
+  ValidationBehaviorFunction,
+  ValidationBehaviorString,
+  ValidationBehavior,
+  ValidationBehaviorInfo
 } from './form'

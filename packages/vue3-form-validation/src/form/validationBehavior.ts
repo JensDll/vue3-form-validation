@@ -1,17 +1,17 @@
 export type DefaultValidationBehaviorString =
-  | 'aggresive'
+  | 'aggressive'
   | 'lazy'
   | 'lazier'
   | 'submit'
 
 export type ValidationBehaviorString =
   | DefaultValidationBehaviorString
-  | keyof UseValidation_CustomValidationBehavior
+  | keyof UseValidation_CustomValidationBehaviorFunctions
 
 export type ValidationBehaviorInfo<T = any> = {
   /**
    *
-   * `True` while this rule has an error.
+   * `True` if the rule of this validation behavior has an error.
    */
   hasError: boolean
   /**
@@ -36,14 +36,12 @@ export type ValidationBehaviorInfo<T = any> = {
   submit: boolean
   /**
    *
-   * The `$value` property of the field this rule belongs to.
+   * The field's `$value` property of this rule.
    */
   value: T
 }
 
-export type ValidationBehaviorFunction = (
-  info: ValidationBehaviorInfo
-) => boolean | void
+export type ValidationBehaviorFunction = (info: ValidationBehaviorInfo) => any
 
 export type ValidationBehavior =
   | ValidationBehaviorString

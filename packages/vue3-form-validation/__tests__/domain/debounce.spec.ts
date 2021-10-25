@@ -1,10 +1,10 @@
 import { debounce, Tuple } from '../../src/domain'
-import { mockFactory } from '../utils'
+import { makeMocks } from '../utils'
 
 let mocks: Tuple<jest.Mock, 2>
 
 beforeEach(() => {
-  mocks = mockFactory(2, () => true)
+  mocks = makeMocks(2, () => true)
 })
 
 describe('without shouldInvoke', () => {

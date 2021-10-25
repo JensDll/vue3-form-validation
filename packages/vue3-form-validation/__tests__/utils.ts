@@ -15,18 +15,18 @@ export const promiseFactory = <T>(
     }, timeout)
   })
 
-export function mockFactory<Amount extends number>(
+export function makeMocks<Amount extends number>(
   amount: Amount,
   returnCallback: (i: number) => any
 ): Tuple<jest.Mock, Amount>
-export function mockFactory<Amount extends number>(
+export function makeMocks<Amount extends number>(
   amount: Amount,
   returnCallback: (i: number) => any,
   timeout: number,
   increasing?: number,
   mode?: 'resolve' | 'reject'
 ): Tuple<jest.Mock, Amount>
-export function mockFactory<Amount extends number>(
+export function makeMocks<Amount extends number>(
   amount: Amount,
   returnCallback: (i: number) => any,
   timeout?: number,

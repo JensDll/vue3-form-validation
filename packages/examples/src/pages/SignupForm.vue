@@ -20,7 +20,7 @@ const { form, submitting, validateFields, resetFields } =
       $rules: [
         [
           'change',
-          (name: string) => {
+          name => {
             if (name.length === 0) {
               return 'Please enter your name'
             }
@@ -32,7 +32,7 @@ const { form, submitting, validateFields, resetFields } =
                 } else {
                   resolve(`Name '${name}' is not available`)
                 }
-              }, 1500)
+              }, 600)
             })
           },
           200
@@ -46,12 +46,12 @@ const { form, submitting, validateFields, resetFields } =
     password: {
       $value: '',
       $rules: [
-        rules.min(5)('Password has to be longer than 5 characters'),
+        rules.min(9)('Password has to be longer than 8 characters'),
         [
           'lazy',
           {
             key: 'pw',
-            rule: rules.equal('Password do not match')
+            rule: rules.equal('Passwords do not match')
           }
         ]
       ]
@@ -59,12 +59,12 @@ const { form, submitting, validateFields, resetFields } =
     confirmPassword: {
       $value: '',
       $rules: [
-        rules.min(5)('Password has to be longer than 5 characters'),
+        rules.min(9)('Password has to be longer than 8 characters'),
         [
           'lazy',
           {
             key: 'pw',
-            rule: rules.equal('Password do not match')
+            rule: rules.equal('Passwords do not match')
           }
         ]
       ]
@@ -103,6 +103,7 @@ async function handleSubmit() {
     </div>
     <div class="password">
       <FormInput
+        type="password"
         :label="{ value: 'Password', for: 'password' }"
         :errors="form.password.$errors"
         v-model="form.password.$value"
@@ -111,6 +112,7 @@ async function handleSubmit() {
     </div>
     <div class="confirm-password">
       <FormInput
+        type="password"
         :label="{ value: 'Confirm Password', for: 'confirm-password' }"
         :errors="form.confirmPassword.$errors"
         v-model="form.confirmPassword.$value"

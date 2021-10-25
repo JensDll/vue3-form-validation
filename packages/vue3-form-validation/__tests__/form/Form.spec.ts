@@ -5,7 +5,7 @@ import {
   ValidationBehaviorFunction,
   ValidationError
 } from '../../src/form'
-import { mockFactory } from '../utils'
+import { makeMocks } from '../utils'
 import { VALIDATION_CONFIG } from '../../src/validationConfig'
 
 let form: Form
@@ -38,8 +38,8 @@ function assignFields(validationBehavior: ValidationBehaviorFunction) {
 
 beforeEach(() => {
   form = new Form()
-  asyncRules = mockFactory(6, i => i <= 2 && `async[${i}]`, 100, 10)
-  syncRules = mockFactory(6, i => i <= 2 && `sync[${i}]`)
+  asyncRules = makeMocks(6, i => i <= 2 && `async[${i}]`, 100, 10)
+  syncRules = makeMocks(6, i => i <= 2 && `sync[${i}]`)
 })
 
 type EachValidationBehavior = {
@@ -48,7 +48,7 @@ type EachValidationBehavior = {
 
 const EACH_VALIDATION_BEHAVIOR: EachValidationBehavior[] = [
   {
-    validationBehavior: VALIDATION_CONFIG.validationBehavior.get('aggresive')!
+    validationBehavior: VALIDATION_CONFIG.validationBehavior.get('aggressive')!
   },
   { validationBehavior: VALIDATION_CONFIG.validationBehavior.get('lazy')! },
   { validationBehavior: VALIDATION_CONFIG.validationBehavior.get('lazier')! }

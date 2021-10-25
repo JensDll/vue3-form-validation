@@ -15,13 +15,21 @@ export type RuleWithKey<T extends readonly any[] = any[]> = {
 
 export type FieldSimpleRule<TParameter = any> =
   | SimpleRule<TParameter>
-  | [ValidationBehavior, SimpleRule<TParameter>, number?]
-  | [SimpleRule<TParameter>, number]
+  | [
+      validationBehavior: ValidationBehavior,
+      rule: SimpleRule<TParameter>,
+      debounce?: number
+    ]
+  | [rule: SimpleRule<TParameter>, debounce: number]
 
 export type FieldRuleWithKey<TParameters extends readonly any[]> =
   | RuleWithKey<TParameters>
-  | [ValidationBehavior, RuleWithKey<TParameters>, number?]
-  | [RuleWithKey<TParameters>, number]
+  | [
+      validationBehavior: ValidationBehavior,
+      rule: RuleWithKey<TParameters>,
+      debounce?: number
+    ]
+  | [rule: RuleWithKey<TParameters>, debounce: number]
 
 export type FieldRule<
   TSimpleParameter,

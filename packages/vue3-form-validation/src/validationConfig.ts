@@ -5,7 +5,7 @@ export class ValidationConfig {
   validationBehavior: Map<ValidationBehaviorString, ValidationBehaviorFunction>
 
   constructor() {
-    const aggresive: ValidationBehaviorFunction = () => true
+    const aggressive: ValidationBehaviorFunction = () => true
     const lazy: ValidationBehaviorFunction = ({ touched }) => touched
     const lazier: ValidationBehaviorFunction = ({
       force,
@@ -18,7 +18,7 @@ export class ValidationConfig {
 
     this.defaultValidationBehavior = 'lazier'
     this.validationBehavior = new Map([
-      ['aggresive', aggresive],
+      ['aggressive', aggressive],
       ['lazy', lazy],
       ['lazier', lazier],
       ['submit', submit]

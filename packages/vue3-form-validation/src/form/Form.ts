@@ -80,20 +80,20 @@ export class Form {
         }
       }
 
-      let incremenetedTimes = 0
+      let incrementedTimes = 0
       const validator: Validator = debounce
         ? n_domain.debounce(
             modelValues => {
               field.validate(ruleNumber, modelValues, true)
-              field.rulesValidating.value -= incremenetedTimes
-              incremenetedTimes = 0
+              field.rulesValidating.value -= incrementedTimes
+              incrementedTimes = 0
             },
             {
               wait: debounce,
               shouldInvoke(modelValues, force, submit) {
                 if (field.shouldValidate(ruleNumber, force, submit) === true) {
                   field.rulesValidating.value++
-                  incremenetedTimes++
+                  incrementedTimes++
                   return true
                 }
               }

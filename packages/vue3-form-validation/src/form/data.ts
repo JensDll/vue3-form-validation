@@ -1,4 +1,4 @@
-import { isReactive, ComputedRef, Ref, UnwrapRef } from 'vue'
+import { isReactive, ComputedRef, Ref, UnwrapRef, unref } from 'vue'
 import { Form } from './Form'
 import { FieldRule, RuleInformation } from './rules'
 import { VALIDATION_CONFIG } from '../validationConfig'
@@ -72,12 +72,12 @@ export type TransformedField<
   $value: TValue
   /**
    *
-   * The field's error messages.
+   * The field's error messages without `null` values.
    */
   $errors: string[]
   /**
    *
-   * The field's raw error messages one for each rule `null` if there is no error.
+   * The field's raw error messages one for each rule and `null` if there is no error.
    */
   $rawErrors: (string | null)[]
   /**
@@ -86,6 +86,7 @@ export type TransformedField<
    */
   $hasError: boolean
   /**
+   *
    * `True` if there is at least one async rule validating.
    */
   $validating: boolean
@@ -100,7 +101,7 @@ export type TransformedField<
   $touched: boolean
   /**
    *
-   * `True` after this `$value` property was changed at least once.
+   * `True` after the `$value` property was changed at least once.
    */
   $dirty: boolean
   /**
@@ -200,7 +201,7 @@ function mapFieldRules(fieldRules: FieldRule<unknown>[]): RuleInformation[] {
         return { validationBehavior, rule: second, debounce: third }
       } else {
         console.warn(
-          `[useValidation] Validation behavior with name '${first}' does not exist. Valid valuea are`,
+          `[useValidation] Validation behavior with name '${first}' does not exist. Valid values are`,
           VALIDATION_CONFIG.validationBehavior.keys()
         )
       }
@@ -264,22 +265,28 @@ export function transformFormData(form: Form, formData: object) {
 
 export function getResultFormData(
   transformedFormData: any,
-  predicate: (value: any) => unknown = () => true
+  predicate: (
+    value: Omit<n_domain.DeepIteratorResult, 'isLeaf' | 'parent'>
+  ) => unknown = () => true
 ): any {
   const result = {}
 
-  for (const { value, path, isLeaf } of n_domain.deepIterator(
+  for (const { key, value, path, isLeaf } of n_domain.deepIterator(
     transformedFormData,
     isTransformedField
   )) {
-    if (isLeaf && predicate(value) === true) {
-      const unpackedValue = isTransformedField(value) ? value.$value : value
-      // Value is reactive -> value is an object or array
-      // Make sure to do a deep clone to loose the reactive reference
-      if (isReactive(unpackedValue)) {
-        n_domain.set(result, path, n_domain.deepCopy(unpackedValue))
-      } else {
-        n_domain.set(result, path, unpackedValue)
+    if (isLeaf) {
+      const unpackedValue = isTransformedField(value)
+        ? value.$value
+        : unref(value)
+      if (predicate({ key, value: unpackedValue, path }) === true) {
+        // Value is reactive -> value is an object or array
+        // Make sure to do a deep clone to loose the reactive reference
+        if (isReactive(unpackedValue)) {
+          n_domain.set(result, path, n_domain.deepCopy(unpackedValue))
+        } else {
+          n_domain.set(result, path, unpackedValue)
+        }
       }
     }
   }

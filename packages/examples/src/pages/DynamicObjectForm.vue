@@ -38,7 +38,7 @@ function removeField(key: string) {
 async function handleSubmit() {
   try {
     const formData = await validateFields({
-      predicate: value => value !== undefined
+      predicate: ({ value }) => value !== undefined
     })
     console.log(formData)
   } catch (e) {

@@ -81,18 +81,15 @@ const value = computed<any>({
       :class="[
         'form-input',
         { error: errors.length || hasError },
-        { 'w-full text-sm': type === 'text' }
+        { 'w-full': type !== 'checkbox' },
+        { 'text-sm': type === 'text' }
       ]"
       v-bind="$attrs"
       v-model="value"
       @blur="emit('blur')"
     />
   </div>
-  <FormErrors
-    v-if="errors.length"
-    :errors="errors"
-    :class="['mt-2', classes.error]"
-  />
+  <FormErrors :errors="errors" :class="['mt-2', classes.error]" />
 </template>
 
 <style lang="postcss" scoped></style>

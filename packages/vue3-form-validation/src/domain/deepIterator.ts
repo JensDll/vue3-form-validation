@@ -2,7 +2,7 @@ import { isRef } from 'vue'
 import { LinkedList } from './LinkedList'
 import { isObject } from './typeGuards'
 
-type DeepIteratorResult = {
+export type DeepIteratorResult = {
   key: string
   value: any
   parent: any

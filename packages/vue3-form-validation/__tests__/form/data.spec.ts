@@ -164,6 +164,19 @@ describe('getResultFormData', () => {
       some: { extra: '', stuff: [1, 2, 3] }
     })
   })
+
+  it('should filter when provided a predicate', () => {
+    const resultFormData = getResultFormData(
+      transformedFormData,
+      ({ key }) => key !== 'e'
+    )
+    expect(resultFormData).toStrictEqual({
+      a: '',
+      b: '',
+      cs: [{ d: '' }, { d: '' }, { d: '' }],
+      some: { extra: '', stuff: [1, 2, 3] }
+    })
+  })
 })
 
 describe('resetFields', () => {

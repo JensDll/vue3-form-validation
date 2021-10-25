@@ -58,14 +58,16 @@ export type UseValidation<FormData extends object> = {
      * () => true // meaning keep all
      * ```
      */
-    predicate?: (value: any) => unknown
+    predicate?: (
+      value: Omit<n_domain.DeepIteratorResult, 'isLeaf' | 'parent'>
+    ) => unknown
   }): Promise<n_form.ResultFormData<FormData>>
   /**
    *
    * Reset all fields to their default value or pass an object to set specific values.
    *
    * @remarks
-   * It will not create any new fields that are not present in the form data originally.
+   * It will not create any new fields that are not present in the form data initially.
    *
    * @param formData - Form data to set specific values. It has the same structure as the object passed to `useValidation`.
    */
