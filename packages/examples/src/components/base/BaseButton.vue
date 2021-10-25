@@ -1,12 +1,14 @@
 <template>
   <button
-    class="focus:outline-none ring-offset-2 focus:ring-2 duration-150"
+    class="button focus:outline-none ring-offset-2 focus:ring-2 duration-150"
     :class="[
-      { 'opacity-40 cursor-not-allowed disabled duration-75': disabled },
+      {
+        'opacity-40 cursor-not-allowed disabled duration-75': disabled
+      },
       { 'opacity-40 cursor-wait disabled': loading },
-      reverse ? `reverse-${type}` : type
+      outline ? `outline-${type}` : type
     ]"
-    :aria-disabled="disabled || loading"
+    :disabled="disabled"
     :type="htmlType"
     ref="button"
     v-on="eventListeners"
@@ -37,7 +39,7 @@ const props = defineProps({
     type: String as PropType<'basic' | 'primary' | 'secondary' | 'danger'>,
     default: 'primary'
   },
-  reverse: {
+  outline: {
     type: Boolean
   }
 })
@@ -60,7 +62,7 @@ onMounted(() => {
 const handleClick = (e: MouseEvent) => {
   const target = e.target as HTMLButtonElement
 
-  if (target.ariaDisabled === 'false') {
+  if (!target.disabled) {
     emit('click')
   }
 }
@@ -69,7 +71,7 @@ const handleSubmit = (e: MouseEvent) => {
   e.preventDefault()
   const target = e.target as HTMLButtonElement
 
-  if (target.ariaDisabled === 'false' && form) {
+  if (!target.disabled && form) {
     form.dispatchEvent(new SubmitEvent('submit', { submitter: button.value }))
   }
 }
@@ -80,12 +82,12 @@ const eventListeners = {
 </script>
 
 <style lang="postcss" scoped>
-button {
-  transition-property: colors opacity;
+.button {
+  transition-property: color, opacity, background-color;
 }
 
 .basic,
-.reverse-basic {
+.outline-basic {
   @apply border-2 border-gray-300;
   &:hover {
     @apply bg-gray-50;
@@ -125,7 +127,7 @@ button {
   }
 }
 
-.reverse-primary {
+.outline-primary {
   @apply border-2 border-blue-500 text-blue-500;
   &:not(.disabled):hover {
     @apply bg-blue-50;
@@ -135,7 +137,7 @@ button {
   }
 }
 
-.reverse-secondary {
+.outline-secondary {
   @apply border-2 border-emerald-500 text-emerald-500;
   &:not(.disabled):hover {
     @apply bg-emerald-50;
@@ -145,7 +147,7 @@ button {
   }
 }
 
-.reverse-danger {
+.outline-danger {
   @apply border-2 border-red-500 text-red-500;
   &:not(.disabled):hover {
     @apply bg-red-50;

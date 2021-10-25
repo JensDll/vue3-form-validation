@@ -1,133 +1,10 @@
-<template>
-  <FormProvider
-    title="Dynamic Form"
-    class="form max-w-3xl"
-    :form="form"
-    @submit="handleSubmit"
-  >
-    <label for="a" class="form-label label-a">A</label>
-    <div class="relative flex items-center input-a">
-      <LoadingIcon
-        v-show="form.a.$validating"
-        class="w-5 h-5 absolute right-4 text-indigo-600"
-        :class="{ '!text-red-500': form.a.$hasError }"
-        spin
-      />
-      <input
-        id="a"
-        class="form-input w-full"
-        :class="{ error: form.a.$hasError }"
-        type="text"
-        v-model="form.a.$value"
-        @blur="form.a.$setTouched()"
-      />
-    </div>
-    <MinusCircleIcon class="minus-circle hide" />
-    <PlusCircleIcon class="plus-circle" @click="addX()" />
-    <FormErrors class="errors-a" :errors="form.a.$errors" />
-    <template v-for="(x, xi) in form.xs" :key="x.b.$uid">
-      <label for="b" class="form-label label-b">B</label>
-      <div class="relative flex items-center input-a">
-        <LoadingIcon
-          v-show="x.b.$validating"
-          class="w-5 h-5 absolute right-4 text-indigo-600"
-          :class="{ '!text-red-500': x.b.$hasError }"
-          spin
-        />
-        <input
-          id="b"
-          class="form-input w-full"
-          :class="{ error: x.b.$hasError }"
-          type="text"
-          v-model="x.b.$value"
-          @blur="x.b.$setTouched()"
-        />
-      </div>
-      <MinusCircleIcon class="minus-circle" @click="removeX(xi)" />
-      <PlusCircleIcon class="plus-circle" @click="addY(xi)" />
-      <FormErrors class="errors-b" :errors="x.b.$errors" />
-      <template v-for="(y, yi) in x.ys" :key="y.c.$uid">
-        <label for="c" class="form-label label-c">C</label>
-        <label for="D" class="form-label label-d">D</label>
-        <div class="relative flex items-center input-c">
-          <LoadingIcon
-            v-show="y.c.$validating"
-            class="w-5 h-5 absolute right-4 text-indigo-600"
-            :class="{ '!text-red-500': y.c.$hasError }"
-            spin
-          />
-          <input
-            id="c"
-            class="form-input w-full"
-            :class="{ error: y.c.$hasError }"
-            type="text"
-            v-model="y.c.$value"
-            @blur="y.c.$setTouched()"
-          />
-        </div>
-        <div class="relative flex items-center input-d">
-          <LoadingIcon
-            v-show="y.d.$validating"
-            class="w-5 h-5 absolute right-4 text-indigo-600"
-            :class="{ '!text-red-500': y.d.$hasError }"
-            spin
-          />
-          <input
-            id="d"
-            class="form-input w-full"
-            :class="{ error: y.d.$hasError }"
-            type="text"
-            v-model="y.d.$value"
-            @blur="y.d.$setTouched()"
-          />
-        </div>
-        <MinusCircleIcon class="minus-circle" @click="removeY(xi, yi)" />
-        <FormErrors class="errors-c" :errors="y.c.$errors" />
-        <FormErrors class="errors-d" :errors="y.d.$errors" />
-      </template>
-    </template>
-    <div class="col-span-full mt-12">
-      <label class="form-label mb-0 capitalize" for="box-a">
-        Validate Fields
-      </label>
-      <div class="flex">
-        <div
-          v-for="name in ['a', 'b', 'c', 'd']"
-          :key="name"
-          class="ml-4 first:ml-0"
-        >
-          <label
-            :for="`box-${name}`"
-            class="form-label font-normal mb-0 capitalize"
-          >
-            {{ name }}
-          </label>
-          <input
-            type="checkbox"
-            :id="`box-${name}`"
-            class="form-input"
-            v-model="fieldNames"
-            :value="name"
-          />
-        </div>
-      </div>
-    </div>
-    <FormButtons
-      class="col-span-full mt-6"
-      :submitting="submitting"
-      @reset="resetFields()"
-    />
-  </FormProvider>
-</template>
-
 <script setup lang="ts">
 import { ref } from 'vue'
 import { PlusCircleIcon, MinusCircleIcon } from '@heroicons/vue/outline'
 import { Field, FieldNames, useValidation } from 'vue3-form-validation'
 
+import FormInput from '~/components/form/FormInput.vue'
 import FormProvider from '~/components/form/FormProvider.vue'
-import FormErrors from '~/components/form/FormErrors.vue'
-import LoadingIcon from '~/components/icon/LoadingIcon.vue'
 import FormButtons from '~/components/form/FormButtons.vue'
 import { rules } from '~/domain'
 
@@ -196,58 +73,176 @@ async function handleSubmit() {
 }
 </script>
 
+<template>
+  <FormProvider
+    title="Dynamic Form"
+    class="form max-w-3xl"
+    @submit="handleSubmit"
+  >
+    <div class="field-container">
+      <FormInput
+        :label="{ value: 'A', for: 'a' }"
+        :errors="form.a.$errors"
+        :validating="form.a.$validating"
+        :classes="{
+          label: 'label-a',
+          input: 'input-a',
+          error: 'error-a'
+        }"
+        v-model="form.a.$value"
+        @blur="form.a.$validate()"
+      />
+      <PlusCircleIcon class="plus-circle" @click="addX()" />
+    </div>
+
+    <template v-for="(x, xi) in form.xs" :key="x.b.$uid">
+      <div class="field-container">
+        <FormInput
+          :label="{ value: 'B', for: 'b' }"
+          :errors="x.b.$errors"
+          :validating="x.b.$validating"
+          :classes="{
+            label: 'label-b',
+            input: 'input-b',
+            error: 'error-b'
+          }"
+          v-model="x.b.$value"
+          @blur="x.b.$validate()"
+        >
+        </FormInput>
+        <MinusCircleIcon class="minus-circle" @click="removeX(xi)" />
+        <PlusCircleIcon class="plus-circle" @click="addY(xi)" />
+      </div>
+
+      <div v-for="(y, yi) in x.ys" :key="y.c.$uid" class="field-container">
+        <MinusCircleIcon class="minus-circle" @click="removeY(xi, yi)" />
+        <FormInput
+          :label="{ value: 'C', for: 'c' }"
+          :errors="y.c.$errors"
+          :validating="y.c.$validating"
+          :classes="{
+            label: 'label-c',
+            input: 'input-c',
+            error: 'error-c'
+          }"
+          v-model="y.c.$value"
+          @blur="y.c.$validate()"
+        />
+        <FormInput
+          :label="{ value: 'D', for: 'd' }"
+          :errors="y.d.$errors"
+          :validating="y.d.$validating"
+          :classes="{
+            label: 'label-d',
+            input: 'input-d',
+            error: 'error-d'
+          }"
+          v-model="y.d.$value"
+          @blur="y.d.$validate()"
+        />
+      </div>
+    </template>
+
+    <div class="col-span-full mt-6">
+      <label class="form-label mb-0 capitalize" for="box-a">
+        Validate Fields
+      </label>
+      <div class="flex">
+        <div
+          v-for="name in ['a', 'b', 'c', 'd']"
+          :key="name"
+          class="ml-4 first:ml-0"
+        >
+          <FormInput
+            type="checkbox"
+            :label="{
+              for: `box-${name}`,
+              value: name
+            }"
+            :classes="{
+              label: 'font-normal mb-0 capitalize'
+            }"
+            v-model="fieldNames"
+            :value="name"
+          />
+        </div>
+      </div>
+    </div>
+
+    <FormButtons
+      class="col-span-full"
+      :submitting="submitting"
+      @reset="resetFields()"
+    />
+  </FormProvider>
+</template>
+
 <style lang="postcss" scoped>
 :deep(.form) {
   display: grid;
+  row-gap: 1.5rem;
+}
+
+.field-container {
+  display: grid;
   column-gap: 2rem;
-  grid-template-columns:
-    [left] 1fr [middle] 1fr [right minus-start]
-    auto [minus-end plus-start] auto [plus-end];
-}
-
-.label-a,
-.input-a,
-.errors-a,
-.label-b,
-.input-b,
-.errors-b {
-  grid-column: left / right;
-}
-
-.label-c,
-.input-c,
-.errors-c {
-  grid-column: left / middle;
-}
-
-.label-d,
-.input-d,
-.errors-d {
-  grid-column: middle / right;
-}
-
-.label-b,
-.label-c,
-.label-d {
-  @apply mt-4;
-}
-
-.errors-a,
-.errors-b,
-.errors-c,
-.errors-d {
-  @apply mt-2;
+  grid-template-columns: 1fr 1fr 2rem 2rem;
+  grid-template-rows: repeat(3, auto);
+  grid-template-areas:
+    'l1 l2 . .'
+    'i1 i2 minus-icon plus-icon'
+    'e1 e2 . .';
 }
 
 .minus-circle {
-  grid-column: minus-start / minus-end;
+  align-self: center;
+  justify-self: end;
   margin-right: -1rem;
-  margin-left: 2rem;
-  place-self: center end;
+  grid-area: minus-icon;
 }
 
 .plus-circle {
-  grid-column: plus-start / plus-end;
-  place-self: center end;
+  align-self: center;
+  justify-self: end;
+  grid-area: plus-icon;
+}
+
+:deep(.label-a),
+:deep(.label-b) {
+  grid-area: l1 / l1 / l2 / l2;
+}
+
+:deep(.input-a),
+:deep(.input-b) {
+  grid-area: i1 / i1 / i2 / i2;
+}
+
+:deep(.error-a),
+:deep(.error-b) {
+  grid-area: e1 / e1 / e2 / e2;
+}
+
+:deep(.label-c) {
+  grid-area: l1;
+}
+
+:deep(.label-d) {
+  grid-area: l2;
+}
+
+:deep(.input-c) {
+  grid-area: i1;
+}
+
+:deep(.input-d) {
+  grid-area: i2;
+}
+
+:deep(.error-c) {
+  grid-area: e1;
+}
+
+:deep(.error-d) {
+  grid-area: e2;
 }
 </style>

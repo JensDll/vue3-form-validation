@@ -5,6 +5,9 @@ export const validation = createValidation({
   validationBehavior: {
     force({ force, submit }) {
       return force || submit
+    },
+    change({ force }) {
+      return !force
     }
   }
 })

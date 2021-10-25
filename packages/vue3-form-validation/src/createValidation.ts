@@ -1,7 +1,7 @@
 import { Plugin } from 'vue'
 import { VALIDATION_CONFIG } from './validationConfig'
 import {
-  ValidationBehavior,
+  ValidationBehaviorFunction,
   ValidationBehaviorString,
   DefaultValidationBehaviorString
 } from './form'
@@ -9,13 +9,13 @@ import * as n_domain from './domain'
 
 export type ConfigurationValidationBehavior = n_domain.Optional<
   {
-    [K in ValidationBehaviorString]: ValidationBehavior
+    [K in ValidationBehaviorString]: ValidationBehaviorFunction
   },
   DefaultValidationBehaviorString
 >
 
 export type Configuration =
-  keyof UseValidation_CustomValidationBehavior extends never
+  keyof UseValidation_CustomValidationBehaviorFunctions extends never
     ? {
         defaultValidationBehavior: ValidationBehaviorString
         validationBehavior?: ConfigurationValidationBehavior
@@ -27,16 +27,16 @@ export type Configuration =
 
 /**
  *
- * @description
- * Configure the validation behavior of `useValidation`
- * @param configuration - Form validation configuration
+ * Configure the validation behavior of `useValidation`.
+ *
+ * @param configuration - The Form validation configuration
  */
 export function createValidation(configuration: Configuration): Plugin {
   return {
     install() {
       for (const [key, validationBehavior] of Object.entries(
         configuration.validationBehavior ?? {}
-      ) as [ValidationBehaviorString, ValidationBehavior][]) {
+      ) as [ValidationBehaviorString, ValidationBehaviorFunction][]) {
         VALIDATION_CONFIG.validationBehavior.set(key, validationBehavior)
       }
 
@@ -49,7 +49,7 @@ export function createValidation(configuration: Configuration): Plugin {
           configuration.defaultValidationBehavior
       } else {
         console.warn(
-          `[useValidation] Default validation behavior is not valid. Valid values are`,
+          `[useValidation] Default validation behavior '${configuration.defaultValidationBehavior}' is not valid. Valid values are`,
           VALIDATION_CONFIG.validationBehavior.keys()
         )
       }

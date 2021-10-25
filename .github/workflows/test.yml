@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [15.x, 16.x]
+        node-version: ['16.11.1']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -17,12 +17,13 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
       - name: Echo debug information
         run: |
+          node --version
           npm --version
           env
-      - name: Install dependencies and build
-        run: |
-          npm ci
-          npm run build
+      - name: Install dependencies
+        run: npm ci
+      - name: Build the project
+        run: npm run build
       - name: Run jest
         run: npm run test
       - name: Run tsd

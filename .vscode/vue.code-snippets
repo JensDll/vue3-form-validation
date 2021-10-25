@@ -3,9 +3,9 @@
     "prefix": "vue init",
     "scope": "vue",
     "body": [
-      "<template></template>",
-      "",
       "<script setup lang=\"ts\">$0</script>",
+      "",
+      "<template></template>",
       "",
       "<style lang=\"postcss\" scoped></style>"
     ],

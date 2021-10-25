@@ -2,10 +2,10 @@ import { Tuple } from '../../src/domain'
 import {
   Form,
   FormField,
-  ValidationBehavior,
+  ValidationBehaviorFunction,
   ValidationError
 } from '../../src/form'
-import { mockFactory } from '../utils'
+import { makeMocks } from '../utils'
 import { VALIDATION_CONFIG } from '../../src/validationConfig'
 
 let form: Form
@@ -13,42 +13,42 @@ let asyncRules: Tuple<jest.Mock, 6>
 let syncRules: Tuple<jest.Mock, 6>
 let fields: [FormField, FormField, FormField]
 
-function assignFields(validationBehavior: ValidationBehavior) {
+function assignFields(validationBehavior: ValidationBehaviorFunction) {
   fields = [
     form.registerField(1, 'field_1', '', [
-      [validationBehavior, syncRules[0]],
-      [validationBehavior, syncRules[1]],
-      [validationBehavior, { key: 'a', rule: asyncRules[0] }],
-      [validationBehavior, asyncRules[1]]
+      { validationBehavior, rule: syncRules[0] },
+      { validationBehavior, rule: syncRules[1] },
+      { validationBehavior, rule: { key: 'a', rule: asyncRules[0] } },
+      { validationBehavior, rule: asyncRules[1] }
     ]),
     form.registerField(2, 'field_2', '', [
-      [validationBehavior, syncRules[2]],
-      [validationBehavior, { key: 'a', rule: asyncRules[2] }],
-      [validationBehavior, { key: 'b', rule: asyncRules[3] }],
-      [validationBehavior, asyncRules[4]]
+      { validationBehavior, rule: syncRules[2] },
+      { validationBehavior, rule: { key: 'a', rule: asyncRules[2] } },
+      { validationBehavior, rule: { key: 'b', rule: asyncRules[3] } },
+      { validationBehavior, rule: asyncRules[4] }
     ]),
     form.registerField(3, 'field_3', '', [
-      [validationBehavior, syncRules[3]],
-      [validationBehavior, syncRules[4]],
-      [validationBehavior, syncRules[5]],
-      [validationBehavior, { key: 'b', rule: asyncRules[5] }]
+      { validationBehavior, rule: syncRules[3] },
+      { validationBehavior, rule: syncRules[4] },
+      { validationBehavior, rule: syncRules[5] },
+      { validationBehavior, rule: { key: 'b', rule: asyncRules[5] } }
     ])
   ]
 }
 
 beforeEach(() => {
   form = new Form()
-  asyncRules = mockFactory(6, i => i <= 2 && `async[${i}]`, 100, 10)
-  syncRules = mockFactory(6, i => i <= 2 && `sync[${i}]`)
+  asyncRules = makeMocks(6, i => i <= 2 && `async[${i}]`, 100, 10)
+  syncRules = makeMocks(6, i => i <= 2 && `sync[${i}]`)
 })
 
 type EachValidationBehavior = {
-  validationBehavior: ValidationBehavior
+  validationBehavior: ValidationBehaviorFunction
 }
 
 const EACH_VALIDATION_BEHAVIOR: EachValidationBehavior[] = [
   {
-    validationBehavior: VALIDATION_CONFIG.validationBehavior.get('aggresive')!
+    validationBehavior: VALIDATION_CONFIG.validationBehavior.get('aggressive')!
   },
   { validationBehavior: VALIDATION_CONFIG.validationBehavior.get('lazy')! },
   { validationBehavior: VALIDATION_CONFIG.validationBehavior.get('lazier')! }
@@ -88,9 +88,9 @@ describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(
           )
 
           const field = form.registerField(1, 'name', '', [
-            [validationBehavior, rule]
+            { validationBehavior, rule }
           ])
-          field.touched = true
+          field.touched.value = true
 
           ms.value = 600
           form.validate(1, true)

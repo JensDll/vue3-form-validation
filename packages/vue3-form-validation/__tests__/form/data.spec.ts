@@ -7,7 +7,7 @@ import {
   TransformedFormData,
   transformFormData,
   resetFields,
-  cleanupForm
+  disposeForm
 } from '../../src/form'
 
 type FormData = {
@@ -55,7 +55,9 @@ describe('transformFormData', () => {
         $rawErrors: [],
         $hasError: false,
         $validating: false,
-        $setTouched: expect.any(Function),
+        $dirty: false,
+        $touched: false,
+        $validate: expect.any(Function),
         extra: 'extra'
       },
       b: {
@@ -65,7 +67,9 @@ describe('transformFormData', () => {
         $rawErrors: [],
         $hasError: false,
         $validating: false,
-        $setTouched: expect.any(Function)
+        $dirty: false,
+        $touched: false,
+        $validate: expect.any(Function)
       },
       cs: [
         {
@@ -76,7 +80,9 @@ describe('transformFormData', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           },
           e: {
             $uid: expect.any(Number),
@@ -85,7 +91,9 @@ describe('transformFormData', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           }
         },
         {
@@ -96,7 +104,9 @@ describe('transformFormData', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           },
           e: {
             $uid: expect.any(Number),
@@ -105,7 +115,9 @@ describe('transformFormData', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           }
         },
         {
@@ -116,7 +128,9 @@ describe('transformFormData', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           },
           e: {
             $uid: expect.any(Number),
@@ -125,7 +139,9 @@ describe('transformFormData', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           }
         }
       ],
@@ -148,11 +164,25 @@ describe('getResultFormData', () => {
       some: { extra: '', stuff: [1, 2, 3] }
     })
   })
+
+  it('should filter when provided a predicate', () => {
+    const resultFormData = getResultFormData(
+      transformedFormData,
+      ({ key }) => key !== 'e'
+    )
+    expect(resultFormData).toStrictEqual({
+      a: '',
+      b: '',
+      cs: [{ d: '' }, { d: '' }, { d: '' }],
+      some: { extra: '', stuff: [1, 2, 3] }
+    })
+  })
 })
 
 describe('resetFields', () => {
-  it('should reset fields to passed values', () => {
+  it('should reset fields to passed values', done => {
     resetFields(
+      form,
       {
         a: 'a',
         b: 'b',
@@ -174,7 +204,9 @@ describe('resetFields', () => {
         $rawErrors: [],
         $hasError: false,
         $validating: false,
-        $setTouched: expect.any(Function),
+        $dirty: false,
+        $touched: false,
+        $validate: expect.any(Function),
         extra: 'extra'
       },
       b: {
@@ -184,7 +216,9 @@ describe('resetFields', () => {
         $rawErrors: [],
         $hasError: false,
         $validating: false,
-        $setTouched: expect.any(Function)
+        $dirty: false,
+        $touched: false,
+        $validate: expect.any(Function)
       },
       cs: [
         {
@@ -195,7 +229,9 @@ describe('resetFields', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           },
           e: {
             $uid: expect.any(Number),
@@ -204,7 +240,9 @@ describe('resetFields', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           }
         },
         {
@@ -215,7 +253,9 @@ describe('resetFields', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           },
           e: {
             $uid: expect.any(Number),
@@ -224,7 +264,9 @@ describe('resetFields', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           }
         },
         {
@@ -235,7 +277,9 @@ describe('resetFields', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           },
           e: {
             $uid: expect.any(Number),
@@ -244,23 +288,30 @@ describe('resetFields', () => {
             $rawErrors: [],
             $hasError: false,
             $validating: false,
-            $setTouched: expect.any(Function)
+            $dirty: false,
+            $touched: false,
+            $validate: expect.any(Function)
           }
         }
       ],
       some: { extra: '', stuff: [1, 2, 3] }
     })
+
+    setTimeout(() => {
+      expect(form.validate).toHaveBeenCalledTimes(0)
+      done()
+    }, 0)
   })
 })
 
-describe('cleanupForm', () => {
-  it('should call onDelete on form for every field', () => {
-    cleanupForm(form, formData, new Map())
-    expect(form.onDelete).toHaveBeenCalledTimes(8)
+describe('disposeForm', () => {
+  it('should call dispose on form for every field', () => {
+    disposeForm(form, formData)
+    expect(form.dispose).toHaveBeenCalledTimes(8)
   })
 
-  it('should call onDelete on form for a subset of fields', () => {
-    cleanupForm(form, formData.cs, new Map())
-    expect(form.onDelete).toHaveBeenCalledTimes(6)
+  it('should call dispose on form for a subset of fields', () => {
+    disposeForm(form, formData.cs)
+    expect(form.dispose).toHaveBeenCalledTimes(6)
   })
 })

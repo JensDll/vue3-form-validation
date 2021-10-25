@@ -1,4 +1,10 @@
-import { KeyedRule, SimpleRule } from 'vue3-form-validation'
+import {
+  Field,
+  KeyedRule,
+  SimpleRule,
+  useValidation,
+  ValidationBehaviorInfo
+} from 'vue3-form-validation'
 
 import { Lengthy } from './types'
 
@@ -68,3 +74,30 @@ export const rules = {
       }
     }
 }
+
+type FormData = {
+  field: Field<string>
+}
+
+useValidation<FormData>({
+  field: {
+    $value: '',
+    $rules: [
+      /*
+       * This will use the default validation behavior
+       */
+      rules.required('Error message'),
+      /*
+       * Only call this on submit and after that if there are errors
+       */
+      ['submit', rules.min(1)('Error message')],
+      /*
+       * Or pass VBF directly
+       */
+      [
+        ({ force }: ValidationBehaviorInfo) => !force,
+        rules.max(15)('Error message')
+      ]
+    ]
+  }
+})

@@ -1,3 +1,15 @@
+<script setup lang="ts">
+import BaseButton from '~/components/base/BaseButton.vue'
+
+defineEmits(['reset', 'submit'])
+
+defineProps({
+  submitting: {
+    type: Boolean
+  }
+})
+</script>
+
 <template>
   <div class="flex">
     <BaseButton
@@ -16,17 +28,5 @@
     </BaseButton>
   </div>
 </template>
-
-<script setup lang="ts">
-import BaseButton from '~/components/base/BaseButton.vue'
-
-defineEmits(['reset', 'submit'])
-
-defineProps({
-  submitting: {
-    type: Boolean
-  }
-})
-</script>
 
 <style lang="postcss" scoped></style>
