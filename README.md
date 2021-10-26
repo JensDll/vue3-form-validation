@@ -1,7 +1,6 @@
 # Form Validation for Vue 3
 
 [![npm](https://badgen.net/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
-[![bundle size](https://badgen.net/bundlephobia/minzip/vue3-form-validation)](https://bundlephobia.com/result?p=vue3-form-validation@latest)
 [![LICENSE](https://badgen.net/github/license/micromatch/micromatch?color=green)](https://github.com/JensDll/vue3-form-validation/blob/main/LICENSE)
 
 Vue composition function for Form validation and async rules support.
