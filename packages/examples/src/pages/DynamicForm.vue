@@ -189,9 +189,9 @@ async function handleSubmit() {
   grid-template-columns: 1fr 1fr 2rem 2rem;
   grid-template-rows: repeat(3, auto);
   grid-template-areas:
-    'l1 l2 . .'
-    'i1 i2 minus-icon plus-icon'
-    'e1 e2 . .';
+    'label-1 label-2 . .'
+    'input-1 input-2 minus-icon plus-icon'
+    'error-1 error-2 . .';
 }
 
 .minus-circle {
@@ -209,40 +209,40 @@ async function handleSubmit() {
 
 :deep(.label-a),
 :deep(.label-b) {
-  grid-area: l1 / l1 / l2 / l2;
+  grid-area: label-1 / label-1 / label-2 / label-2;
 }
 
 :deep(.input-a),
 :deep(.input-b) {
-  grid-area: i1 / i1 / i2 / i2;
+  grid-area: input-1 / input-1 / input-2 / input-2;
 }
 
 :deep(.error-a),
 :deep(.error-b) {
-  grid-area: e1 / e1 / e2 / e2;
+  grid-area: error-1 / error-1 / error-2 / error-2;
 }
 
 :deep(.label-c) {
-  grid-area: l1;
+  grid-area: label-1;
 }
 
 :deep(.label-d) {
-  grid-area: l2;
+  grid-area: label-2;
 }
 
 :deep(.input-c) {
-  grid-area: i1;
+  grid-area: input-1;
 }
 
 :deep(.input-d) {
-  grid-area: i2;
+  grid-area: input-2;
 }
 
 :deep(.error-c) {
-  grid-area: e1;
+  grid-area: error-1;
 }
 
 :deep(.error-d) {
-  grid-area: e2;
+  grid-area: error-2;
 }
 </style>

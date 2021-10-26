@@ -91,9 +91,9 @@ async function handleSubmit() {
   grid-template-columns: 1fr 4rem;
   grid-template-rows: repeat(3 auto);
   grid-template-areas:
-    'l .'
-    'i icon'
-    'e .';
+    'label .'
+    'input icon'
+    'error .';
 }
 
 .minus-circle {
@@ -103,14 +103,14 @@ async function handleSubmit() {
 }
 
 :deep(.label) {
-  grid-area: l;
+  grid-area: label;
 }
 
 :deep(.input) {
-  grid-area: i;
+  grid-area: input;
 }
 
 :deep(.error) {
-  grid-area: e;
+  grid-area: error;
 }
 </style>

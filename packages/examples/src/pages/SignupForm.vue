@@ -7,7 +7,7 @@ import FormInput from '~/components/form/FormInput.vue'
 import { rules } from '~/domain'
 
 interface FormData {
-  name: Field<any>
+  name: Field<string>
   email: Field<string>
   password: Field<string>
   confirmPassword: Field<string>

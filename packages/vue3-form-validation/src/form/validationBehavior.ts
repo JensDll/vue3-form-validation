@@ -11,32 +11,32 @@ export type ValidationBehaviorString =
 export type ValidationBehaviorInfo<T = any> = {
   /**
    *
-   * `True` if the rule of this validation behavior has an error.
+   * `True` if the paired rule of this behavior has an error.
    */
   hasError: boolean
   /**
    *
-   * `True` if the field of this rule is touched.
+   * The touched state of the field.
    */
   touched: boolean
   /**
    *
-   * `True` if the field of this rule is dirty.
+   * The dirty state of the field.
    */
   dirty: boolean
   /**
    *
-   * `True` if the rule was called with the `force` flag.
+   * `True` if the validation was triggered with the `force` flag.
    */
   force: boolean
   /**
    *
-   * `True` if the rule was called with the `submit` flag.
+   * `True` if the validation was triggered with the `submit` flag.
    */
   submit: boolean
   /**
    *
-   * The field's `$value` property of this rule.
+   * The `$value` of the field.
    */
   value: T
 }

@@ -4,7 +4,7 @@
 [![bundle size](https://badgen.net/bundlephobia/minzip/vue3-form-validation)](https://bundlephobia.com/result?p=vue3-form-validation@latest)
 [![LICENSE](https://badgen.net/github/license/micromatch/micromatch?color=green)](https://github.com/JensDll/vue3-form-validation/blob/main/LICENSE)
 
-Vue composition function for Form Validation with async rules.
+Vue Composition Function for Form Validation and async Rules support.
 
 - :milky_way: **Written in TypeScript**
 - :ocean: **Dynamic Form support**

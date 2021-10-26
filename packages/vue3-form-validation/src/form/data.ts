@@ -34,7 +34,7 @@ export type Field<
   $value: DeepMaybeRef<TValue>
   /**
    *
-   * List of rules to use for validation.
+   * Rules to use for validation.
    */
   $rules?: FieldRule<TValue>[]
 } & (TExtra extends Record<string, never> ? unknown : TExtra)
@@ -42,7 +42,7 @@ export type Field<
 export type ValidateOptions = {
   /**
    *
-   * Set this field touched when called.
+   * Set the field touched when called.
    *
    * @default true
    */
@@ -72,7 +72,7 @@ export type TransformedField<
   $value: TValue
   /**
    *
-   * The field's error messages without `null` values.
+   * A list of validation error messages local to the field without `null` values.
    */
   $errors: string[]
   /**
@@ -82,31 +82,31 @@ export type TransformedField<
   $rawErrors: (string | null)[]
   /**
    *
-   * `True` if this field has any error.
+   * `True` while there are any errors on the field.
    */
   $hasError: boolean
   /**
    *
-   * `True` if there is at least one async rule validating.
+   * `True` while the field has any pending rules.
    */
   $validating: boolean
   /**
    *
-   * `True` after this field was touched.
+   * `True` if the field is touched.
    *
    * @remarks
-   * In most cases, this value should be set together with the `blur` event.
+   * In most cases, it should be set together with the `blur` event.
    * Either through `$validate` or manually.
    */
   $touched: boolean
   /**
    *
-   * `True` after the `$value` property was changed at least once.
+   * `True` if the `$value` of the field has changed at least once.
    */
   $dirty: boolean
   /**
    *
-   * Validate this field.
+   * Validate the field.
    *
    * @param options - Validation options to use
    * @default

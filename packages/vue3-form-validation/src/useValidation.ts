@@ -5,22 +5,22 @@ import * as n_domain from './domain'
 export type UseValidation<FormData extends object> = {
   /**
    *
-   * The reactive form data.
+   * A transformed reactive `formData` object.
    */
   form: n_form.TransformedFormData<FormData>
   /**
    *
-   * `True` after calling `validateFields` when there are async rules.
+   * `True` during validation after calling `validateFields` when there were rules that returned a `Promise`.
    */
   submitting: Ref<boolean>
   /**
    *
-   * `True` while there is at least one async rule validating.
+   * `True` while the form has any pending rules.
    */
   validating: ComputedRef<boolean>
   /**
    *
-   * `True` while there is at least one field that has an error.
+   * `True` if the form has any error.
    */
   hasError: ComputedRef<boolean>
   /**
@@ -69,12 +69,12 @@ export type UseValidation<FormData extends object> = {
    * @remarks
    * It will not create any new fields that are not present in the form data initially.
    *
-   * @param formData - Form data to set specific values. It has the same structure as the object passed to `useValidation`.
+   * @param formData - `FormData` to set specific values. It has the same structure as the object passed to `useValidation`.
    */
   resetFields(formData?: Partial<n_form.ResultFormData<FormData>>): void
   /**
    *
-   * Adds one or more new properties to the form data.
+   * Adds a new property to the form data.
    *
    * @remarks
    * Fields with a `$value` are transformed.
@@ -90,22 +90,22 @@ export type UseValidation<FormData extends object> = {
   ): void
   /**
    *
-   * Removes one or more properties from the form data.
+   * Removes a property from the form data.
    *
-   * @param path - A path of `string` and `numbers` to the properties to remove
+   * @param path - A path of `string` and `numbers` to the property to remove
    */
   remove(path: n_domain.Key[]): void
 }
 
 /**
  *
- * Vue composition function for Form validation.
+ * Vue composition function for form validation.
  *
  * @remarks
- * For better type inference, consider defining the structure
- * of your `formData` upfront and pass it as the generic parameter `FormData`.
+ * For type inference inside of `useValidation` you need to define the structure of your
+ * `formData` upfront and pass it as the generic parameter `FormData`.
  *
- * @param formData - The structure of your Form data
+ * @param formData - The structure of your `formData`.
  *
  * @example
  * ```
