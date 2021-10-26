@@ -67,7 +67,12 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <FormProvider class="form" title="Home Examples" @submit="handleSubmit()">
+  <FormProvider
+    class="form"
+    title="Home Examples"
+    :form="form"
+    @submit="handleSubmit()"
+  >
     <div class="date-range-container lg:w-2/3">
       <FormInput
         type="date"

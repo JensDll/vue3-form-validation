@@ -82,7 +82,12 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <FormProvider title="Signup Form" class="form" @submit="handleSubmit()">
+  <FormProvider
+    title="Signup Form"
+    class="form"
+    :form="form"
+    @submit="handleSubmit()"
+  >
     <div class="name">
       <FormInput
         placeholder="Alice, Bob or Oscar"

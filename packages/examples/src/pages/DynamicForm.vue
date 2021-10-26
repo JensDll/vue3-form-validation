@@ -77,6 +77,7 @@ async function handleSubmit() {
   <FormProvider
     title="Dynamic Form"
     class="form max-w-3xl"
+    :form="form"
     @submit="handleSubmit"
   >
     <div class="field-container">

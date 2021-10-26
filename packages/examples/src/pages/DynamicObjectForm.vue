@@ -51,6 +51,7 @@ async function handleSubmit() {
   <FormProvider
     title="Dynamic Object Form"
     class="form"
+    :form="form"
     @submit="handleSubmit()"
   >
     <template v-for="[key, field] in Object.entries(form)" :key="key">

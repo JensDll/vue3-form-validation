@@ -40,6 +40,7 @@ async function handleSubmit() {
   <FormProvider
     title="Basic Form"
     class="grid gap-y-6 max-w-2xl"
+    :form="form"
     @submit="handleSubmit()"
   >
     <div>
