@@ -3,11 +3,12 @@
 [![npm](https://badgen.net/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
 [![LICENSE](https://badgen.net/github/license/micromatch/micromatch?color=green)](https://github.com/JensDll/vue3-form-validation/blob/main/LICENSE)
 
-Vue composition function for Form validation and async rules support.
+Vue composition function for form validation.
 
-- :milky_way: **Written in TypeScript**
-- :ocean: **Dynamic Form support**
-- :fallen_leaf: **Light weight**
+- 🌌 **Written in TypeScript**
+- ☄️ **Async rules**
+- 🌊 **Dynamic forms**
+- 🍂 **Light weight**
 
 ```bash
 npm install vue3-form-validation
