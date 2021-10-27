@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ['16.11.1']
+        node-version: ['16.x']
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -31,12 +31,11 @@ jobs:
           echo "Npm version: $(npm --version)"
           echo "==================================="
           env
-      # - name: Install dependencies
-      #   if: steps.setup-node.outputs.cache-hit != 'true'
-      #   run: npm ci
-      # - name: Build the project
-      #   run: npm run build
-      # - name: Run jest
-      #   run: npm run test
-      # - name: Run tsd
-      #   run: npm run test-dts-only
+      - name: Install dependencies
+        run: npm ci
+      - name: Build the project
+        run: npm run build
+      - name: Run jest
+        run: npm run test
+      - name: Run tsd
+        run: npm run test-dts-only
