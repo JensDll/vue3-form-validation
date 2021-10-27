@@ -23,15 +23,18 @@ jobs:
           STEPS_CONTEXT: ${{ toJSON(steps) }}
         run: |
           ls -la
-          node --version
-          npm --version
+          echo "=================="
+          echo "Node version: $(node --version)"
+          echo "=================="
+          echo "Npm version: $(npm --version)"
+          echo "=================="
           env
       - name: Install dependencies
         if: steps.setup-node.outputs.cache-hit != 'true'
         run: npm ci
-      # - name: Build the project
-      #   run: npm run build
-      # - name: Run jest
-      #   run: npm run test
-      # - name: Run tsd
-      #   run: npm run test-dts-only
+      - name: Build the project
+        run: npm run build
+      - name: Run jest
+        run: npm run test
+      - name: Run tsd
+        run: npm run test-dts-only
