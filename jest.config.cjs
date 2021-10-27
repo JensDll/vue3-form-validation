@@ -2,7 +2,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  testMatch: ['<rootDir>/**/__tests__/**/*spec.[jt]s?(x)'],
+  testMatch: ['<rootDir>/packages/**/__tests__/**/*spec.[jt]s?(x)'],
   globals: {
     'ts-jest': {
       isolatedModules: true
