@@ -105,7 +105,7 @@ export type UseValidation<FormData extends object> = {
  * For type inference inside of `useValidation` make sure to define the structure of your
  * `formData` upfront and pass it as the generic parameter `FormData`.
  *
- * @param formData - The structure of your `formData`.
+ * @param formData - The structure of your `formData`
  *
  * @example
  * ```
