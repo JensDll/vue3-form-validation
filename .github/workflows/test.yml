@@ -22,19 +22,21 @@ jobs:
         env:
           STEPS_CONTEXT: ${{ toJSON(steps) }}
         run: |
+          pwd
+          echo "==================================="
           ls -la
-          echo "=================="
+          echo "==================================="
           echo "Node version: $(node --version)"
-          echo "=================="
+          echo "==================================="
           echo "Npm version: $(npm --version)"
-          echo "=================="
+          echo "==================================="
           env
-      - name: Install dependencies
-        if: steps.setup-node.outputs.cache-hit != 'true'
-        run: npm ci
-      - name: Build the project
-        run: npm run build
-      - name: Run jest
-        run: npm run test
-      - name: Run tsd
-        run: npm run test-dts-only
+      # - name: Install dependencies
+      #   if: steps.setup-node.outputs.cache-hit != 'true'
+      #   run: npm ci
+      # - name: Build the project
+      #   run: npm run build
+      # - name: Run jest
+      #   run: npm run test
+      # - name: Run tsd
+      #   run: npm run test-dts-only
