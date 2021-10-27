@@ -1,14 +1,19 @@
 import { reactive } from 'vue'
 import { MockedObject } from 'ts-jest/dist/utils/testing'
+
+import { makeMocks } from '../utils'
 import {
-  Form,
   Field,
+  Form,
   getResultFormData,
   TransformedFormData,
   transformFormData,
   resetFields,
-  disposeForm
+  disposeForm,
+  RuleInformation,
+  mapFieldRules
 } from '../../src/form'
+import { Tuple } from '../../src/domain'
 
 type FormData = {
   a: Field<string, { extra: string }>
@@ -28,8 +33,11 @@ jest.mock('../../src/form/Form')
 let form: MockedObject<Form>
 let formData: FormData
 let transformedFormData: TransformedFormData<FormData>
+let mocks: Tuple<jest.Mock, 2>
+const mockConsoleError = jest.spyOn(console, 'error').mockImplementation()
 
 beforeEach(() => {
+  mocks = makeMocks(2)
   formData = {
     a: { $value: '', extra: 'extra' },
     b: { $value: '' },
@@ -43,6 +51,222 @@ beforeEach(() => {
   form = new Form() as any
   transformFormData(form, formData)
   transformedFormData = reactive(formData) as any
+})
+
+afterEach(() => {
+  mockConsoleError.mockReset()
+})
+
+describe('mapFieldRules', () => {
+  it('simple rule', () => {
+    const ruleInfo = mapFieldRules([mocks[0]])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: expect.any(Function),
+        rule: mocks[0]
+      }
+    ])
+  })
+
+  it('keyed rule', () => {
+    const ruleInfo = mapFieldRules([
+      {
+        key: 'key',
+        rule: mocks[0]
+      }
+    ])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: expect.any(Function),
+        rule: {
+          key: 'key',
+          rule: mocks[0]
+        }
+      }
+    ])
+  })
+
+  it('simple rule with validation behavior string', () => {
+    const ruleInfo = mapFieldRules([['lazy', mocks[0]]])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: expect.any(Function),
+        rule: mocks[0]
+      }
+    ])
+  })
+
+  it('keyed rule with validation behavior string', () => {
+    const ruleInfo = mapFieldRules([
+      [
+        'lazy',
+        {
+          key: 'key',
+          rule: mocks[0]
+        }
+      ]
+    ])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: expect.any(Function),
+        rule: {
+          key: 'key',
+          rule: mocks[0]
+        }
+      }
+    ])
+  })
+
+  it('simple rule with validation behavior inline', () => {
+    const ruleInfo = mapFieldRules([[mocks[0], mocks[1]]])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: mocks[0],
+        rule: mocks[1]
+      }
+    ])
+  })
+
+  it('keyed rule with validation behavior inline', () => {
+    const ruleInfo = mapFieldRules([
+      [
+        mocks[0],
+        {
+          key: 'key',
+          rule: mocks[1]
+        }
+      ]
+    ])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: mocks[0],
+        rule: {
+          key: 'key',
+          rule: mocks[1]
+        }
+      }
+    ])
+  })
+
+  it('simple rule with validation behavior string and debounce', () => {
+    const ruleInfo = mapFieldRules([['lazy', mocks[0], 100]])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: expect.any(Function),
+        rule: mocks[0],
+        debounce: 100
+      }
+    ])
+  })
+
+  it('keyed rule with validation behavior string and debounce', () => {
+    const ruleInfo = mapFieldRules([
+      [
+        'lazy',
+        {
+          key: 'key',
+          rule: mocks[0]
+        },
+        100
+      ]
+    ])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: expect.any(Function),
+        rule: {
+          key: 'key',
+          rule: mocks[0]
+        },
+        debounce: 100
+      }
+    ])
+  })
+
+  it('simple rule with validation behavior inline and debounce', () => {
+    const ruleInfo = mapFieldRules([[mocks[0], mocks[1], 100]])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: mocks[0],
+        rule: mocks[1],
+        debounce: 100
+      }
+    ])
+  })
+
+  it('keyed rule with validation behavior inline and debounce', () => {
+    const ruleInfo = mapFieldRules([
+      [
+        mocks[0],
+        {
+          key: 'key',
+          rule: mocks[1]
+        },
+        100
+      ]
+    ])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: mocks[0],
+        rule: {
+          key: 'key',
+          rule: mocks[1]
+        },
+        debounce: 100
+      }
+    ])
+  })
+
+  it('simple rule with debounce', () => {
+    const ruleInfo = mapFieldRules([[mocks[0], 100]])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: expect.any(Function),
+        rule: mocks[0],
+        debounce: 100
+      }
+    ])
+  })
+
+  it('keyed rule with debounce', () => {
+    const ruleInfo = mapFieldRules([
+      [
+        {
+          key: 'key',
+          rule: mocks[0]
+        },
+        100
+      ]
+    ])
+
+    expect(ruleInfo).toEqual<RuleInformation[]>([
+      {
+        validationBehavior: expect.any(Function),
+        rule: {
+          key: 'key',
+          rule: mocks[0]
+        },
+        debounce: 100
+      }
+    ])
+  })
+
+  it('should throw error for invalid input', () => {
+    expect(() => {
+      mapFieldRules([['x', mocks[0]]])
+    }).toThrow()
+    expect(mockConsoleError).toHaveBeenCalledTimes(1)
+  })
 })
 
 describe('transformFormData', () => {

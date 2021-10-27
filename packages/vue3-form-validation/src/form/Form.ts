@@ -2,7 +2,7 @@ import { computed, ref, shallowReactive } from 'vue'
 import { FormField } from './FormField'
 import { ValidationError } from './ValidationError'
 import { isSimpleRule, RuleInformation } from './rules'
-import * as n_domain from '../domain'
+import * as nDomain from '../domain'
 
 type ValidatorResult = Promise<void | string> | void
 
@@ -37,9 +37,9 @@ export class Form {
   private _keyedValidators: Map<string, KeyedValidators> = new Map()
   private _reactiveFieldMap: Map<number, FormField> = shallowReactive(new Map())
 
-  tryGetSimpleValidators = n_domain.tryGet(this._simpleValidators)
-  trySetKeyedValidators = n_domain.trySet(this._keyedValidators)
-  tryGetKeyedValidators = n_domain.tryGet(this._keyedValidators)
+  tryGetSimpleValidators = nDomain.tryGet(this._simpleValidators)
+  trySetKeyedValidators = nDomain.trySet(this._keyedValidators)
+  tryGetKeyedValidators = nDomain.tryGet(this._keyedValidators)
 
   rulesValidating = ref(0)
   submitting = ref(false)
@@ -82,7 +82,7 @@ export class Form {
 
       let incrementedTimes = 0
       const validator: Validator = debounce
-        ? n_domain.debounce(
+        ? nDomain.debounce(
             modelValues => {
               field.validate(ruleNumber, modelValues, true)
               field.rulesValidating.value -= incrementedTimes
@@ -154,7 +154,7 @@ export class Form {
     this._invokeValidatorsForKeys(meta.keys, force, false)
   }
 
-  async validateAll(names?: readonly n_domain.Key[]) {
+  async validateAll(names?: readonly nDomain.Key[]) {
     const settledResults = await Promise.allSettled(
       this._collectValidatorResultsForNames(names)
     )
@@ -224,7 +224,7 @@ export class Form {
   }
 
   private *_collectValidatorResultsForNames(
-    names?: readonly n_domain.Key[]
+    names?: readonly nDomain.Key[]
   ): Generator<ValidatorResult> {
     if (names === undefined) {
       for (const {

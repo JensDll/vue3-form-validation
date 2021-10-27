@@ -6,7 +6,6 @@ import {
   ValidationError
 } from '../../src/form'
 import { makeMocks } from '../utils'
-import { VALIDATION_CONFIG } from '../../src/validationConfig'
 
 let form: Form
 let asyncRules: Tuple<jest.Mock, 6>
@@ -38,8 +37,14 @@ function assignFields(validationBehavior: ValidationBehaviorFunction) {
 
 beforeEach(() => {
   form = new Form()
-  asyncRules = makeMocks(6, i => i <= 2 && `async[${i}]`, 100, 10)
-  syncRules = makeMocks(6, i => i <= 2 && `sync[${i}]`)
+  asyncRules = makeMocks(6, {
+    returnCallback: i => i <= 2 && `async[${i}]`,
+    timeout: 100,
+    increasing: 10
+  })
+  syncRules = makeMocks(6, {
+    returnCallback: i => i <= 2 && `sync[${i}]`
+  })
 })
 
 type EachValidationBehavior = {
@@ -48,10 +53,8 @@ type EachValidationBehavior = {
 
 const EACH_VALIDATION_BEHAVIOR: EachValidationBehavior[] = [
   {
-    validationBehavior: VALIDATION_CONFIG.validationBehavior.get('aggressive')!
-  },
-  { validationBehavior: VALIDATION_CONFIG.validationBehavior.get('lazy')! },
-  { validationBehavior: VALIDATION_CONFIG.validationBehavior.get('lazier')! }
+    validationBehavior: () => true
+  }
 ]
 
 describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(

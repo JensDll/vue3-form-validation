@@ -1,13 +1,13 @@
 import { reactive, Ref, ComputedRef } from 'vue'
-import * as n_form from './form'
-import * as n_domain from './domain'
+import * as nForm from './form'
+import * as nDomain from './domain'
 
 export type UseValidation<FormData extends object> = {
   /**
    *
    * A transformed reactive `formData` object.
    */
-  form: n_form.TransformedFormData<FormData>
+  form: nForm.TransformedFormData<FormData>
   /**
    *
    * `True` during validation after calling `validateFields` when there were rules that returned a `Promise`.
@@ -45,7 +45,7 @@ export type UseValidation<FormData extends object> = {
      * undefined // meaning validate all
      * ```
      */
-    names?: n_form.FieldNames<FormData>[] | string[]
+    names?: nForm.FieldNames<FormData>[] | string[]
     /**
      *
      * Filter which values to keep in the resulting form data.
@@ -59,9 +59,9 @@ export type UseValidation<FormData extends object> = {
      * ```
      */
     predicate?: (
-      value: Omit<n_domain.DeepIteratorResult, 'isLeaf' | 'parent'>
+      value: Omit<nDomain.DeepIteratorResult, 'isLeaf' | 'parent'>
     ) => unknown
-  }): Promise<n_form.ResultFormData<FormData>>
+  }): Promise<nForm.ResultFormData<FormData>>
   /**
    *
    * Reset all fields to their default value or pass an object to set specific values.
@@ -71,7 +71,7 @@ export type UseValidation<FormData extends object> = {
    *
    * @param formData - `FormData` to set specific values. It has the same structure as the object passed to `useValidation`.
    */
-  resetFields(formData?: Partial<n_form.ResultFormData<FormData>>): void
+  resetFields(formData?: Partial<nForm.ResultFormData<FormData>>): void
   /**
    *
    * Adds a new property to the form data.
@@ -82,11 +82,11 @@ export type UseValidation<FormData extends object> = {
    * @param path - A path of `string` and `numbers`
    * @param value - The value to add at the specified path
    */
-  add<Ks extends readonly n_domain.Key[]>(
+  add<Ks extends readonly nDomain.Key[]>(
     path: readonly [...Ks],
-    value: n_domain.DeepIndex<FormData, Ks> extends (infer TArray)[]
+    value: nDomain.DeepIndex<FormData, Ks> extends (infer TArray)[]
       ? TArray
-      : n_domain.DeepIndex<FormData, Ks>
+      : nDomain.DeepIndex<FormData, Ks>
   ): void
   /**
    *
@@ -94,7 +94,7 @@ export type UseValidation<FormData extends object> = {
    *
    * @param path - A path of `string` and `numbers` to the property to remove
    */
-  remove(path: n_domain.Key[]): void
+  remove(path: nDomain.Key[]): void
 }
 
 /**
@@ -102,7 +102,7 @@ export type UseValidation<FormData extends object> = {
  * Vue composition function for form validation.
  *
  * @remarks
- * For type inference inside of `useValidation` you need to define the structure of your
+ * For type inference inside of `useValidation` make sure to define the structure of your
  * `formData` upfront and pass it as the generic parameter `FormData`.
  *
  * @param formData - The structure of your `formData`.
@@ -120,15 +120,15 @@ export type UseValidation<FormData extends object> = {
 export function useValidation<FormData extends object>(
   formData: FormData
 ): UseValidation<FormData> {
-  const form = new n_form.Form()
-  const promiseCancel = new n_domain.PromiseCancel<n_form.ValidationError>()
+  const form = new nForm.Form()
+  const promiseCancel = new nDomain.PromiseCancel<nForm.ValidationError>()
 
-  n_form.transformFormData(form, formData)
+  nForm.transformFormData(form, formData)
 
   const transformedFormData: any = reactive(formData)
 
   return {
-    form: transformedFormData as n_form.TransformedFormData<FormData>,
+    form: transformedFormData as nForm.TransformedFormData<FormData>,
     submitting: form.submitting,
     validating: form.validating,
     hasError: form.hasError,
@@ -137,10 +137,10 @@ export function useValidation<FormData extends object>(
     async validateFields({ names, predicate } = {}) {
       form.submitting.value = true
 
-      const resultFormData = n_form.getResultFormData(
+      const resultFormData = nForm.getResultFormData(
         transformedFormData,
         predicate
-      ) as n_form.ResultFormData<FormData>
+      ) as nForm.ResultFormData<FormData>
 
       try {
         await promiseCancel.race(form.validateAll(names as any))
@@ -153,13 +153,13 @@ export function useValidation<FormData extends object>(
 
     resetFields(formData) {
       if (form.submitting.value) {
-        promiseCancel.cancelReject(new n_form.ValidationError())
+        promiseCancel.cancelReject(new nForm.ValidationError())
       }
 
       if (formData === undefined) {
         form.resetFields()
       } else {
-        n_form.resetFields(form, formData, transformedFormData)
+        nForm.resetFields(form, formData, transformedFormData)
       }
     },
 
@@ -168,13 +168,13 @@ export function useValidation<FormData extends object>(
 
       if (lastKey !== undefined) {
         const box = { [lastKey]: value }
-        n_form.transformFormData(form, box)
+        nForm.transformFormData(form, box)
         const transformedBox = box[lastKey]
-        const valueAtPath = n_domain.path(path, transformedFormData)
+        const valueAtPath = nDomain.path(path, transformedFormData)
         if (Array.isArray(valueAtPath)) {
           valueAtPath.push(transformedBox)
         } else {
-          n_domain.set(transformedFormData, path, transformedBox)
+          nDomain.set(transformedFormData, path, transformedBox)
         }
       }
     },
@@ -184,15 +184,15 @@ export function useValidation<FormData extends object>(
 
       if (lastKey !== undefined) {
         if (path.length === 0) {
-          n_form.disposeForm(form, transformedFormData[lastKey])
+          nForm.disposeForm(form, transformedFormData[lastKey])
           delete transformedFormData[lastKey]
         } else {
-          const valueAtPath = n_domain.path(path, transformedFormData)
+          const valueAtPath = nDomain.path(path, transformedFormData)
           if (Array.isArray(valueAtPath)) {
             const deletedFormData = valueAtPath.splice(+lastKey, 1)
-            n_form.disposeForm(form, deletedFormData)
+            nForm.disposeForm(form, deletedFormData)
           } else {
-            n_form.disposeForm(form, valueAtPath[lastKey])
+            nForm.disposeForm(form, valueAtPath[lastKey])
             delete valueAtPath[lastKey]
           }
         }

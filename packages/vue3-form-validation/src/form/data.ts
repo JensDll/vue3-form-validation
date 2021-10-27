@@ -2,30 +2,30 @@ import { isReactive, ComputedRef, Ref, UnwrapRef, unref } from 'vue'
 import { Form } from './Form'
 import { FieldRule, RuleInformation } from './rules'
 import { VALIDATION_CONFIG } from '../validationConfig'
-import * as n_domain from '../domain'
+import * as nDomain from '../domain'
 
-type DeepMaybeRefRecord<T extends Record<n_domain.Key, unknown> | undefined> =
+type DeepMaybeRefRecord<T extends Record<nDomain.Key, unknown> | undefined> =
   T extends undefined
     ? undefined
     : {
         [K in keyof T]: T[K] extends Ref
           ? T[K] | UnwrapRef<T[K]>
           : T[K] extends any[]
-          ? n_domain.MaybeRef<T[K]>
+          ? nDomain.MaybeRef<T[K]>
           : T[K] extends Record<string, unknown> | undefined
           ? DeepMaybeRefRecord<T[K]>
-          : n_domain.MaybeRef<T[K]>
+          : nDomain.MaybeRef<T[K]>
       }
 
 export type DeepMaybeRef<T> = T extends Ref
   ? T | UnwrapRef<T>
   : T extends Record<string, unknown>
   ? DeepMaybeRefRecord<T>
-  : n_domain.MaybeRef<T>
+  : nDomain.MaybeRef<T>
 
 export type Field<
   TValue,
-  TExtra extends Record<n_domain.Key, unknown> = Record<string, never>
+  TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
 > = {
   /**
    *
@@ -58,7 +58,7 @@ export type ValidateOptions = {
 
 export type TransformedField<
   TValue,
-  TExtra extends Record<n_domain.Key, unknown> = Record<string, never>
+  TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
 > = {
   /**
    *
@@ -157,12 +157,14 @@ export type TransformedFormData<FormData extends object | undefined> =
       }
 
 export const isField = <T>(x: unknown): x is Field<T> =>
-  n_domain.isRecord(x) ? '$value' in x : false
+  nDomain.isRecord(x) ? '$value' in x : false
 
 export const isTransformedField = <T>(x: unknown): x is TransformedField<T> =>
-  n_domain.isRecord(x) ? '$uid' in x && '$value' in x : false
+  nDomain.isRecord(x) ? '$uid' in x && '$value' in x : false
 
-function mapFieldRules(fieldRules: FieldRule<unknown>[]): RuleInformation[] {
+export function mapFieldRules(
+  fieldRules: FieldRule<unknown>[]
+): RuleInformation[] {
   const defaultValidationBehavior =
     VALIDATION_CONFIG.getDefaultValidationBehavior()
 
@@ -200,7 +202,7 @@ function mapFieldRules(fieldRules: FieldRule<unknown>[]): RuleInformation[] {
       if (validationBehavior !== undefined) {
         return { validationBehavior, rule: second, debounce: third }
       } else {
-        console.warn(
+        console.error(
           `[useValidation] Validation behavior with name '${first}' does not exist. Valid values are`,
           VALIDATION_CONFIG.validationBehavior.keys()
         )
@@ -216,7 +218,7 @@ function mapFieldRules(fieldRules: FieldRule<unknown>[]): RuleInformation[] {
   })
 }
 
-function registerField(
+export function registerField(
   form: Form,
   name: string,
   field: Field<unknown>
@@ -228,7 +230,7 @@ function registerField(
 } {
   const { $value, $rules, ...fieldExtraProperties } = field
   const rules = $rules ? mapFieldRules($rules) : []
-  const uid = n_domain.uid()
+  const uid = nDomain.uid()
   const formField = form.registerField(uid, name, $value, rules)
 
   return {
@@ -255,7 +257,7 @@ function registerField(
 }
 
 export function transformFormData(form: Form, formData: object) {
-  for (const { key, value, parent } of n_domain.deepIterator(formData)) {
+  for (const { key, value, parent } of nDomain.deepIterator(formData)) {
     if (isField(value)) {
       const transformedField = registerField(form, key, value)
       parent[key] = transformedField
@@ -266,12 +268,12 @@ export function transformFormData(form: Form, formData: object) {
 export function getResultFormData(
   transformedFormData: any,
   predicate: (
-    value: Omit<n_domain.DeepIteratorResult, 'isLeaf' | 'parent'>
+    value: Omit<nDomain.DeepIteratorResult, 'isLeaf' | 'parent'>
   ) => unknown = () => true
 ): any {
   const result = {}
 
-  for (const { key, value, path, isLeaf } of n_domain.deepIterator(
+  for (const { key, value, path, isLeaf } of nDomain.deepIterator(
     transformedFormData,
     isTransformedField
   )) {
@@ -283,9 +285,9 @@ export function getResultFormData(
         // Value is reactive -> value is an object or array
         // Make sure to do a deep clone to loose the reactive reference
         if (isReactive(unpackedValue)) {
-          n_domain.set(result, path, n_domain.deepCopy(unpackedValue))
+          nDomain.set(result, path, nDomain.deepCopy(unpackedValue))
         } else {
-          n_domain.set(result, path, unpackedValue)
+          nDomain.set(result, path, unpackedValue)
         }
       }
     }
@@ -295,7 +297,7 @@ export function getResultFormData(
 }
 
 export function disposeForm(form: Form, deletedFormData: any) {
-  for (const { value } of n_domain.deepIterator(
+  for (const { value } of nDomain.deepIterator(
     { box: deletedFormData },
     isTransformedField
   )) {
@@ -315,7 +317,7 @@ export function resetFields(form: Form, data: any, transformedFormData: any) {
       return
     }
 
-    if (n_domain.isObject(value)) {
+    if (nDomain.isObject(value)) {
       resetFields(form, value, transformedFormData[key])
     }
   })

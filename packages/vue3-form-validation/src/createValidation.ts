@@ -5,9 +5,9 @@ import {
   ValidationBehaviorString,
   DefaultValidationBehaviorString
 } from './form'
-import * as n_domain from './domain'
+import * as nDomain from './domain'
 
-export type ConfigurationValidationBehavior = n_domain.Optional<
+export type ConfigurationValidationBehavior = nDomain.Optional<
   {
     [K in ValidationBehaviorString]: ValidationBehaviorFunction
   },

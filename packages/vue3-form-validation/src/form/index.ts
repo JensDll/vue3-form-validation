@@ -4,7 +4,8 @@ export {
   resetFields,
   transformFormData,
   isField,
-  isTransformedField
+  isTransformedField,
+  mapFieldRules
 } from './data'
 export { Form } from './Form'
 export { FormField } from './FormField'
@@ -14,7 +15,8 @@ export {
   FieldRule,
   KeyedRule,
   SimpleRule,
-  RuleWithKey
+  RuleWithKey,
+  RuleInformation
 } from './rules'
 export {
   ValidationBehavior,

@@ -4,7 +4,7 @@ import { makeMocks } from '../utils'
 let mocks: Tuple<jest.Mock, 2>
 
 beforeEach(() => {
-  mocks = makeMocks(2, () => true)
+  mocks = makeMocks(2, { returnCallback: () => true })
 })
 
 describe('without shouldInvoke', () => {

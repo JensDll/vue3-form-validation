@@ -1,8 +1,9 @@
 import { ref } from 'vue'
 import { useValidation } from '../src/useValidation'
 import { Field, TransformedFormData } from '../src/form'
+import { makeMocks } from './utils'
 
-type TestData = {
+type FormData = {
   a: Field<string>
   b: Field<string>
   c: Field<number[]>
@@ -21,47 +22,42 @@ type TestData = {
   }[]
 }
 
-let testData: TestData
-
-const delay = () =>
-  new Promise(resolve => {
-    setTimeout(() => {
-      resolve(null)
-    }, 100)
-  })
+let formData: FormData
 
 beforeEach(() => {
-  testData = {
+  const [mock] = makeMocks(1, { timeout: 100 })
+
+  formData = {
     a: {
       $value: ref(''),
-      $rules: [delay]
+      $rules: [mock]
     },
     b: {
       $value: ref(''),
-      $rules: [delay]
+      $rules: [mock]
     },
     c: {
       $value: [1, 2, 3],
-      $rules: [delay]
+      $rules: [mock]
     },
     d: {
       $value: {
         a: ''
       },
-      $rules: [delay]
+      $rules: [mock]
     },
     es: [
       {
         f: {
           $value: '',
-          $rules: [delay]
+          $rules: [mock]
         },
         gs: []
       },
       {
         f: {
           $value: '',
-          $rules: [delay]
+          $rules: [mock]
         },
         gs: [
           {
@@ -73,7 +69,7 @@ beforeEach(() => {
                   }
                 }
               },
-              $rules: [delay]
+              $rules: [mock]
             }
           }
         ]
@@ -82,26 +78,24 @@ beforeEach(() => {
   }
 })
 
-const changeFormValues = (form: TransformedFormData<TestData>) => {
-  form.a.$value = 'a'
-  form.b.$value = 'b'
-  form.c.$value[0] = 100
-  form.c.$value[1] = 100
-  form.c.$value[2] = 100
-  form.c.$value[3] = 100
-  form.c.$value[4] = 100
-  form.d.$value.a = 'd.a'
-  form.es[0].f.$value = 'f0'
-  form.es[1].f.$value = 'f1'
-  ;(form.es[1].gs[0].h.$value.a.b.c as any)[0] = 200
-  ;(form.es[1].gs[0].h.$value.a.b.c as any)[1] = 200
-  ;(form.es[1].gs[0].h.$value.a.b.c as any)[2] = 200
-  ;(form.es[1].gs[0].h.$value.a.b.c as any)[3] = 200
-  ;(form.es[1].gs[0].h.$value.a.b.c as any)[4] = 200
+const changeFormValues = (form: TransformedFormData<FormData>) => {
+  form.a.$value = 'x'
+  form.b.$value = 'x'
+  form.c.$value[0] = -1
+  form.c.$value[1] = -1
+  form.c.$value[2] = -1
+  form.d.$value.a = 'x'
+  form.es[0].f.$value = 'x'
+  form.es[1].f.$value = 'x'
+  form.es[1].gs[0].h.$value.a.b.c[0] = -1
+  form.es[1].gs[0].h.$value.a.b.c[1] = -1
+  form.es[1].gs[0].h.$value.a.b.c[2] = -1
+  form.es[1].gs[0].h.$value.a.b.c[3] = -1
+  form.es[1].gs[0].h.$value.a.b.c[4] = -1
 }
 
-test('change form values after submitting', done => {
-  const { form, validateFields } = useValidation<TestData>(testData)
+test('should not change result data when changing form after submitting', done => {
+  const { form, validateFields } = useValidation<FormData>(formData)
 
   validateFields()
     .then(formData => {
@@ -122,20 +116,18 @@ test('change form values after submitting', done => {
           }
         ]
       })
+      done()
     })
     .catch(e => {
       fail(e)
-    })
-    .finally(() => {
-      done()
     })
 
   changeFormValues(form)
 })
 
 describe('reset fields', () => {
-  test('mutiple times to default values', () => {
-    const { form, resetFields } = useValidation<TestData>(testData)
+  test('multiple times to default values', () => {
+    const { form, resetFields } = useValidation<FormData>(formData)
 
     for (let i = 0; i < 10; i++) {
       changeFormValues(form)
@@ -241,8 +233,8 @@ describe('reset fields', () => {
     }
   })
 
-  test('mutiple times to specific values', () => {
-    const { form, resetFields } = useValidation<TestData>(testData)
+  test('multiple times to specific values', () => {
+    const { form, resetFields } = useValidation<FormData>(formData)
 
     for (let i = 0; i < 10; i++) {
       changeFormValues(form)
@@ -258,7 +250,7 @@ describe('reset fields', () => {
             f: 'foo',
             gs: [
               {
-                h: { a: { b: { c: [420, 420, 420] } } }
+                h: { a: { b: { c: [42, 42, 42] } } }
               }
             ]
           }
@@ -344,7 +336,7 @@ describe('reset fields', () => {
                   $value: {
                     a: {
                       b: {
-                        c: [420, 420, 420]
+                        c: [42, 42, 42]
                       }
                     }
                   },
@@ -364,8 +356,8 @@ describe('reset fields', () => {
     }
   })
 
-  test('mutiple times to specific values and default values', () => {
-    const { form, resetFields } = useValidation<TestData>(testData)
+  test('multiple times to specific values and default values', () => {
+    const { form, resetFields } = useValidation<FormData>(formData)
 
     for (let i = 0; i < 20; i++) {
       changeFormValues(form)
@@ -591,7 +583,7 @@ describe('reset fields', () => {
 
 describe('add and remove', () => {
   test('add field', () => {
-    const { form, add } = useValidation(testData)
+    const { form, add } = useValidation(formData)
 
     add(['es'], {
       f: {
@@ -713,7 +705,7 @@ describe('add and remove', () => {
   })
 
   test('remove field', () => {
-    const { form, remove } = useValidation(testData)
+    const { form, remove } = useValidation(formData)
 
     remove(['es', 1])
 

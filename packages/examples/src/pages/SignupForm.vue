@@ -21,6 +21,7 @@ const { form, submitting, validateFields, resetFields } =
         [
           'change',
           name => {
+            console.log(name)
             if (name.length === 0) {
               return 'Please enter your name'
             }
