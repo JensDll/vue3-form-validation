@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
-        id: node
+        id: setup-node
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
@@ -20,34 +20,12 @@ jobs:
           cache-dependency-path: '**/package-lock.json'
       - name: Echo debug information
         run: |
+          ls -la
           node --version
           npm --version
           env
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJSON(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJSON(steps) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJSON(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJSON(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJSON(matrix) }}
-        run: echo "$MATRIX_CONTEXT"
       - name: Install dependencies
+        if: setup-node.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build the project
         run: npm run build
