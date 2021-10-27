@@ -26,7 +26,6 @@ jobs:
           env
           echo ${{ toJSON(steps) }}
       - name: Install dependencies
-        if: cache.outputs.cache-hit != 'true'
         run: npm ci
       - name: Build the project
         run: npm run build
