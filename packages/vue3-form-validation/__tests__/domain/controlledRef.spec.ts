@@ -63,13 +63,14 @@ describe('reactivity', () => {
   })
 
   it('should unwrap ref', async () => {
-    const a = controlledRef(ref(1))
+    const a = ref(1)
+    const b = controlledRef(a)
 
-    watch(a, mocks[0], {
+    watch(b, mocks[0], {
       deep: true
     })
 
-    a.value = 2
+    b.value = 2
 
     await nextTick()
 
@@ -94,6 +95,31 @@ describe('reactivity', () => {
       { count: 2 },
       expect.any(Function)
     )
+  })
+
+  it('ref in ref old refs should be updated', async () => {
+    const a = ref(1)
+    const b = controlledRef(a)
+    const c = controlledRef(b)
+
+    watch(a, mocks[0])
+    watch(c, mocks[1])
+
+    c.value = 2
+
+    await nextTick()
+
+    expect(a.value).toBe(2)
+    expect(mocks[0]).toBeCalledTimes(1)
+    expect(mocks[1]).toBeCalledTimes(1)
+
+    c.silentSet(3)
+
+    await nextTick()
+
+    expect(a.value).toBe(3)
+    expect(mocks[0]).toBeCalledTimes(2)
+    expect(mocks[1]).toBeCalledTimes(1)
   })
 })
 

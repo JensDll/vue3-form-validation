@@ -7,7 +7,11 @@ import * as nDomain from '../domain'
 type ValidatorResult = Promise<void | string> | void
 
 type Validator = (
-  modelValues: unknown[],
+  /**
+   * Type definition might not be accurate.
+   * The accurate type would be anything expect `ControlledRef`.
+   */
+  modelValues: (string | number | Record<any, unknown>)[],
   force: boolean,
   submit: boolean
 ) => ValidatorResult
@@ -149,7 +153,7 @@ export class Form {
     const { validators, meta } = simpleValidators
 
     for (const validator of validators) {
-      validator([meta.field.modelValue], force, false)
+      validator([meta.field.modelValue.value], force, false)
     }
     this._invokeValidatorsForKeys(meta.keys, force, false)
   }
@@ -200,7 +204,9 @@ export class Form {
       const keyedValidators = this._keyedValidators.get(key)!
       if (this._isEveryFieldTouched(keyedValidators)) {
         const values = [...keyedValidators.values()]
-        const modelValues = values.map(({ meta }) => meta.field.modelValue)
+        const modelValues = values.map(
+          ({ meta }) => meta.field.modelValue.value
+        )
         for (const { validator } of values) {
           validator(modelValues, force, submit)
         }
@@ -216,7 +222,7 @@ export class Form {
     for (const key of keys) {
       const keyedValidators = this._keyedValidators.get(key)!
       const values = [...keyedValidators.values()]
-      const modelValues = values.map(({ meta }) => meta.field.modelValue)
+      const modelValues = values.map(({ meta }) => meta.field.modelValue.value)
       for (const { validatorNotDebounced } of values) {
         yield validatorNotDebounced(modelValues, force, submit)
       }
@@ -233,7 +239,7 @@ export class Form {
       } of this._simpleValidators.values()) {
         meta.field.touched.value = true
         for (const validator of validatorsNotDebounced) {
-          yield validator([meta.field.modelValue], false, true)
+          yield validator([meta.field.modelValue.value], false, true)
         }
       }
       yield* this._collectValidatorResultsForKeys(
@@ -251,7 +257,7 @@ export class Form {
         if (uniqueNames.has(meta.field.name)) {
           meta.field.touched.value = true
           for (const validator of validatorsNotDebounced) {
-            yield validator([meta.field.modelValue], false, true)
+            yield validator([meta.field.modelValue.value], false, true)
           }
           yield* this._collectValidatorResultsForKeys(
             this._keyedValidators.keys(),

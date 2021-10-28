@@ -7,12 +7,12 @@ export type ControlledRef<T> = {
 } & Ref<T>
 
 export function controlledRef<T>(initial: T): ControlledRef<UnwrapRef<T>> {
-  let _value: T = isRef(initial)
+  const _isRef = isRef(initial)
+  let _value: T = _isRef
     ? initial.value
     : isObject(initial)
     ? reactive(initial as any)
     : initial
-
   let _track: () => void
   let _trigger: () => void
 
@@ -33,6 +33,11 @@ export function controlledRef<T>(initial: T): ControlledRef<UnwrapRef<T>> {
 
   function set(value: T, shouldTrigger = true) {
     _value = value
+
+    if (_isRef) {
+      initial.value = value
+    }
+
     if (shouldTrigger) {
       _trigger()
     }

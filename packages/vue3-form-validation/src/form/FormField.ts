@@ -62,7 +62,7 @@ export class FormField {
 
     const buffer = this._buffers[ruleNumber]
     let error: unknown
-    const ruleResult = rule(...modelValues.map(unref))
+    const ruleResult = rule(...modelValues)
 
     const shouldSetError = buffer.addLast(true)
 
@@ -109,7 +109,7 @@ export class FormField {
       }
     }
 
-    for (let i = 1; i < this.rawErrors.length; i++) {
+    for (let i = 0; i < this.rawErrors.length; i++) {
       this.rawErrors[i] = null
     }
   }
