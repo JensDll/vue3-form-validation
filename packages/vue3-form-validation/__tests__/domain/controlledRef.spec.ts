@@ -3,10 +3,10 @@ import { ref, watch, nextTick } from 'vue'
 import { makeMocks } from '../utils'
 import { controlledRef, Tuple } from '../../src/domain'
 
-let mocks: Tuple<jest.Mock, 2>
+let mocks: Tuple<jest.Mock, 3>
 
 beforeEach(() => {
-  mocks = makeMocks(2)
+  mocks = makeMocks(3)
 })
 
 it('should hold a value', () => {
@@ -97,29 +97,34 @@ describe('reactivity', () => {
     )
   })
 
-  it('ref in ref old refs should be updated', async () => {
+  it('ref in ref should update old refs', async () => {
     const a = ref(1)
     const b = controlledRef(a)
     const c = controlledRef(b)
 
     watch(a, mocks[0])
-    watch(c, mocks[1])
+    watch(b, mocks[1])
+    watch(c, mocks[2])
 
     c.value = 2
 
     await nextTick()
 
     expect(a.value).toBe(2)
+    expect(b.value).toBe(2)
     expect(mocks[0]).toBeCalledTimes(1)
     expect(mocks[1]).toBeCalledTimes(1)
+    expect(mocks[2]).toBeCalledTimes(1)
 
     c.silentSet(3)
 
     await nextTick()
 
     expect(a.value).toBe(3)
+    expect(b.value).toBe(3)
     expect(mocks[0]).toBeCalledTimes(2)
-    expect(mocks[1]).toBeCalledTimes(1)
+    expect(mocks[1]).toBeCalledTimes(2)
+    expect(mocks[2]).toBeCalledTimes(1)
   })
 })
 

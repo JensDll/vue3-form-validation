@@ -1,5 +1,5 @@
 import { Plugin } from 'vue'
-import { VALIDATION_CONFIG } from './validationConfig'
+import { VALIDATION_CONFIG } from './ValidationConfig'
 import {
   ValidationBehaviorFunction,
   ValidationBehaviorString,

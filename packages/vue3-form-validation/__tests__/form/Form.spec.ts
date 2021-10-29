@@ -1,164 +1,344 @@
-import { Tuple } from '../../src/domain'
-import {
-  Form,
-  FormField,
-  ValidationBehaviorFunction,
-  ValidationError
-} from '../../src/form'
-import { makeMocks } from '../utils'
+import { ref, nextTick } from 'vue'
+
+import { Form, FormField, ValidationBehaviorInfo } from '../../src/form'
+import { makePromise } from '../utils'
 
 let form: Form
-let asyncRules: Tuple<jest.Mock, 6>
-let syncRules: Tuple<jest.Mock, 6>
-let fields: [FormField, FormField, FormField]
-
-function assignFields(validationBehavior: ValidationBehaviorFunction) {
-  fields = [
-    form.registerField(1, 'field_1', '', [
-      { validationBehavior, rule: syncRules[0] },
-      { validationBehavior, rule: syncRules[1] },
-      { validationBehavior, rule: { key: 'a', rule: asyncRules[0] } },
-      { validationBehavior, rule: asyncRules[1] }
-    ]),
-    form.registerField(2, 'field_2', '', [
-      { validationBehavior, rule: syncRules[2] },
-      { validationBehavior, rule: { key: 'a', rule: asyncRules[2] } },
-      { validationBehavior, rule: { key: 'b', rule: asyncRules[3] } },
-      { validationBehavior, rule: asyncRules[4] }
-    ]),
-    form.registerField(3, 'field_3', '', [
-      { validationBehavior, rule: syncRules[3] },
-      { validationBehavior, rule: syncRules[4] },
-      { validationBehavior, rule: syncRules[5] },
-      { validationBehavior, rule: { key: 'b', rule: asyncRules[5] } }
-    ])
-  ]
-}
 
 beforeEach(() => {
   form = new Form()
-  asyncRules = makeMocks(6, {
-    returnCallback: i => i <= 2 && `async[${i}]`,
-    timeout: 100,
-    increasing: 10
+})
+
+describe('validation behavior', () => {
+  let vbf: jest.Mock
+  let rule: jest.Mock
+  let field: FormField
+
+  beforeEach(() => {
+    vbf = jest.fn()
+    rule = jest.fn()
+
+    field = form.registerField(1, 'field', 'foo', [
+      {
+        validationBehavior: vbf,
+        rule
+      }
+    ])
   })
-  syncRules = makeMocks(6, {
-    returnCallback: i => i <= 2 && `sync[${i}]`
+
+  it('should call vbf before validating', () => {
+    form.validate(1)
+
+    expect(vbf).toBeCalledTimes(1)
+    expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+      dirty: false,
+      force: false,
+      hasError: false,
+      submit: false,
+      touched: false,
+      value: 'foo'
+    })
+  })
+
+  it('with force flag', () => {
+    form.validate(1, true)
+
+    expect(vbf).toBeCalledTimes(1)
+    expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+      dirty: false,
+      force: true,
+      hasError: false,
+      submit: false,
+      touched: false,
+      value: 'foo'
+    })
+  })
+
+  it('with submit flag', async () => {
+    await form.validateAll()
+
+    expect(vbf).toBeCalledTimes(1)
+    expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+      dirty: false,
+      force: false,
+      hasError: false,
+      submit: true,
+      touched: true,
+      value: 'foo'
+    })
+  })
+
+  it('when touched', () => {
+    field.touched.value = true
+
+    form.validate(1)
+
+    expect(vbf).toBeCalledTimes(1)
+    expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+      dirty: false,
+      force: false,
+      hasError: false,
+      submit: false,
+      touched: true,
+      value: 'foo'
+    })
+  })
+
+  it('when dirty', async () => {
+    field.modelValue.value = 'bar'
+
+    await nextTick()
+
+    expect(vbf).toBeCalledTimes(1)
+    expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+      dirty: true,
+      force: false,
+      hasError: false,
+      submit: false,
+      touched: false,
+      value: 'bar'
+    })
+  })
+
+  it('with ref', () => {
+    const vbf = jest.fn()
+    const rule = jest.fn()
+
+    field = form.registerField(1, 'field', ref('foo'), [
+      {
+        validationBehavior: vbf,
+        rule
+      }
+    ])
+
+    form.validate(1)
+
+    expect(vbf).toBeCalledTimes(1)
+    expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+      dirty: false,
+      force: false,
+      hasError: false,
+      submit: false,
+      touched: false,
+      value: 'foo'
+    })
+  })
+
+  it('with debounce', done => {
+    const vbf = jest.fn()
+    const rule = jest.fn()
+
+    field = form.registerField(1, 'field', ref('foo'), [
+      {
+        validationBehavior: vbf,
+        rule,
+        debounce: 20
+      }
+    ])
+
+    form.validate(1)
+
+    setTimeout(() => {
+      expect(vbf).toBeCalledTimes(1)
+      expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+        dirty: false,
+        force: false,
+        hasError: false,
+        submit: false,
+        touched: false,
+        value: 'foo'
+      })
+      done()
+    }, 20)
+  })
+
+  it('should execute rule when vbf returns true and work with debounce', done => {
+    const vbf = jest.fn(() => true)
+    const rule = jest.fn()
+
+    field = form.registerField(1, 'field', ref('foo'), [
+      {
+        validationBehavior: vbf,
+        rule
+      },
+      {
+        validationBehavior: vbf,
+        rule,
+        debounce: 20
+      }
+    ])
+
+    form.validate(1)
+
+    setTimeout(() => {
+      expect(vbf).toBeCalledTimes(2)
+      expect(vbf).nthCalledWith<ValidationBehaviorInfo[]>(1, {
+        dirty: false,
+        force: false,
+        hasError: false,
+        submit: false,
+        touched: false,
+        value: 'foo'
+      })
+      expect(vbf).nthCalledWith<ValidationBehaviorInfo[]>(2, {
+        dirty: false,
+        force: false,
+        hasError: false,
+        submit: false,
+        touched: false,
+        value: 'foo'
+      })
+      expect(rule).toBeCalledTimes(2)
+      expect(rule).nthCalledWith(1, 'foo')
+      expect(rule).nthCalledWith(2, 'foo')
+      done()
+    }, 20)
+  })
+
+  it('should not execute rule when vbf returns false', () => {
+    const vbf = jest.fn(() => false)
+    const rule = jest.fn()
+
+    field = form.registerField(1, 'field', ref('foo'), [
+      {
+        validationBehavior: vbf,
+        rule
+      }
+    ])
+
+    form.validate(1)
+
+    expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+      dirty: false,
+      force: false,
+      hasError: false,
+      submit: false,
+      touched: false,
+      value: 'foo'
+    })
+    expect(rule).toBeCalledTimes(0)
   })
 })
 
-type EachValidationBehavior = {
-  validationBehavior: ValidationBehaviorFunction
-}
+describe('validation', () => {
+  it('async simple rule: should be validating and set error', done => {
+    const vbf = jest.fn(() => true)
+    const rule = jest.fn(() => makePromise('Error message', 20))
 
-const EACH_VALIDATION_BEHAVIOR: EachValidationBehavior[] = [
-  {
-    validationBehavior: () => true
-  }
-]
-
-describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(
-  'form.validate ($validationBehavior)',
-  ({ validationBehavior }) => {
-    beforeEach(() => {
-      assignFields(validationBehavior)
-    })
-
-    it('should prioritize last rule call', async () => {
-      const testFactory = () =>
-        new Promise<void>(resolve => {
-          const ms = { value: 0 }
-          let timeoutCalledTimes = 0
-
-          const callback = () => {
-            expect(rule).toHaveBeenCalledTimes(6)
-            expect(timeoutCalledTimes).toBe(6)
-            expect(field.errors.value).toStrictEqual(['50'])
-            resolve()
-          }
-
-          const rule = jest.fn(
-            () =>
-              new Promise(resolve => {
-                const result = ms.value.toString()
-                setTimeout(() => {
-                  resolve(result)
-                  if (++timeoutCalledTimes === 6) {
-                    callback()
-                  }
-                }, ms.value)
-              })
-          )
-
-          const field = form.registerField(1, 'name', '', [
-            { validationBehavior, rule }
-          ])
-          field.touched.value = true
-
-          ms.value = 600
-          form.validate(1, true)
-          ms.value = 100
-          form.validate(1, true)
-          ms.value = 400
-          form.validate(1, true)
-          ms.value = 800
-          form.validate(1, true)
-          ms.value = 200
-          form.validate(1, true)
-          ms.value = 50
-          form.validate(1, true)
-        })
-
-      const tests = []
-
-      for (let i = 0; i < 1000; i++) {
-        tests.push(testFactory())
+    const field = form.registerField(1, 'field', ref('foo'), [
+      {
+        validationBehavior: vbf,
+        rule
       }
+    ])
 
-      await Promise.all(tests)
-    })
-  }
-)
+    form.validate(1)
 
-describe.each<EachValidationBehavior>(EACH_VALIDATION_BEHAVIOR)(
-  'form.validateAll ($validationBehavior) ',
-  ({ validationBehavior }) => {
-    beforeEach(() => {
-      assignFields(validationBehavior)
-    })
+    expect(field.validating.value).toBe(true)
+    expect(field.errors.value).toStrictEqual([])
+    expect(field.rawErrors).toStrictEqual([null])
+    expect(rule).toBeCalledTimes(1)
+    expect(rule).toBeCalledWith('foo')
 
-    it('should invoke every rule once per call', async () => {
-      try {
-        await form.validateAll()
-        fail('Should throw an error')
-      } catch (e) {
-        expect(e).toBeInstanceOf(ValidationError)
+    setTimeout(() => {
+      expect(field.validating.value).toBe(false)
+      expect(field.errors.value).toStrictEqual(['Error message'])
+      expect(field.rawErrors).toStrictEqual(['Error message'])
+      done()
+    }, 20)
+  })
+
+  it('should only call keyed rule when all fields are touched', () => {
+    const vbf = jest.fn(() => true)
+
+    const rule1 = jest.fn(() => 'rule1')
+    const field1 = form.registerField(1, 'field', 'foo', [
+      {
+        validationBehavior: vbf,
+        rule: {
+          key: 'key',
+          rule: rule1
+        }
       }
+    ])
 
-      const allRules = [...syncRules, ...asyncRules]
-
-      for (const rule of allRules) {
-        expect(rule).toHaveBeenCalledTimes(1)
+    const rule2 = jest.fn(() => 'rule2')
+    const field2 = form.registerField(1, 'field', 'bar', [
+      {
+        validationBehavior: vbf,
+        rule: {
+          key: 'key',
+          rule: rule2
+        }
       }
+    ])
 
-      try {
-        await form.validateAll()
-        fail('Should throw an error')
-      } catch (e) {
-        expect(e).toBeInstanceOf(ValidationError)
-      }
+    form.validate(1)
+    field1.touched.value = true
+    form.validate(1)
+    field2.touched.value = true
+    form.validate(1)
 
-      for (const rule of allRules) {
-        expect(rule).toHaveBeenCalledTimes(2)
-      }
+    expect(rule1).toBeCalledTimes(1)
+    expect(rule1).toBeCalledWith('foo', 'bar')
+    expect(rule2).toBeCalledTimes(1)
+    expect(rule2).toBeCalledWith('foo', 'bar')
+    expect(field1.errors.value).toStrictEqual(['rule1'])
+    expect(field2.errors.value).toStrictEqual(['rule2'])
+  })
 
-      expect(fields[0].errors.value.sort()).toStrictEqual(
-        ['async[0]', 'async[1]', 'sync[0]', 'sync[1]'].sort()
-      )
-      expect(fields[1].errors.value.sort()).toStrictEqual(
-        ['async[2]', 'sync[2]'].sort()
-      )
-      expect(fields[2].errors.value).toStrictEqual([])
-    })
-  }
-)
+  it('should prioritize last rule call', async () => {
+    const testFactory = () =>
+      new Promise<void>(resolve => {
+        const ms = { value: 0 }
+        let timeoutCalledTimes = 0
+
+        const vbf = jest.fn(() => true)
+        const rule = jest.fn(
+          () =>
+            new Promise(resolve => {
+              const result = ms.value.toString()
+              setTimeout(() => {
+                resolve(result)
+                if (++timeoutCalledTimes === 6) {
+                  callback()
+                }
+              }, ms.value)
+            })
+        )
+
+        const callback = () => {
+          expect(vbf).toBeCalledTimes(6)
+          expect(rule).toHaveBeenCalledTimes(6)
+          expect(timeoutCalledTimes).toBe(6)
+          expect(field.errors.value).toStrictEqual(['50'])
+          resolve()
+        }
+
+        const field = form.registerField(1, 'name', '', [
+          { validationBehavior: vbf, rule }
+        ])
+
+        ms.value = 600
+        form.validate(1, true)
+        ms.value = 100
+        form.validate(1, true)
+        ms.value = 400
+        form.validate(1, true)
+        ms.value = 800
+        form.validate(1, true)
+        ms.value = 200
+        form.validate(1, true)
+        ms.value = 50
+        form.validate(1, true)
+      })
+
+    const tests = []
+
+    for (let i = 0; i < 400; i++) {
+      tests.push(testFactory())
+    }
+
+    await Promise.all(tests)
+  })
+})

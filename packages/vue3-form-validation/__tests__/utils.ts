@@ -1,6 +1,6 @@
 import { Tuple } from '../src/domain'
 
-export const promiseFactory = <T>(
+export const makePromise = <T>(
   message: T,
   timeout: number,
   mode: 'resolve' | 'reject' = 'resolve'
@@ -39,7 +39,7 @@ export function makeMocks<Amount extends number>(
     const ret = returnCallback(i)
 
     return timeout
-      ? jest.fn(() => promiseFactory(ret, timeout + i * increasing, mode))
+      ? jest.fn(() => makePromise(ret, timeout + i * increasing, mode))
       : jest.fn(() => ret)
   }
 

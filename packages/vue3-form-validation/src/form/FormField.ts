@@ -1,4 +1,5 @@
-import { computed, reactive, ref, unref, watch, WatchStopHandle } from 'vue'
+import { computed, reactive, ref, watch, WatchStopHandle } from 'vue'
+
 import { Form } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'
 import { isSimpleRule, SimpleRule, RuleInformation } from './rules'
@@ -128,7 +129,7 @@ export class FormField {
       dirty: this.dirty.value,
       force,
       submit,
-      value: unref(this.modelValue)
+      value: this.modelValue.value
     })
   }
 
