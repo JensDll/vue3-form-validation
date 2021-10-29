@@ -1,5 +1,6 @@
 import { expectType } from 'tsd'
 import { Ref } from 'vue'
+
 import { MaybeRef } from 'vue3-form-validation/src/domain'
 import { DeepMaybeRef } from 'vue3-form-validation/src/form'
 

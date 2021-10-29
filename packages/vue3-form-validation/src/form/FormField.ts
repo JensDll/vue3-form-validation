@@ -1,4 +1,4 @@
-import { computed, reactive, ref, watch, WatchStopHandle } from 'vue'
+import { computed, reactive, ref, watch, WatchStopHandle, Ref } from 'vue'
 
 import { Form } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'
@@ -18,7 +18,7 @@ export class FormField {
   name: string
   touched = ref(false)
   dirty = ref(false)
-  modelValue: nDomain.ControlledRef<any>
+  modelValue: Ref<any>
   rawErrors: (string | null)[]
   errors = computed(() => this.rawErrors.filter(nDomain.isDefined))
   validating = computed(() => this.rulesValidating.value > 0)
@@ -41,7 +41,7 @@ export class FormField {
     this.rawErrors = reactive(ruleInfos.map(() => null))
     this.name = name
     this.uid = uid
-    this.modelValue = nDomain.controlledRef(modelValue)
+    this.modelValue = ref(modelValue)
     this.initialModelValue = nDomain.deepCopy(this.modelValue.value)
 
     this._watchStopHandle = watch(
@@ -98,9 +98,10 @@ export class FormField {
   }
 
   reset(resetValue = this.initialModelValue) {
+    this._watchStopHandle()
     this.touched.value = false
     this.dirty.value = false
-    this.modelValue.silentSet(nDomain.deepCopy(resetValue))
+    this.modelValue.value = nDomain.deepCopy(resetValue)
     this.rulesValidating.value = 0
     this._form.rulesValidating.value = 0
 
@@ -113,6 +114,15 @@ export class FormField {
     for (let i = 0; i < this.rawErrors.length; i++) {
       this.rawErrors[i] = null
     }
+
+    this._watchStopHandle = watch(
+      this.modelValue,
+      () => {
+        this.dirty.value = true
+        this._form.validate(this.uid)
+      },
+      { deep: true }
+    )
   }
 
   dispose() {

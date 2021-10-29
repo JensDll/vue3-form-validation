@@ -9,8 +9,8 @@ type ValidatorResult = Promise<void | string> | void
 
 type Validator = (
   /**
-   * Type definition might not be accurate.
-   * The accurate type would be anything expect `ControlledRef`.
+   * Type definition is not be accurate.
+   * The accurate type would be anything expect `Ref`.
    */
   modelValues: (string | number | Record<any, unknown>)[],
   force: boolean,
