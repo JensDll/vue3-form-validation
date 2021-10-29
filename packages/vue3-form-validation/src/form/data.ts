@@ -1,4 +1,5 @@
-import { isReactive, ComputedRef, Ref, UnwrapRef, unref } from 'vue'
+import { ComputedRef, Ref, UnwrapRef, unref } from 'vue'
+
 import { Form } from './Form'
 import { FieldRule, RuleInformation } from './rules'
 import { VALIDATION_CONFIG } from '../ValidationConfig'
@@ -282,13 +283,7 @@ export function getResultFormData(
         ? value.$value
         : unref(value)
       if (predicate({ key, value: unpackedValue, path }) === true) {
-        // Value is reactive -> value is an object or array
-        // Make sure to do a deep clone to loose the reactive reference
-        if (isReactive(unpackedValue)) {
-          nDomain.set(result, path, nDomain.deepCopy(unpackedValue))
-        } else {
-          nDomain.set(result, path, unpackedValue)
-        }
+        nDomain.set(result, path, nDomain.deepCopy(unpackedValue))
       }
     }
   }

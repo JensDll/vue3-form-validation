@@ -263,7 +263,7 @@ describe('validation', () => {
     ])
 
     const rule2 = jest.fn(() => 'rule2')
-    const field2 = form.registerField(1, 'field', 'bar', [
+    const field2 = form.registerField(2, 'field', 'bar', [
       {
         validationBehavior: vbf,
         rule: {
@@ -285,6 +285,44 @@ describe('validation', () => {
     expect(rule2).toBeCalledWith('foo', 'bar')
     expect(field1.errors.value).toStrictEqual(['rule1'])
     expect(field2.errors.value).toStrictEqual(['rule2'])
+  })
+
+  it('validateAll: should only validate fields with given names', async () => {
+    const vbf = jest.fn(() => true)
+
+    const rule1 = jest.fn()
+    form.registerField(1, 'field1', 'foo', [
+      {
+        validationBehavior: vbf,
+        rule: rule1
+      }
+    ])
+
+    const rule2 = jest.fn()
+    form.registerField(2, 'field2', 'bar', [
+      {
+        validationBehavior: vbf,
+        rule: rule2
+      }
+    ])
+
+    const rule3 = jest.fn()
+    form.registerField(3, 'field3', 'baz', [
+      {
+        validationBehavior: vbf,
+        rule: rule3
+      }
+    ])
+
+    await Promise.all([
+      form.validateAll(),
+      form.validateAll(['field1']),
+      form.validateAll(['field2', 'field3'])
+    ])
+
+    expect(rule1).toBeCalledTimes(2)
+    expect(rule2).toBeCalledTimes(2)
+    expect(rule3).toBeCalledTimes(2)
   })
 
   it('should prioritize last rule call', async () => {

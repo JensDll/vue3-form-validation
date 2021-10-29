@@ -22,6 +22,6 @@
     "vue": "3.2.20",
     "vue-router": "^4.0.11",
     "vue-tsc": "^0.28.10",
-    "vue3-form-validation": "5.0.0"
+    "vue3-form-validation": "5.0.1"
   }
 }
