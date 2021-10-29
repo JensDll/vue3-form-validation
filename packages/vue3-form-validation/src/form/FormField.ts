@@ -1,20 +1,23 @@
-import { computed, reactive, ref, watch, WatchStopHandle, Ref } from 'vue'
+import { reactive, computed, ref, watch, WatchStopHandle, Ref } from 'vue'
 
-import { Form } from './Form'
+import { Form, Validator } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'
-import { isSimpleRule, SimpleRule, RuleInformation } from './rules'
+import { SimpleRule, RuleInformation, unpackRule } from './rules'
 import * as nDomain from '../domain'
 
 export class FormField {
-  private _rules: (SimpleRule | undefined)[]
-  private _validationBehaviors: ValidationBehaviorFunction[]
-  private _buffers: nDomain.LinkedList<boolean>[]
-  private _watchStopHandle: WatchStopHandle
-  private _form: Form
-
-  uid: number
+  watchStopHandle: WatchStopHandle
+  form: Form
+  buffers: nDomain.LinkedList<boolean>[]
+  rules: (SimpleRule | undefined)[]
+  validators: Validator[]
+  validatorsNotDebounced: Validator[]
+  validationBehaviors: ValidationBehaviorFunction[]
+  hasReset: boolean[]
   rulesValidating = ref(0)
   initialModelValue: unknown
+
+  uid: number
   name: string
   touched = ref(false)
   dirty = ref(false)
@@ -31,51 +34,101 @@ export class FormField {
     modelValue: any,
     ruleInfos: RuleInformation[]
   ) {
-    this._rules = ruleInfos.map(({ rule }) =>
-      isSimpleRule(rule) ? rule : rule.rule
-    )
-    this._validationBehaviors = ruleInfos.map(info => info.validationBehavior)
-    this._buffers = ruleInfos.map(() => new nDomain.LinkedList())
-    this._form = form
-
-    this.rawErrors = reactive(ruleInfos.map(() => null))
-    this.name = name
+    this.form = form
+    this.buffers = new Array(ruleInfos.length)
+    this.rules = new Array(ruleInfos.length)
+    this.validationBehaviors = new Array(ruleInfos.length)
+    this.validators = new Array(ruleInfos.length)
+    this.validatorsNotDebounced = new Array(ruleInfos.length)
+    this.rawErrors = new Array(ruleInfos.length)
+    this.hasReset = new Array(ruleInfos.length)
     this.uid = uid
+    this.name = name
     this.modelValue = ref(modelValue)
     this.initialModelValue = nDomain.deepCopy(this.modelValue.value)
 
-    this._watchStopHandle = watch(
+    ruleInfos.forEach((info, ruleNumber) => {
+      let invokedTimes = 0
+      const validator: Validator = info.debounce
+        ? nDomain.debounce(
+            modelValues => {
+              if (!this.hasReset[ruleNumber]) {
+                this.validate(ruleNumber, modelValues, true)
+                this.rulesValidating.value -= invokedTimes
+                this.form.rulesValidating.value -= invokedTimes
+              } else {
+                this.hasReset[ruleNumber] = false
+              }
+
+              invokedTimes = 0
+            },
+            {
+              wait: info.debounce,
+              shouldInvoke: (modelValues, force, submit) => {
+                if (this.shouldValidate(ruleNumber, force, submit) === true) {
+                  invokedTimes++
+                  this.rulesValidating.value++
+                  this.form.rulesValidating.value++
+                  return true
+                }
+              }
+            }
+          )
+        : (modelValues, force, submit) => {
+            if (this.shouldValidate(ruleNumber, force, submit) === true) {
+              this.validate(ruleNumber, modelValues, true)
+            }
+          }
+
+      const validatorNotDebounced: Validator = (modelValues, force, submit) => {
+        if (this.shouldValidate(ruleNumber, force, submit) === true) {
+          return this.validate(ruleNumber, modelValues, false)
+        }
+      }
+
+      this.buffers[ruleNumber] = new nDomain.LinkedList()
+      this.rules[ruleNumber] = unpackRule(info.rule)
+      this.validationBehaviors[ruleNumber] = info.validationBehavior
+      this.validators[ruleNumber] = validator
+      this.validatorsNotDebounced[ruleNumber] = validatorNotDebounced
+      this.rawErrors[ruleNumber] = null
+      this.hasReset[ruleNumber] = false
+    })
+
+    this.rawErrors = reactive(this.rawErrors)
+
+    this.watchStopHandle = watch(
       this.modelValue,
       () => {
         this.dirty.value = true
-        this._form.validate(this.uid)
+        this.form.validate(this.uid)
       },
       { deep: true }
     )
   }
 
   async validate(ruleNumber: number, modelValues: unknown[], noThrow: boolean) {
-    const rule = this._rules[ruleNumber]
+    const rule = this.rules[ruleNumber]
 
     if (!rule) {
       return
     }
 
-    const buffer = this._buffers[ruleNumber]
+    const buffer = this.buffers[ruleNumber]
     let error: unknown
     const ruleResult = rule(...modelValues)
 
     const shouldSetError = buffer.addLast(true)
 
-    if (shouldSetError.prev) {
+    if (shouldSetError.prev?.value) {
       shouldSetError.prev.value = false
       this.rulesValidating.value--
-      this._form.rulesValidating.value--
+      this.form.rulesValidating.value--
     }
 
     if (typeof ruleResult?.then === 'function') {
       this.rulesValidating.value++
-      this._form.rulesValidating.value++
+      this.form.rulesValidating.value++
 
       try {
         error = await ruleResult
@@ -87,39 +140,40 @@ export class FormField {
 
       if (shouldSetError.value) {
         this.rulesValidating.value--
-        this._form.rulesValidating.value--
-        this._setError(ruleNumber, error, noThrow)
+        this.form.rulesValidating.value--
+        this.setError(ruleNumber, error, noThrow)
       }
     } else {
       buffer.removeLast()
       error = ruleResult
-      this._setError(ruleNumber, error, noThrow)
+      this.setError(ruleNumber, error, noThrow)
     }
   }
 
   reset(resetValue = this.initialModelValue) {
-    this._watchStopHandle()
+    this.watchStopHandle()
     this.touched.value = false
     this.dirty.value = false
     this.modelValue.value = nDomain.deepCopy(resetValue)
     this.rulesValidating.value = 0
-    this._form.rulesValidating.value = 0
+    this.form.rulesValidating.value = 0
 
-    for (const buffer of this._buffers) {
+    for (const buffer of this.buffers) {
       for (const shouldSetError of buffer.nodesForwards()) {
         shouldSetError.value = false
       }
     }
 
-    for (let i = 0; i < this.rawErrors.length; i++) {
+    for (let i = 0; i < this.rules.length; i++) {
       this.rawErrors[i] = null
+      this.hasReset[i] = true
     }
 
-    this._watchStopHandle = watch(
+    this.watchStopHandle = watch(
       this.modelValue,
       () => {
         this.dirty.value = true
-        this._form.validate(this.uid)
+        this.form.validate(this.uid)
       },
       { deep: true }
     )
@@ -129,11 +183,11 @@ export class FormField {
     this.errors.effect.stop()
     this.validating.effect.stop()
     this.hasError.effect.stop()
-    this._watchStopHandle()
+    this.watchStopHandle()
   }
 
   shouldValidate(ruleNumber: number, force: boolean, submit: boolean) {
-    return this._validationBehaviors[ruleNumber]({
+    return this.validationBehaviors[ruleNumber]({
       hasError: this.rawErrors[ruleNumber] !== null,
       touched: this.touched.value,
       dirty: this.dirty.value,
@@ -143,7 +197,7 @@ export class FormField {
     })
   }
 
-  private _setError(ruleNumber: any, error: unknown, noThrow: boolean) {
+  private setError(ruleNumber: any, error: unknown, noThrow: boolean) {
     if (typeof error === 'string') {
       this.rawErrors[ruleNumber] = error
       if (!noThrow) {

@@ -22,6 +22,7 @@ const { form, submitting, validateFields, resetFields } =
         [
           'change',
           name => {
+            console.log('RULE')
             if (name.length === 0) {
               return 'Please enter your name'
             }
@@ -36,7 +37,7 @@ const { form, submitting, validateFields, resetFields } =
               }, 600)
             })
           },
-          200
+          2000
         ]
       ]
     },

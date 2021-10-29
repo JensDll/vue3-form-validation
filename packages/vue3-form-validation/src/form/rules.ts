@@ -52,3 +52,7 @@ export type RuleInformation = {
 export const isSimpleRule = (
   rule: SimpleRule | RuleWithKey
 ): rule is SimpleRule => typeof rule === 'function'
+
+export const unpackRule = (
+  rule: SimpleRule | RuleWithKey
+): SimpleRule | undefined => (isSimpleRule(rule) ? rule : rule.rule)
