@@ -1,7 +1,7 @@
 import { isReactive, ComputedRef, Ref, UnwrapRef, unref } from 'vue'
 import { Form } from './Form'
 import { FieldRule, RuleInformation } from './rules'
-import { VALIDATION_CONFIG } from '../validationConfig'
+import { VALIDATION_CONFIG } from '../ValidationConfig'
 import * as nDomain from '../domain'
 
 type DeepMaybeRefRecord<T extends Record<nDomain.Key, unknown> | undefined> =

@@ -1,13 +1,5 @@
-import {
-  computed,
-  isReactive,
-  isRef,
-  reactive,
-  ref,
-  unref,
-  watch,
-  WatchStopHandle
-} from 'vue'
+import { computed, reactive, ref, watch, WatchStopHandle } from 'vue'
+
 import { Form } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'
 import { isSimpleRule, SimpleRule, RuleInformation } from './rules'
@@ -26,7 +18,7 @@ export class FormField {
   name: string
   touched = ref(false)
   dirty = ref(false)
-  modelValue: ReturnType<typeof ref> | ReturnType<typeof reactive>
+  modelValue: nDomain.ControlledRef<any>
   rawErrors: (string | null)[]
   errors = computed(() => this.rawErrors.filter(nDomain.isDefined))
   validating = computed(() => this.rulesValidating.value > 0)
@@ -49,17 +41,8 @@ export class FormField {
     this.rawErrors = reactive(ruleInfos.map(() => null))
     this.name = name
     this.uid = uid
-
-    if (isRef(modelValue) || isReactive(modelValue)) {
-      this.modelValue = modelValue
-      this.initialModelValue = nDomain.deepCopy(unref(modelValue))
-    } else if (nDomain.isRecord(modelValue)) {
-      this.modelValue = reactive(modelValue)
-      this.initialModelValue = nDomain.deepCopy(this.modelValue)
-    } else {
-      this.modelValue = ref(modelValue)
-      this.initialModelValue = nDomain.deepCopy(unref(modelValue))
-    }
+    this.modelValue = nDomain.controlledRef(modelValue)
+    this.initialModelValue = nDomain.deepCopy(this.modelValue.value)
 
     this._watchStopHandle = watch(
       this.modelValue,
@@ -80,7 +63,7 @@ export class FormField {
 
     const buffer = this._buffers[ruleNumber]
     let error: unknown
-    const ruleResult = rule(...modelValues.map(unref))
+    const ruleResult = rule(...modelValues)
 
     const shouldSetError = buffer.addLast(true)
 
@@ -115,21 +98,9 @@ export class FormField {
   }
 
   reset(resetValue = this.initialModelValue) {
-    this._watchStopHandle()
     this.touched.value = false
     this.dirty.value = false
-
-    if (isRef(this.modelValue)) {
-      if (nDomain.isArray(this.modelValue.value)) {
-        this.modelValue.value = nDomain.deepCopy(resetValue)
-      } else {
-        this.modelValue.value = resetValue
-      }
-    } else {
-      const copy = nDomain.deepCopy(resetValue)
-      Object.assign(this.modelValue, copy)
-    }
-
+    this.modelValue.silentSet(nDomain.deepCopy(resetValue))
     this.rulesValidating.value = 0
     this._form.rulesValidating.value = 0
 
@@ -139,19 +110,9 @@ export class FormField {
       }
     }
 
-    Object.assign(
-      this.rawErrors,
-      this.rawErrors.map(() => null)
-    )
-
-    this._watchStopHandle = watch(
-      this.modelValue,
-      () => {
-        this.dirty.value = true
-        this._form.validate(this.uid)
-      },
-      { deep: true }
-    )
+    for (let i = 0; i < this.rawErrors.length; i++) {
+      this.rawErrors[i] = null
+    }
   }
 
   dispose() {
@@ -168,7 +129,7 @@ export class FormField {
       dirty: this.dirty.value,
       force,
       submit,
-      value: unref(this.modelValue)
+      value: this.modelValue.value
     })
   }
 

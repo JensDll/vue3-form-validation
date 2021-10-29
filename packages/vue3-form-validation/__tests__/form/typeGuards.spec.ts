@@ -1,18 +1,12 @@
-import {
-  Field,
-  isField,
-  isTransformedField,
-  isSimpleRule
-} from '../../src/form'
+import { isField, isTransformedField, isSimpleRule } from '../../src/form'
 
 describe('isField', () => {
   it('field -> true', () => {
     expect(
       isField({
         $value: '',
-        $rules: [],
-        $validationBehaviour: 'lazy'
-      } as Field<unknown>)
+        $rules: []
+      })
     ).toBe(true)
   })
 })
