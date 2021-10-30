@@ -33,10 +33,10 @@ const { form, submitting, validateFields, resetFields } =
                 } else {
                   resolve(`Name '${name}' is not available`)
                 }
-              }, 100)
+              }, 500)
             })
           },
-          2000
+          200
         ]
       ]
     },
