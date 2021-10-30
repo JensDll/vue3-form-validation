@@ -99,14 +99,7 @@ export class FormField {
 
     this.rawErrors = reactive(this.rawErrors)
 
-    this.watchStopHandle = watch(
-      this.modelValue,
-      () => {
-        this.dirty.value = true
-        this.form.validate(this.uid)
-      },
-      { deep: true }
-    )
+    this.watchStopHandle = this.setupWatcher()
   }
 
   async validate(ruleNumber: number, modelValues: unknown[], noThrow: boolean) {
@@ -171,14 +164,7 @@ export class FormField {
       this.cancelDebounce[i]()
     }
 
-    this.watchStopHandle = watch(
-      this.modelValue,
-      () => {
-        this.dirty.value = true
-        this.form.validate(this.uid)
-      },
-      { deep: true }
-    )
+    this.watchStopHandle = this.setupWatcher()
   }
 
   dispose() {
@@ -208,5 +194,16 @@ export class FormField {
     } else {
       this.rawErrors[ruleNumber] = null
     }
+  }
+
+  private setupWatcher() {
+    return watch(
+      this.modelValue,
+      () => {
+        this.dirty.value = true
+        this.form.validate(this.uid)
+      },
+      { deep: true }
+    )
   }
 }

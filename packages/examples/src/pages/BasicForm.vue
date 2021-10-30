@@ -20,9 +20,7 @@ const { form, submitting, validateFields, resetFields } =
     },
     text: {
       $value: '',
-      $rules: [
-        rules.min(6)('Please enter some text that is longer than 5 characters')
-      ]
+      $rules: [rules.min(6)('Please enter text longer than 5 characters')]
     }
   })
 

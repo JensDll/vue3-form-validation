@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { Field, useValidation } from 'vue3-form-validation'
 
 import FormProvider from '~/components/form/FormProvider.vue'
@@ -33,10 +32,10 @@ const { form, submitting, validateFields, resetFields } =
                 } else {
                   resolve(`Name '${name}' is not available`)
                 }
-              }, 500)
+              }, 400)
             })
           },
-          200
+          300
         ]
       ]
     },
