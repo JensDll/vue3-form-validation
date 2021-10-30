@@ -16,5 +16,6 @@ export type {
   ValidationBehaviorFunction,
   ValidationBehaviorString,
   ValidationBehavior,
-  ValidationBehaviorInfo
+  ValidationBehaviorInfo,
+  ResultFormData
 } from './form'

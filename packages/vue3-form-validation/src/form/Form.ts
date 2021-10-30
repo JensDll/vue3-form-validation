@@ -7,8 +7,8 @@ import * as nDomain from '../domain'
 
 export type ValidatorParameters = [
   /**
-   * Type definition is not be accurate here but catches invalid use of validators.
-   * The accurate type would be anything expect `Ref`.
+   * Type definition is not accurate here but catches invalid use of validators.
+   * The accurate type would be an array of anything expect `Ref`.
    */
   modelValues: (string | number | Record<any, unknown>)[],
   force: boolean,
