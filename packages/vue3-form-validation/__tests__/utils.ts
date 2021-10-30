@@ -1,8 +1,8 @@
 import { Tuple } from '../src/domain'
 
 export const makePromise = <T>(
-  message: T,
   timeout: number,
+  message?: T,
   mode: 'resolve' | 'reject' = 'resolve'
 ) =>
   new Promise<T>((resolve, reject) => {
@@ -16,7 +16,7 @@ export const makePromise = <T>(
   })
 
 type MakeMockOptions = {
-  returnCallback?: (i: number) => any
+  returnCallback?: (x: any, i: number) => any
   timeout?: number
   increasing?: number
   mode?: 'resolve' | 'reject'
@@ -31,17 +31,16 @@ export function makeMocks<Amount extends number>(
     mode
   }: MakeMockOptions | undefined = {}
 ): Tuple<jest.Mock, Amount> {
-  returnCallback ??= i => i
+  returnCallback ??= () => void 0
   increasing ??= 0
   mode ??= 'resolve'
 
-  const mapping = (_: never, i: number) => {
-    const ret = returnCallback(i)
-
-    return timeout
-      ? jest.fn(() => makePromise(ret, timeout + i * increasing, mode))
-      : jest.fn(() => ret)
-  }
+  const mapping = (_: never, i: number) =>
+    timeout
+      ? jest.fn(x =>
+          makePromise(timeout + i * increasing, returnCallback(x, i), mode)
+        )
+      : jest.fn(x => returnCallback(x, i))
 
   return Array.from({ length: amount }, mapping) as any
 }

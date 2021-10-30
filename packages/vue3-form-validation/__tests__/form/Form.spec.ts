@@ -223,7 +223,7 @@ describe('validation behavior', () => {
 describe('validation', () => {
   it('async simple rule: should be validating and set error', done => {
     const vbf = jest.fn(() => true)
-    const rule = jest.fn(() => makePromise('Error message', 20))
+    const rule = jest.fn(() => makePromise(20, 'Error message'))
 
     const field = form.registerField(1, 'field', ref('foo'), [
       {
@@ -324,6 +324,72 @@ describe('validation', () => {
     expect(rule2).toBeCalledTimes(2)
     expect(rule3).toBeCalledTimes(2)
   })
+
+  it.each([
+    { debounce: true, note: 'with debounce' },
+    { debounce: false, note: 'without debounce' }
+  ])(
+    'should cancel validating when resetting fields and not set errors afterwards ($note)',
+    async ({ debounce }) => {
+      const vbf = jest.fn(() => true)
+      const rule1 = jest.fn(() => makePromise(40, 'rule1'))
+      const rule2 = jest.fn(() => makePromise(50, 'rule2'))
+
+      const field = form.registerField(1, 'field', 'foo', [
+        {
+          validationBehavior: vbf,
+          rule: rule1
+        },
+        debounce
+          ? {
+              validationBehavior: vbf,
+              rule: rule2,
+              debounce: 50
+            }
+          : {
+              validationBehavior: vbf,
+              rule: rule2
+            }
+      ])
+
+      form.validate(1)
+
+      expect(field.rulesValidating.value).toBe(2)
+      expect(form.rulesValidating.value).toBe(2)
+
+      form.resetFields()
+
+      expect(field.rulesValidating.value).toBe(0)
+      expect(form.rulesValidating.value).toBe(0)
+
+      form.validate(1)
+
+      expect(field.rulesValidating.value).toBe(2)
+      expect(form.rulesValidating.value).toBe(2)
+
+      form.resetFields()
+
+      expect(field.rulesValidating.value).toBe(0)
+      expect(form.rulesValidating.value).toBe(0)
+
+      await makePromise(150)
+
+      expect(field.rulesValidating.value).toBe(0)
+      expect(form.rulesValidating.value).toBe(0)
+      expect(field.rawErrors).toStrictEqual([null, null])
+
+      form.validate(1)
+
+      expect(field.rulesValidating.value).toBe(2)
+      expect(form.rulesValidating.value).toBe(2)
+
+      await makePromise(150)
+
+      expect(field.rulesValidating.value).toBe(0)
+      expect(form.rulesValidating.value).toBe(0)
+      expect(field.rawErrors).toStrictEqual(['rule1', 'rule2'])
+    }
+  )
 
   it('should prioritize last rule call', async () => {
     const testFactory = () =>
