@@ -49,7 +49,7 @@ type KeyedValidators = Set<KeyedValidator>
 export class Form {
   simpleValidators: Map<number, SimpleValidators> = new Map()
   keyedValidators: Map<string, KeyedValidators> = new Map()
-  reactiveFieldMap: Map<number, FormField> = shallowReactive(new Map())
+  reactiveFields: Map<number, FormField> = shallowReactive(new Map())
 
   tryGetSimpleValidators = nDomain.tryGet(this.simpleValidators)
   trySetKeyedValidators = nDomain.trySet(this.keyedValidators)
@@ -62,7 +62,7 @@ export class Form {
   errors = computed(() => {
     const errors: string[] = []
 
-    for (const field of this.reactiveFieldMap.values()) {
+    for (const field of this.reactiveFields.values()) {
       errors.push(...field.errors.value)
     }
 
@@ -123,7 +123,7 @@ export class Form {
     })
 
     this.simpleValidators.set(uid, simpleValidators)
-    this.reactiveFieldMap.set(uid, field)
+    this.reactiveFields.set(uid, field)
 
     return field
   }
@@ -160,7 +160,7 @@ export class Form {
     })(uid)
 
     this.simpleValidators.delete(uid)
-    this.reactiveFieldMap.delete(uid)
+    this.reactiveFields.delete(uid)
   }
 
   resetFields(): void {
