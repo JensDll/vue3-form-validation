@@ -1,6 +1,6 @@
 import { reactive, computed, ref, watch, WatchStopHandle, Ref } from 'vue'
 
-import { Form, Validator } from './Form'
+import { Form, Validator, ValidatorNotDebounced } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'
 import { SimpleRule, RuleInformation, unpackRule } from './rules'
 import * as nDomain from '../domain'
@@ -11,9 +11,9 @@ export class FormField {
   buffers: nDomain.LinkedList<boolean>[]
   rules: (SimpleRule | undefined)[]
   validators: Validator[]
-  validatorsNotDebounced: Validator[]
+  validatorsNotDebounced: ValidatorNotDebounced[]
   validationBehaviors: ValidationBehaviorFunction[]
-  hasReset: boolean[]
+  cancelDebounce: (() => void)[]
   rulesValidating = ref(0)
   initialModelValue: unknown
 
@@ -41,7 +41,7 @@ export class FormField {
     this.validators = new Array(ruleInfos.length)
     this.validatorsNotDebounced = new Array(ruleInfos.length)
     this.rawErrors = new Array(ruleInfos.length)
-    this.hasReset = new Array(ruleInfos.length)
+    this.cancelDebounce = new Array(ruleInfos.length)
     this.uid = uid
     this.name = name
     this.modelValue = ref(modelValue)
@@ -52,14 +52,9 @@ export class FormField {
       const validator: Validator = info.debounce
         ? nDomain.debounce(
             modelValues => {
-              if (!this.hasReset[ruleNumber]) {
-                this.validate(ruleNumber, modelValues, true)
-                this.rulesValidating.value -= invokedTimes
-                this.form.rulesValidating.value -= invokedTimes
-              } else {
-                this.hasReset[ruleNumber] = false
-              }
-
+              this.validate(ruleNumber, modelValues, true)
+              this.rulesValidating.value -= invokedTimes
+              this.form.rulesValidating.value -= invokedTimes
               invokedTimes = 0
             },
             {
@@ -80,7 +75,11 @@ export class FormField {
             }
           }
 
-      const validatorNotDebounced: Validator = (modelValues, force, submit) => {
+      const validatorNotDebounced: ValidatorNotDebounced = (
+        modelValues,
+        force,
+        submit
+      ) => {
         if (this.shouldValidate(ruleNumber, force, submit) === true) {
           return this.validate(ruleNumber, modelValues, false)
         }
@@ -92,7 +91,10 @@ export class FormField {
       this.validators[ruleNumber] = validator
       this.validatorsNotDebounced[ruleNumber] = validatorNotDebounced
       this.rawErrors[ruleNumber] = null
-      this.hasReset[ruleNumber] = false
+      this.cancelDebounce[ruleNumber] = () => {
+        invokedTimes = 0
+        validator.cancel?.()
+      }
     })
 
     this.rawErrors = reactive(this.rawErrors)
@@ -166,7 +168,7 @@ export class FormField {
 
     for (let i = 0; i < this.rules.length; i++) {
       this.rawErrors[i] = null
-      this.hasReset[i] = true
+      this.cancelDebounce[i]()
     }
 
     this.watchStopHandle = watch(

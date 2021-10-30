@@ -223,7 +223,7 @@ describe('validation behavior', () => {
 describe('validation', () => {
   it('async simple rule: should be validating and set error', done => {
     const vbf = jest.fn(() => true)
-    const rule = jest.fn(() => makePromise('Error message', 20))
+    const rule = jest.fn(() => makePromise(20, 'Error message'))
 
     const field = form.registerField(1, 'field', ref('foo'), [
       {
@@ -332,8 +332,8 @@ describe('validation', () => {
     'should cancel validating when resetting fields and not set errors afterwards ($note)',
     async ({ debounce }) => {
       const vbf = jest.fn(() => true)
-      const rule1 = jest.fn(() => makePromise('rule1', 40))
-      const rule2 = jest.fn(() => makePromise('rule2', 50))
+      const rule1 = jest.fn(() => makePromise(40, 'rule1'))
+      const rule2 = jest.fn(() => makePromise(50, 'rule2'))
 
       const field = form.registerField(1, 'field', 'foo', [
         {
@@ -372,7 +372,7 @@ describe('validation', () => {
       expect(field.rulesValidating.value).toBe(0)
       expect(form.rulesValidating.value).toBe(0)
 
-      await makePromise('', 150)
+      await makePromise(150)
 
       expect(field.rulesValidating.value).toBe(0)
       expect(form.rulesValidating.value).toBe(0)
@@ -383,7 +383,7 @@ describe('validation', () => {
       expect(field.rulesValidating.value).toBe(2)
       expect(form.rulesValidating.value).toBe(2)
 
-      await makePromise('', 150)
+      await makePromise(150)
 
       expect(field.rulesValidating.value).toBe(0)
       expect(form.rulesValidating.value).toBe(0)

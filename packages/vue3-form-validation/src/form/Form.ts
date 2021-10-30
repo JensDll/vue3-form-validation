@@ -5,21 +5,30 @@ import { ValidationError } from './ValidationError'
 import { isSimpleRule, RuleInformation } from './rules'
 import * as nDomain from '../domain'
 
-export type ValidatorResult = Promise<void | string> | void
-
-export type Validator = (
+export type ValidatorParameters = [
   /**
-   * Type definition is not be accurate.
+   * Type definition is not be accurate here but catches invalid use of validators.
    * The accurate type would be anything expect `Ref`.
    */
   modelValues: (string | number | Record<any, unknown>)[],
   force: boolean,
   submit: boolean
-) => ValidatorResult
+]
+
+export type ValidatorReturn = Promise<void | string> | void
+
+export type ValidatorNotDebounced = (
+  ...params: ValidatorParameters
+) => ValidatorReturn
+
+export type Validator = nDomain.Optional<
+  nDomain.Debounced<ValidatorParameters>,
+  'cancel'
+>
 
 type SimpleValidators = {
   validators: Validator[]
-  validatorsNotDebounced: Validator[]
+  validatorsNotDebounced: ValidatorNotDebounced[]
   meta: {
     field: FormField
     keys: string[]
@@ -29,7 +38,7 @@ type SimpleValidators = {
 
 type KeyedValidator = {
   validator: Validator
-  validatorNotDebounced: Validator
+  validatorNotDebounced: ValidatorNotDebounced
   meta: {
     field: FormField
   }
@@ -190,7 +199,7 @@ export class Form {
     keys: string[] | IterableIterator<string>,
     force: boolean,
     submit: boolean
-  ): Generator<ValidatorResult> {
+  ): Generator<ValidatorReturn> {
     for (const key of keys) {
       const keyedValidators = this.keyedValidators.get(key)!
       const values = [...keyedValidators.values()]
@@ -203,7 +212,7 @@ export class Form {
 
   private *collectValidatorResultsForNames(
     names?: readonly nDomain.Key[]
-  ): Generator<ValidatorResult> {
+  ): Generator<ValidatorReturn> {
     if (names === undefined) {
       for (const {
         validatorsNotDebounced,

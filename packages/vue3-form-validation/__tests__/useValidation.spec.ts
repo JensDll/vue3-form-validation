@@ -25,7 +25,7 @@ type FormData = {
 let formData: FormData
 
 beforeEach(() => {
-  const [mock] = makeMocks(1, { timeout: 100 })
+  const [mock] = makeMocks(1, { timeout: 50 })
 
   formData = {
     a: {
@@ -97,30 +97,26 @@ const changeFormValues = (form: TransformedFormData<FormData>) => {
 test('should not change result data when changing form after submitting', done => {
   const { form, validateFields } = useValidation<FormData>(formData)
 
-  validateFields()
-    .then(formData => {
-      expect(formData).toStrictEqual<typeof formData>({
-        a: '',
-        b: '',
-        c: [1, 2, 3],
-        d: { a: '' },
-        es: [
-          { f: '', gs: [] },
-          {
-            f: '',
-            gs: [
-              {
-                h: { a: { b: { c: [1, 2, 3] } } }
-              }
-            ]
-          }
-        ]
-      })
-      done()
+  validateFields().then(formData => {
+    expect(formData).toStrictEqual<typeof formData>({
+      a: '',
+      b: '',
+      c: [1, 2, 3],
+      d: { a: '' },
+      es: [
+        { f: '', gs: [] },
+        {
+          f: '',
+          gs: [
+            {
+              h: { a: { b: { c: [1, 2, 3] } } }
+            }
+          ]
+        }
+      ]
     })
-    .catch(e => {
-      fail(e)
-    })
+    done()
+  })
 
   changeFormValues(form)
 })
