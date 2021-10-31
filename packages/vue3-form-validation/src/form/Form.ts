@@ -88,16 +88,16 @@ export class Form {
     }
 
     ruleInfos.forEach(({ rule }, ruleNumber) => {
+      const validator = field.validators[ruleNumber]
+      const validatorNotDebounced = field.validatorsNotDebounced[ruleNumber]
+
       if (isSimpleRule(rule)) {
-        simpleValidators.validators.push(field.validators[ruleNumber])
-        simpleValidators.validatorsNotDebounced.push(
-          field.validatorsNotDebounced[ruleNumber]
-        )
+        simpleValidators.validators.push(validator)
+        simpleValidators.validatorsNotDebounced.push(validatorNotDebounced)
       } else {
-        const { key } = rule
         const keyedValidator: KeyedValidator = {
-          validator: field.validators[ruleNumber],
-          validatorNotDebounced: field.validatorsNotDebounced[ruleNumber],
+          validator,
+          validatorNotDebounced,
           meta: {
             field
           }
@@ -107,18 +107,18 @@ export class Form {
             success: keyedValidators => {
               keyedValidators.delete(keyedValidator)
               if (keyedValidators.size === 0) {
-                this.keyedValidators.delete(key)
+                this.keyedValidators.delete(rule.key)
               }
             }
-          })(key)
+          })(rule.key)
         }
 
-        simpleValidators.meta.keys.push(key)
+        simpleValidators.meta.keys.push(rule.key)
         simpleValidators.meta.rollbacks.push(rollback)
 
         this.trySetKeyedValidators({
           failure: keyedValidators => keyedValidators.add(keyedValidator)
-        })(key, new Set([keyedValidator]))
+        })(rule.key, new Set([keyedValidator]))
       }
     })
 

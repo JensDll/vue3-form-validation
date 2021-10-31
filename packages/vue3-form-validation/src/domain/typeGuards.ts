@@ -1,7 +1,7 @@
 import { Key } from './types'
 
 export const isDefined = <T>(x: T | null | undefined): x is T =>
-  x !== null && typeof x !== 'undefined'
+  x !== null && x !== undefined
 
 export const isRecord = (x: unknown): x is Record<Key, any> =>
   typeof x === 'object' && x !== null && !Array.isArray(x)
