@@ -25,10 +25,7 @@ const { form, submitting, validateFields, resetFields, add, remove } =
   useValidation<FormData>({
     a: {
       $value: '',
-      $rules: [
-        rules.required('Please enter some text'),
-        ['change', rules.random(1000, 1000)]
-      ]
+      $rules: [rules.required('Please enter some text'), rules.random()]
     },
     xs: []
   })
