@@ -5,10 +5,12 @@ import { ValidationBehaviorFunction } from './validationBehavior'
 import { SimpleRule, RuleInformation, unpackRule } from './rules'
 import * as nDomain from '../domain'
 
+class ResetError extends Error {}
+
 export class FormField {
   watchStopHandle: WatchStopHandle
   form: Form
-  buffers: nDomain.LinkedList<boolean>[]
+  promiseCancels: nDomain.PromiseCancel<never>[]
   rules: (SimpleRule | undefined)[]
   validators: Validator[]
   validatorsNotDebounced: ValidatorNotDebounced[]
@@ -35,7 +37,7 @@ export class FormField {
     ruleInfos: RuleInformation[]
   ) {
     this.form = form
-    this.buffers = new Array(ruleInfos.length)
+    this.promiseCancels = new Array(ruleInfos.length)
     this.rules = new Array(ruleInfos.length)
     this.validationBehaviors = new Array(ruleInfos.length)
     this.validators = new Array(ruleInfos.length)
@@ -85,7 +87,7 @@ export class FormField {
         }
       }
 
-      this.buffers[ruleNumber] = new nDomain.LinkedList()
+      this.promiseCancels[ruleNumber] = new nDomain.PromiseCancel()
       this.rules[ruleNumber] = unpackRule(info.rule)
       this.validationBehaviors[ruleNumber] = info.validationBehavior
       this.validators[ruleNumber] = validator
@@ -109,16 +111,12 @@ export class FormField {
       return
     }
 
-    const buffer = this.buffers[ruleNumber]
+    const promiseCancel = this.promiseCancels[ruleNumber]
     let error: unknown
     const ruleResult = rule(...modelValues)
 
-    const shouldSetError = buffer.addLast(true)
-
-    if (shouldSetError.prev?.value) {
-      shouldSetError.prev.value = false
-      this.rulesValidating.value--
-      this.form.rulesValidating.value--
+    if (promiseCancel.isRacing) {
+      promiseCancel.cancelReject(new nDomain.CancelError())
     }
 
     if (typeof ruleResult?.then === 'function') {
@@ -126,20 +124,26 @@ export class FormField {
       this.form.rulesValidating.value++
 
       try {
-        error = await ruleResult
-      } catch (err) {
-        error = err
+        error = await promiseCancel.race(ruleResult)
+      } catch (err: any) {
+        switch (err.constructor) {
+          case ResetError:
+            return
+          case nDomain.CancelError:
+            this.rulesValidating.value--
+            this.form.rulesValidating.value--
+            return
+          default:
+            error = err
+        }
+      } finally {
+        promiseCancel.isRacing = false
       }
 
-      buffer.remove(shouldSetError)
-
-      if (shouldSetError.value) {
-        this.rulesValidating.value--
-        this.form.rulesValidating.value--
-        this.setError(ruleNumber, error, noThrow)
-      }
+      this.rulesValidating.value--
+      this.form.rulesValidating.value--
+      this.setError(ruleNumber, error, noThrow)
     } else {
-      buffer.removeLast()
       error = ruleResult
       this.setError(ruleNumber, error, noThrow)
     }
@@ -153,15 +157,12 @@ export class FormField {
     this.rulesValidating.value = 0
     this.form.rulesValidating.value = 0
 
-    for (const buffer of this.buffers) {
-      for (const shouldSetError of buffer.nodesForwards()) {
-        shouldSetError.value = false
-      }
-    }
-
     for (let i = 0; i < this.rules.length; i++) {
       this.rawErrors[i] = null
       this.cancelDebounce[i]()
+      if (this.promiseCancels[i].isRacing) {
+        this.promiseCancels[i].cancelReject(new ResetError())
+      }
     }
 
     this.watchStopHandle = this.setupWatcher()
