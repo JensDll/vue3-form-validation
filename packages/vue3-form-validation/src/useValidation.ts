@@ -144,7 +144,7 @@ export function useValidation<FormData extends object>(
       ) as nForm.ResultFormData<FormData>
 
       try {
-        await promiseCancel.raceSingle(form.validateAll(names as any))
+        await promiseCancel.race(form.validateAll(names as any))
       } finally {
         form.submitting.value = false
       }

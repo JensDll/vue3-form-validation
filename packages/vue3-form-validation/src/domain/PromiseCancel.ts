@@ -28,11 +28,6 @@ export class PromiseCancel<T = unknown> {
     return Promise.race([this.promise, ...promises])
   }
 
-  raceSingle<TPromise extends Promise<any>>(promise: TPromise) {
-    this.isRacing = true
-    return Promise.race([this.promise, promise])
-  }
-
   private assign() {
     this.promise = new Promise<T>((resolve, reject) => {
       this.resolve = resolve

@@ -124,7 +124,7 @@ export class FormField {
       this.form.rulesValidating.value++
 
       try {
-        error = await promiseCancel.raceSingle(ruleResult)
+        error = await promiseCancel.race(ruleResult)
       } catch (err: any) {
         switch (err.constructor) {
           case ResetError:
@@ -157,15 +157,12 @@ export class FormField {
     this.rulesValidating.value = 0
     this.form.rulesValidating.value = 0
 
-    for (const promiseCancel of this.promiseCancels) {
-      if (promiseCancel.isRacing) {
-        promiseCancel.cancelReject(new ResetError())
-      }
-    }
-
     for (let i = 0; i < this.rules.length; i++) {
       this.rawErrors[i] = null
       this.cancelDebounce[i]()
+      if (this.promiseCancels[i].isRacing) {
+        this.promiseCancels[i].cancelReject(new ResetError())
+      }
     }
 
     this.watchStopHandle = this.setupWatcher()
