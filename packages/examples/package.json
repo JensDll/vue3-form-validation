@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "examples",
-  "description": "Vue composition function for Form Validation examples",
+  "description": "Vue composition function for form validation examples",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite",
@@ -12,14 +12,14 @@
     "@heroicons/vue": "1.0.5",
     "@tailwindcss/forms": "0.3.4",
     "@vitejs/plugin-vue": "^1.9.4",
-    "@vue/compiler-sfc": "3.2.20",
+    "@vue/compiler-sfc": "3.2.21",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.3.11",
     "postcss-nesting": "^9.0.0",
     "tailwindcss": "2.2.19",
     "typescript": "4.4.4",
     "vite": "^2.6.13",
-    "vue": "3.2.20",
+    "vue": "3.2.21",
     "vue-router": "^4.0.11",
     "vue-tsc": "^0.28.10",
     "vue3-form-validation": "5.0.2"
