@@ -1,10 +1,11 @@
+import { expectType, expectAssignable } from 'tsd'
+
 import {
   TransformedFormData,
   TransformedField,
   Field
 } from '../packages/vue3-form-validation/src/form'
 import { MaybeRef } from '../packages/vue3-form-validation/src/domain'
-import { expectType, expectAssignable } from 'tsd'
 
 // Testing without using the Field type
 expectType<TransformedFormData<{ a: { $value: MaybeRef<10> } }>>(

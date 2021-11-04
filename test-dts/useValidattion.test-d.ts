@@ -39,7 +39,7 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
   a: {
     $value: {
       b: {
-        c: ref('')
+        c: ''
       }
     },
     // unpack refs in rules (nested)
@@ -115,23 +115,23 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
     a: Field<
       {
         xs: string[]
-        y: Ref<number>
+        y: number
       }[]
     >
   }>({
     a: {
-      $value: [
+      $value: ref([
         {
           xs: [],
-          y: ref(10)
+          y: 10
         }
-      ],
+      ]),
       $rules: [
         as =>
           expectType<
             {
               xs: string[]
-              y: Ref<number>
+              y: number
             }[]
           >(as) // no ref unwrapping in array
       ]

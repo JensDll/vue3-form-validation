@@ -129,7 +129,7 @@ export function useValidation<FormData extends object>(
   const transformedFormData: any = reactive(formData)
 
   return {
-    form: transformedFormData as nForm.TransformedFormData<FormData>,
+    form: transformedFormData,
     submitting: form.submitting,
     validating: form.validating,
     hasError: form.hasError,

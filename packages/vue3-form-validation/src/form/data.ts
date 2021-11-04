@@ -5,25 +5,6 @@ import { FieldRule, RuleInformation } from './rules'
 import { VALIDATION_CONFIG } from '../ValidationConfig'
 import * as nDomain from '../domain'
 
-type DeepMaybeRefRecord<T extends Record<nDomain.Key, unknown> | undefined> =
-  T extends undefined
-    ? undefined
-    : {
-        [K in keyof T]: T[K] extends Ref
-          ? T[K] | UnwrapRef<T[K]>
-          : T[K] extends any[]
-          ? nDomain.MaybeRef<T[K]>
-          : T[K] extends Record<string, unknown> | undefined
-          ? DeepMaybeRefRecord<T[K]>
-          : nDomain.MaybeRef<T[K]>
-      }
-
-export type DeepMaybeRef<T> = T extends Ref
-  ? T | UnwrapRef<T>
-  : T extends Record<string, unknown>
-  ? DeepMaybeRefRecord<T>
-  : nDomain.MaybeRef<T>
-
 export type Field<
   TValue,
   TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
@@ -32,7 +13,7 @@ export type Field<
    *
    * The field's default value.
    */
-  $value: DeepMaybeRef<TValue>
+  $value: TValue extends Ref<infer V> ? TValue | V : Ref<TValue> | TValue
   /**
    *
    * Rules to use for validation.
@@ -125,7 +106,7 @@ export type ResultFormData<FormData extends object | undefined> =
         [K in keyof FormData]: FormData[K] extends
           | { $value: infer TValue }
           | undefined
-          ? UnwrapRef<TValue>
+          ? UnwrapRef<Exclude<TValue, Ref>>
           : FormData[K] extends object | undefined
           ? ResultFormData<FormData[K]>
           : FormData[K]
@@ -149,7 +130,7 @@ export type TransformedFormData<FormData extends object | undefined> =
           ? FormData[K] extends undefined
             ? undefined
             : TransformedField<
-                UnwrapRef<TValue>,
+                UnwrapRef<Exclude<TValue, Ref>>,
                 Omit<Exclude<FormData[K], undefined>, '$value' | '$rules'>
               >
           : FormData[K] extends object | undefined
