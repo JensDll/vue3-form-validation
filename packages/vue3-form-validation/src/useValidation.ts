@@ -5,32 +5,26 @@ import * as nDomain from './domain'
 
 export type UseValidation<FormData extends object> = {
   /**
-   *
    * A transformed reactive `formData` object.
    */
   form: nForm.TransformedFormData<FormData>
   /**
-   *
    * `True` during validation after calling `validateFields` when there were rules that returned a `Promise`.
    */
   submitting: Ref<boolean>
   /**
-   *
    * `True` while the form has any pending rules.
    */
   validating: ComputedRef<boolean>
   /**
-   *
    * `True` if the form has any error.
    */
   hasError: ComputedRef<boolean>
   /**
-   *
    * All current validation error messages.
    */
   errors: ComputedRef<string[]>
   /**
-   *
    * Validate all fields and return a `Promise` containing the resulting form data.
    *
    * @param options - Options to use for validation
@@ -38,7 +32,6 @@ export type UseValidation<FormData extends object> = {
    */
   validateFields(options?: {
     /**
-     *
      * A list of field names to validate.
      *
      * @default
@@ -48,7 +41,6 @@ export type UseValidation<FormData extends object> = {
      */
     names?: nForm.FieldNames<FormData>[] | string[]
     /**
-     *
      * Filter which values to keep in the resulting form data.
      *
      * @remarks
@@ -64,7 +56,6 @@ export type UseValidation<FormData extends object> = {
     ) => unknown
   }): Promise<nForm.ResultFormData<FormData>>
   /**
-   *
    * Reset all fields to their default value or pass an object to set specific values.
    *
    * @remarks
@@ -74,7 +65,6 @@ export type UseValidation<FormData extends object> = {
    */
   resetFields(formData?: Partial<nForm.ResultFormData<FormData>>): void
   /**
-   *
    * Adds a new property to the form data.
    *
    * @remarks
@@ -90,7 +80,6 @@ export type UseValidation<FormData extends object> = {
       : nDomain.DeepIndex<FormData, Ks>
   ): void
   /**
-   *
    * Removes a property from the form data.
    *
    * @param path - A path of `string` and `numbers` to the property to remove
@@ -99,7 +88,6 @@ export type UseValidation<FormData extends object> = {
 }
 
 /**
- *
  * Vue composition function for form validation.
  *
  * @remarks

@@ -5,139 +5,6 @@ import { FieldRule, RuleInformation } from './rules'
 import { VALIDATION_CONFIG } from '../ValidationConfig'
 import * as nDomain from '../domain'
 
-export type Field<
-  TValue,
-  TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
-> = {
-  /**
-   *
-   * The field's default value.
-   */
-  $value: TValue extends Ref<infer V> ? TValue | V : Ref<TValue> | TValue
-  /**
-   *
-   * Rules to use for validation.
-   */
-  $rules?: FieldRule<TValue>[]
-} & (TExtra extends Record<string, never> ? unknown : TExtra)
-
-export type ValidateOptions = {
-  /**
-   *
-   * Set the field touched when called.
-   *
-   * @default true
-   */
-  setTouched?: boolean
-  /**
-   *
-   * Validate with the `force` flag set.
-   *
-   * @default true
-   */
-  force?: boolean
-}
-
-export type TransformedField<
-  TValue,
-  TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
-> = {
-  /**
-   *
-   * The unique id of this field.
-   */
-  $uid: number
-  /**
-   *
-   * The current field's value.
-   */
-  $value: TValue
-  /**
-   *
-   * A list of validation error messages local to the field without `null` values.
-   */
-  $errors: string[]
-  /**
-   *
-   * The field's raw error messages one for each rule and `null` if there is no error.
-   */
-  $rawErrors: (string | null)[]
-  /**
-   *
-   * `True` while there are any errors on the field.
-   */
-  $hasError: boolean
-  /**
-   *
-   * `True` while the field has any pending rules.
-   */
-  $validating: boolean
-  /**
-   *
-   * `True` if the field is touched.
-   *
-   * @remarks
-   * In most cases, it should be set together with the `blur` event.
-   * Either through `$validate` or manually.
-   */
-  $touched: boolean
-  /**
-   *
-   * `True` if the `$value` of the field has changed at least once.
-   */
-  $dirty: boolean
-  /**
-   *
-   * Validate the field.
-   *
-   * @param options - Validation options to use
-   * @default
-   * ```
-   * { setTouched: true, force: true }
-   * ```
-   */
-  $validate(options?: ValidateOptions): void
-} & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
-
-export type ResultFormData<FormData extends object | undefined> =
-  FormData extends undefined
-    ? undefined
-    : {
-        [K in keyof FormData]: FormData[K] extends
-          | { $value: infer TValue }
-          | undefined
-          ? UnwrapRef<Exclude<TValue, Ref>>
-          : FormData[K] extends object | undefined
-          ? ResultFormData<FormData[K]>
-          : FormData[K]
-      }
-
-export type FieldNames<T> = T extends (infer TArray)[]
-  ? FieldNames<TArray>
-  : {
-      [K in keyof T]-?: T[K] extends { $value: any } | undefined
-        ? K
-        : FieldNames<T[K]>
-    }[keyof T]
-
-export type TransformedFormData<FormData extends object | undefined> =
-  FormData extends undefined
-    ? undefined
-    : {
-        [K in keyof FormData]: FormData[K] extends
-          | { $value: infer TValue }
-          | undefined
-          ? FormData[K] extends undefined
-            ? undefined
-            : TransformedField<
-                UnwrapRef<Exclude<TValue, Ref>>,
-                Omit<Exclude<FormData[K], undefined>, '$value' | '$rules'>
-              >
-          : FormData[K] extends object | undefined
-          ? TransformedFormData<FormData[K]>
-          : FormData[K]
-      }
-
 export const isField = <T>(x: unknown): x is Field<T> =>
   nDomain.isRecord(x) ? '$value' in x : false
 
@@ -298,3 +165,123 @@ export function resetFields(form: Form, data: any, transformedFormData: any) {
     }
   })
 }
+
+export type Field<
+  TValue,
+  TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
+> = {
+  /**
+   * The field's default value.
+   */
+  $value: TValue extends Ref<infer V> ? TValue | V : Ref<TValue> | TValue
+  /**
+   * Rules to use for validation.
+   */
+  $rules?: FieldRule<TValue>[]
+} & (TExtra extends Record<string, never> ? unknown : TExtra)
+
+export type ValidateOptions = {
+  /**
+   * Set the field touched when called.
+   *
+   * @default true
+   */
+  setTouched?: boolean
+  /**
+   * Validate with the `force` flag set.
+   *
+   * @default true
+   */
+  force?: boolean
+}
+
+export type TransformedField<
+  TValue,
+  TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
+> = {
+  /**
+   * The unique id of this field.
+   */
+  $uid: number
+  /**
+   * The current field's value.
+   */
+  $value: TValue
+  /**
+   * A list of validation error messages local to the field without `null` values.
+   */
+  $errors: string[]
+  /**
+   * The field's raw error messages one for each rule and `null` if there is no error.
+   */
+  $rawErrors: (string | null)[]
+  /**
+   * `True` while there are any errors on the field.
+   */
+  $hasError: boolean
+  /**
+   * `True` while the field has any pending rules.
+   */
+  $validating: boolean
+  /**
+   * `True` if the field is touched.
+   *
+   * @remarks
+   * In most cases, it should be set together with the `blur` event.
+   * Either through `$validate` or manually.
+   */
+  $touched: boolean
+  /**
+   * `True` if the `$value` of the field has changed at least once.
+   */
+  $dirty: boolean
+  /**
+   * Validate the field.
+   *
+   * @param options - Validation options to use
+   * @default
+   * ```
+   * { setTouched: true, force: true }
+   * ```
+   */
+  $validate(options?: ValidateOptions): void
+} & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
+
+export type ResultFormData<FormData extends object | undefined> =
+  FormData extends undefined
+    ? undefined
+    : {
+        [K in keyof FormData]: FormData[K] extends
+          | { $value: infer TValue }
+          | undefined
+          ? UnwrapRef<Exclude<TValue, Ref>>
+          : FormData[K] extends object | undefined
+          ? ResultFormData<FormData[K]>
+          : FormData[K]
+      }
+
+export type FieldNames<T> = T extends (infer TArray)[]
+  ? FieldNames<TArray>
+  : {
+      [K in keyof T]-?: T[K] extends { $value: any } | undefined
+        ? K
+        : FieldNames<T[K]>
+    }[keyof T]
+
+export type TransformedFormData<FormData extends object | undefined> =
+  FormData extends undefined
+    ? undefined
+    : {
+        [K in keyof FormData]: FormData[K] extends
+          | { $value: infer TValue }
+          | undefined
+          ? FormData[K] extends undefined
+            ? undefined
+            : TransformedField<
+                UnwrapRef<Exclude<TValue, Ref>>,
+                Omit<Exclude<FormData[K], undefined>, '$value' | '$rules'>
+              >
+          : FormData[K] extends object | undefined
+          ? TransformedFormData<FormData[K]>
+          : FormData[K]
+      }
