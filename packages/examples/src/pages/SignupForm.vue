@@ -90,7 +90,7 @@ async function handleSubmit() {
   >
     <div class="name">
       <FormInput
-        placeholder="Alice, Bob or Oscar"
+        placeholder="Alice, Bob, or Oscar"
         :label="{ value: 'Name', for: 'name' }"
         :errors="form.name.$errors"
         :validating="form.name.$validating"

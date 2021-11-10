@@ -12,15 +12,19 @@ export class PromiseCancel<T = unknown> {
   }
 
   cancelResolve(value: T | PromiseLike<T>) {
-    this.isRacing = false
-    this.resolve(value)
-    this.assign()
+    if (this.isRacing) {
+      this.isRacing = false
+      this.resolve(value)
+      this.assign()
+    }
   }
 
   cancelReject(reason?: any) {
-    this.isRacing = false
-    this.reject(reason)
-    this.assign()
+    if (this.isRacing) {
+      this.isRacing = false
+      this.reject(reason)
+      this.assign()
+    }
   }
 
   race<Ps extends readonly Promise<any>[]>(...promises: [...Ps]) {

@@ -3,6 +3,107 @@ import { reactive, Ref, ComputedRef } from 'vue'
 import * as nForm from './form'
 import * as nDomain from './domain'
 
+/**
+ * Vue composition function for form validation.
+ *
+ * @remarks
+ * For type inference inside of `useValidation` make sure to define the structure of your
+ * `formData` upfront and pass it as the generic parameter `FormData`.
+ *
+ * @param formData - The structure of your `formData`
+ *
+ * @example
+ * ```
+ * type FormData = {
+ *   name: Field<string>,
+ *   password: Field<string>
+ * }
+ *
+ * const { form } = useValidation<FormData>({})
+ * ```
+ */
+export function useValidation<FormData extends object>(
+  formData: FormData
+): UseValidation<FormData> {
+  const form = new nForm.Form()
+  const promiseCancel = new nDomain.PromiseCancel<nForm.ValidationError>()
+
+  nForm.transformFormData(form, formData)
+
+  const transformedFormData: any = reactive(formData)
+
+  return {
+    form: transformedFormData,
+    submitting: form.submitting,
+    validating: form.validating,
+    hasError: form.hasError,
+    errors: form.errors,
+
+    async validateFields({ names, predicate } = {}) {
+      form.submitting.value = true
+
+      const resultFormData = nForm.getResultFormData(
+        transformedFormData,
+        predicate
+      ) as nForm.ResultFormData<FormData>
+
+      try {
+        await promiseCancel.race(form.validateAll(names as any))
+      } finally {
+        form.submitting.value = false
+      }
+
+      return resultFormData
+    },
+
+    resetFields(formData) {
+      promiseCancel.cancelReject(new nForm.ValidationError())
+
+      if (formData === undefined) {
+        form.resetFields()
+      } else {
+        nForm.resetFields(form, formData, transformedFormData)
+      }
+    },
+
+    add(path, value) {
+      const lastKey = path[path.length - 1]
+
+      if (lastKey !== undefined) {
+        const box = { [lastKey]: value }
+        nForm.transformFormData(form, box)
+        const transformedValue = box[lastKey]
+        const valueAtPath = nDomain.path(path, transformedFormData)
+        if (Array.isArray(valueAtPath)) {
+          valueAtPath.push(transformedValue)
+        } else {
+          nDomain.set(transformedFormData, path, transformedValue)
+        }
+      }
+    },
+
+    remove(path) {
+      const lastKey = path.pop()
+
+      if (lastKey !== undefined) {
+        if (path.length === 0) {
+          nForm.disposeForm(form, transformedFormData[lastKey])
+          delete transformedFormData[lastKey]
+        } else {
+          const valueAtPath = nDomain.path(path, transformedFormData)
+          if (Array.isArray(valueAtPath)) {
+            const deletedFormData = valueAtPath.splice(+lastKey, 1)
+            nForm.disposeForm(form, deletedFormData)
+          } else {
+            nForm.disposeForm(form, valueAtPath[lastKey])
+            delete valueAtPath[lastKey]
+          }
+        }
+      }
+    }
+  }
+}
+
 export type UseValidation<FormData extends object> = {
   /**
    * A transformed reactive `formData` object.
@@ -85,107 +186,4 @@ export type UseValidation<FormData extends object> = {
    * @param path - A path of `string` and `numbers` to the property to remove
    */
   remove(path: nDomain.Key[]): void
-}
-
-/**
- * Vue composition function for form validation.
- *
- * @remarks
- * For type inference inside of `useValidation` make sure to define the structure of your
- * `formData` upfront and pass it as the generic parameter `FormData`.
- *
- * @param formData - The structure of your `formData`
- *
- * @example
- * ```
- * type FormData = {
- *   name: Field<string>,
- *   password: Field<string>
- * }
- *
- * const { form } = useValidation<FormData>({})
- * ```
- */
-export function useValidation<FormData extends object>(
-  formData: FormData
-): UseValidation<FormData> {
-  const form = new nForm.Form()
-  const promiseCancel = new nDomain.PromiseCancel<nForm.ValidationError>()
-
-  nForm.transformFormData(form, formData)
-
-  const transformedFormData: any = reactive(formData)
-
-  return {
-    form: transformedFormData,
-    submitting: form.submitting,
-    validating: form.validating,
-    hasError: form.hasError,
-    errors: form.errors,
-
-    async validateFields({ names, predicate } = {}) {
-      form.submitting.value = true
-
-      const resultFormData = nForm.getResultFormData(
-        transformedFormData,
-        predicate
-      ) as nForm.ResultFormData<FormData>
-
-      try {
-        await promiseCancel.race(form.validateAll(names as any))
-      } finally {
-        form.submitting.value = false
-      }
-
-      return resultFormData
-    },
-
-    resetFields(formData) {
-      if (form.submitting.value) {
-        promiseCancel.cancelReject(new nForm.ValidationError())
-      }
-
-      if (formData === undefined) {
-        form.resetFields()
-      } else {
-        nForm.resetFields(form, formData, transformedFormData)
-      }
-    },
-
-    add(path, value) {
-      const lastKey = path[path.length - 1]
-
-      if (lastKey !== undefined) {
-        const box = { [lastKey]: value }
-        nForm.transformFormData(form, box)
-        const transformedBox = box[lastKey]
-        const valueAtPath = nDomain.path(path, transformedFormData)
-        if (Array.isArray(valueAtPath)) {
-          valueAtPath.push(transformedBox)
-        } else {
-          nDomain.set(transformedFormData, path, transformedBox)
-        }
-      }
-    },
-
-    remove(path) {
-      const lastKey = path.pop()
-
-      if (lastKey !== undefined) {
-        if (path.length === 0) {
-          nForm.disposeForm(form, transformedFormData[lastKey])
-          delete transformedFormData[lastKey]
-        } else {
-          const valueAtPath = nDomain.path(path, transformedFormData)
-          if (Array.isArray(valueAtPath)) {
-            const deletedFormData = valueAtPath.splice(+lastKey, 1)
-            nForm.disposeForm(form, deletedFormData)
-          } else {
-            nForm.disposeForm(form, valueAtPath[lastKey])
-            delete valueAtPath[lastKey]
-          }
-        }
-      }
-    }
-  }
 }

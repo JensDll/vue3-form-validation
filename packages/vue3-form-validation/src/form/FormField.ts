@@ -115,9 +115,7 @@ export class FormField {
     let error: unknown
     const ruleResult = rule(...modelValues)
 
-    if (promiseCancel.isRacing) {
-      promiseCancel.cancelReject(new nDomain.CancelError())
-    }
+    promiseCancel.cancelReject(new nDomain.CancelError())
 
     if (typeof ruleResult?.then === 'function') {
       this.rulesValidating.value++
@@ -125,17 +123,16 @@ export class FormField {
 
       try {
         error = await promiseCancel.race(ruleResult)
-      } catch (err: any) {
-        switch (err.constructor) {
-          case ResetError:
-            return
-          case nDomain.CancelError:
-            this.rulesValidating.value--
-            this.form.rulesValidating.value--
-            return
-          default:
-            error = err
+      } catch (err) {
+        if (err instanceof ResetError) {
+          return
         }
+        if (err instanceof nDomain.CancelError) {
+          this.rulesValidating.value--
+          this.form.rulesValidating.value--
+          return
+        }
+        error = err
       } finally {
         promiseCancel.isRacing = false
       }
@@ -160,9 +157,7 @@ export class FormField {
     for (let i = 0; i < this.rules.length; i++) {
       this.rawErrors[i] = null
       this.cancelDebounce[i]()
-      if (this.promiseCancels[i].isRacing) {
-        this.promiseCancels[i].cancelReject(new ResetError())
-      }
+      this.promiseCancels[i].cancelReject(new ResetError())
     }
 
     this.watchStopHandle = this.setupWatcher()
