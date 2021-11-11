@@ -7,7 +7,7 @@ import * as nDomain from './domain'
  * Vue composition function for form validation.
  *
  * @remarks
- * For type inference inside of `useValidation` make sure to define the structure of your
+ * For type inference in `useValidation` make sure to define the structure of your
  * `formData` upfront and pass it as the generic parameter `FormData`.
  *
  * @param formData - The structure of your `formData`
@@ -83,14 +83,15 @@ export function useValidation<FormData extends object>(
     },
 
     remove(path) {
-      const lastKey = path.pop()
+      const pathCopy = path.slice()
+      const lastKey = pathCopy.pop()
 
       if (lastKey !== undefined) {
         if (path.length === 0) {
           nForm.disposeForm(form, transformedFormData[lastKey])
           delete transformedFormData[lastKey]
         } else {
-          const valueAtPath = nDomain.path(path, transformedFormData)
+          const valueAtPath = nDomain.path(pathCopy, transformedFormData)
           if (Array.isArray(valueAtPath)) {
             const deletedFormData = valueAtPath.splice(+lastKey, 1)
             nForm.disposeForm(form, deletedFormData)
@@ -110,7 +111,7 @@ export type UseValidation<FormData extends object> = {
    */
   form: nForm.TransformedFormData<FormData>
   /**
-   * `True` during validation after calling `validateFields` when there were rules that returned a `Promise`.
+   * `True` during validation after calling `validateFields` when there were rules returning a `Promise`.
    */
   submitting: Ref<boolean>
   /**
@@ -140,7 +141,7 @@ export type UseValidation<FormData extends object> = {
      * undefined // meaning validate all
      * ```
      */
-    names?: nForm.FieldNames<FormData>[] | string[]
+    names?: nForm.FieldNames<FormData>[]
     /**
      * Filter which values to keep in the resulting form data.
      *
@@ -160,9 +161,9 @@ export type UseValidation<FormData extends object> = {
    * Reset all fields to their default value or pass an object to set specific values.
    *
    * @remarks
-   * It will not create any new fields that are not present in the form data initially.
+   * It will not create any new fields not present in the form data initially.
    *
-   * @param formData - `FormData` to set specific values. It has the same structure as the object passed to `useValidation`.
+   * @param formData - `FormData` to set specific values. It has the same structure as the object passed to `useValidation`
    */
   resetFields(formData?: Partial<nForm.ResultFormData<FormData>>): void
   /**
@@ -174,7 +175,7 @@ export type UseValidation<FormData extends object> = {
    * @param path - A path of `string` and `numbers`
    * @param value - The value to add at the specified path
    */
-  add<Ks extends readonly nDomain.Key[]>(
+  add<Ks extends readonly (string | number)[]>(
     path: readonly [...Ks],
     value: nDomain.DeepIndex<FormData, Ks> extends (infer TArray)[]
       ? TArray
@@ -185,5 +186,5 @@ export type UseValidation<FormData extends object> = {
    *
    * @param path - A path of `string` and `numbers` to the property to remove
    */
-  remove(path: nDomain.Key[]): void
+  remove(path: readonly (string | number)[]): void
 }

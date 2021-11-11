@@ -1,5 +1,6 @@
 import { expectType, expectError } from 'tsd'
-import { ref, Ref } from 'vue'
+import { ref } from 'vue'
+
 import {
   Field,
   TransformedField

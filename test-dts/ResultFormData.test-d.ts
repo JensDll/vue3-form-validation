@@ -1,21 +1,25 @@
+import { expectType } from 'tsd'
+
 import { MaybeRef } from '../packages/vue3-form-validation/src/domain'
 import { ResultFormData } from '../packages/vue3-form-validation/src/form'
 
-expect<ResultFormData<{ a: { $value: MaybeRef<string> } }>>({} as { a: string })
+expectType<ResultFormData<{ a: { $value: MaybeRef<string> } }>>(
+  {} as { a: string }
+)
 
-expect<ResultFormData<{ a?: { $value: MaybeRef<string> } }>>(
+expectType<ResultFormData<{ a?: { $value: MaybeRef<string> } }>>(
   {} as { a?: string }
 )
 
-expect<ResultFormData<{ a: { b: { $value: MaybeRef<string> } } }>>(
+expectType<ResultFormData<{ a: { b: { $value: MaybeRef<string> } } }>>(
   {} as { a: { b: string } }
 )
 
-expect<ResultFormData<{ a?: { b: { $value: MaybeRef<string> } } }>>(
+expectType<ResultFormData<{ a?: { b: { $value: MaybeRef<string> } } }>>(
   {} as { a?: { b: string } }
 )
 
-expect<
+expectType<
   ResultFormData<{
     as?: {
       b: {

@@ -32,7 +32,7 @@ export type Optional<T, K extends keyof T> = Partial<Pick<T, K>> &
     ? { (...args: Parameters<T>): ReturnType<T> }
     : unknown)
 
-export type MaybeRef<T> = Ref<T> | T
+export type MaybeRef<T> = T extends Ref<infer V> ? T | V : Ref<T> | T
 
 type DeepMaybeRefCollectionTypes<T extends CollectionTypes> = T extends Map<
   infer TMapKey,

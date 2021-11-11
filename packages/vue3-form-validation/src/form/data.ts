@@ -173,7 +173,7 @@ export type Field<
   /**
    * The field's default value.
    */
-  $value: TValue extends Ref<infer V> ? TValue | V : Ref<TValue> | TValue
+  $value: nDomain.MaybeRef<TValue>
   /**
    * Rules to use for validation.
    */
