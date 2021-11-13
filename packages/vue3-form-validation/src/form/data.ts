@@ -51,9 +51,10 @@ export function mapFieldRules(
       if (validationBehavior !== undefined) {
         return { validationBehavior, rule: second, debounce: third }
       } else {
-        console.error(
-          `[useValidation] Validation behavior with name '${first}' does not exist. Valid values are`,
-          VALIDATION_CONFIG.validationBehavior.keys()
+        throw new Error(
+          `[useValidation] Validation behavior with name '${first}' does not exist. Valid values are: ${[
+            ...VALIDATION_CONFIG.validationBehavior.keys()
+          ].join(', ')}`
         )
       }
     } else {
@@ -62,8 +63,6 @@ export function mapFieldRules(
         rule: fieldRule
       }
     }
-
-    throw Error('[useValidation] Invalid rule provided')
   })
 }
 
