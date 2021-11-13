@@ -34,7 +34,6 @@ let form: MockedObject<Form>
 let formData: FormData
 let transformedFormData: TransformedFormData<FormData>
 let mocks: Tuple<jest.Mock, 2>
-const mockConsoleError = jest.spyOn(console, 'error').mockImplementation()
 
 beforeEach(() => {
   mocks = makeMocks(2)
@@ -51,10 +50,6 @@ beforeEach(() => {
   form = new Form() as any
   transformFormData(form, formData)
   transformedFormData = reactive(formData) as any
-})
-
-afterEach(() => {
-  mockConsoleError.mockReset()
 })
 
 describe('mapFieldRules', () => {
@@ -265,7 +260,6 @@ describe('mapFieldRules', () => {
     expect(() => {
       mapFieldRules([['x', mocks[0]]])
     }).toThrow()
-    expect(mockConsoleError).toHaveBeenCalledTimes(1)
   })
 })
 
