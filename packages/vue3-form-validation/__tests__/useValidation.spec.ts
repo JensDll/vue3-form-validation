@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { useValidation } from '../src/useValidation'
 import { Field, TransformedFormData } from '../src/form'
 import { makeMocks } from './utils'
@@ -14,7 +14,7 @@ type FormData = {
       h: Field<{
         a: {
           b: {
-            c: number[]
+            c: Ref<number[]>
           }
         }
       }>
@@ -703,20 +703,10 @@ describe('add and remove', () => {
   test('remove field', () => {
     const { form, remove } = useValidation(formData)
 
+    remove(['a'])
     remove(['es', 1])
 
-    expect(form).toStrictEqual<typeof form>({
-      a: {
-        $uid: expect.any(Number),
-        $value: '',
-        $errors: [],
-        $rawErrors: [null],
-        $hasError: false,
-        $validating: false,
-        $dirty: false,
-        $touched: false,
-        $validate: expect.any(Function)
-      },
+    expect(form).toStrictEqual({
       b: {
         $uid: expect.any(Number),
         $value: '',

@@ -87,7 +87,7 @@ export function useValidation<FormData extends object>(
       const lastKey = pathCopy.pop()
 
       if (lastKey !== undefined) {
-        if (path.length === 0) {
+        if (pathCopy.length === 0) {
           nForm.disposeForm(form, transformedFormData[lastKey])
           delete transformedFormData[lastKey]
         } else {
