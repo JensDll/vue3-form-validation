@@ -4,3 +4,4 @@ temp
 tmp
 coverage
 **/dist
+**/*.log
