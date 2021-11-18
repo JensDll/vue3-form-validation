@@ -1,4 +1,4 @@
-import execa from 'execa'
+import { execa } from 'execa'
 import yargs from 'yargs'
 
 const args = await yargs(process.argv.slice(2)).array('targets').argv

@@ -4,11 +4,10 @@ import {
   TransformedFormData,
   TransformedField,
   Field
-} from '../packages/vue3-form-validation/src/form'
-import { MaybeRef } from '../packages/vue3-form-validation/src/domain'
+} from 'vue3-form-validation/src/form'
+import { MaybeRef } from 'vue3-form-validation/src/domain'
 
 // Testing without using the Field type
-// ---------------------------------------
 
 expectType<TransformedFormData<{ a: { $value: MaybeRef<10> } }>>(
   {} as {
@@ -97,7 +96,6 @@ expectType<
 )
 
 // Testing with using the Field type
-// ---------------------------------------
 
 expectType<TransformedFormData<{ a: Field<10> }>>(
   {} as {

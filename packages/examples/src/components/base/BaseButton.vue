@@ -20,7 +20,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, PropType, Ref } from 'vue'
 
-import { guards } from '~/domain'
+import { guards } from '~/utils'
 
 const emit = defineEmits(['click', 'submit'])
 

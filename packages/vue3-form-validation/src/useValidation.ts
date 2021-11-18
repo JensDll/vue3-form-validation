@@ -83,15 +83,14 @@ export function useValidation<FormData extends object>(
     },
 
     remove(path) {
-      const pathCopy = path.slice()
-      const lastKey = pathCopy.pop()
+      const lastKey = path.pop()
 
       if (lastKey !== undefined) {
-        if (pathCopy.length === 0) {
+        if (path.length === 0) {
           nForm.disposeForm(form, transformedFormData[lastKey])
           delete transformedFormData[lastKey]
         } else {
-          const valueAtPath = nDomain.path(pathCopy, transformedFormData)
+          const valueAtPath = nDomain.path(path, transformedFormData)
           if (Array.isArray(valueAtPath)) {
             const deletedFormData = valueAtPath.splice(+lastKey, 1)
             nForm.disposeForm(form, deletedFormData)
@@ -186,5 +185,5 @@ export type UseValidation<FormData extends object> = {
    *
    * @param path - A path of `string` and `numbers` to the property to remove
    */
-  remove(path: readonly (string | number)[]): void
+  remove(path: (string | number)[]): void
 }

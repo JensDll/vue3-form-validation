@@ -2,7 +2,7 @@
 import { RouteRecordName, useRoute, useRouter } from 'vue-router'
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline'
 
-import { guards } from '~/domain'
+import { guards } from '~/utils'
 
 const route = useRoute()
 const router = useRouter()
