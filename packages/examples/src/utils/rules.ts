@@ -63,7 +63,7 @@ export const rules = {
     startDate => {
       const now = new Date().toLocaleDateString('en-CA')
 
-      if (startDate && startDate < now) {
+      if (startDate.length === now.length && startDate < now) {
         return msg
       }
     }

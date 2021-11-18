@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs-extra'
-import execa from 'execa'
+import { execa } from 'execa'
 import { buildFormats, buildTargets } from './meta'
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor'
 

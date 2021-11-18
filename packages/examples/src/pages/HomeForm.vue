@@ -5,7 +5,7 @@ import FormProvider from '~/components/form/FormProvider.vue'
 import FormErrors from '~/components/form/FormErrors.vue'
 import FormButtons from '~/components/form/FormButtons.vue'
 import FormInput from '~/components/form/FormInput.vue'
-import { rules } from '~/domain'
+import { rules } from '~/utils'
 
 type FormData = {
   startDate: Field<string>
@@ -31,7 +31,7 @@ const { form, submitting, validateFields, resetFields } =
         {
           key: 'date',
           rule: (startDate: string, endDate: string) => {
-            if (endDate && endDate < startDate) {
+            if (startDate.length === endDate.length && endDate < startDate) {
               return 'Please select an ending date later than the starting date'
             }
           }

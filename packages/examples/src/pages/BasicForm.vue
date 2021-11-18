@@ -5,7 +5,7 @@ import FormFileUpload from '~/components/form/FormFileUpload.vue'
 import FormProvider from '~/components/form/FormProvider.vue'
 import FormInput from '~/components/form/FormInput.vue'
 import FormButtons from '~/components/form/FormButtons.vue'
-import { rules } from '~/domain'
+import { rules } from '~/utils'
 
 interface FormData {
   files: Field<File[]>

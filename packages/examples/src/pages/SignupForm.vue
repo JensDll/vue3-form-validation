@@ -4,7 +4,7 @@ import { Field, useValidation } from 'vue3-form-validation'
 import FormProvider from '~/components/form/FormProvider.vue'
 import FormButtons from '~/components/form/FormButtons.vue'
 import FormInput from '~/components/form/FormInput.vue'
-import { rules } from '~/domain'
+import { rules } from '~/utils'
 
 interface FormData {
   name: Field<string>
