@@ -247,27 +247,29 @@ export type TransformedField<
 } & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
 
 /**
- * Unwrap the `$value` type of all fields in an object.
+ * Unwrap the `$value` property of all fields in an object.
  */
-export type ResultFormData<FormData> = FormData extends undefined
-  ? undefined
-  : {
-      [K in keyof FormData]: FormData[K] extends
-        | { $value: infer TValue }
-        | undefined
+export type ResultFormData<FormData> = FormData extends any
+  ? {
+      [K in keyof FormData]: Exclude<FormData[K], undefined> extends {
+        $value: infer TValue
+      }
         ? UnwrapRef<Exclude<TValue, Ref>>
-        : FormData[K] extends object | undefined
+        : Exclude<FormData[K], undefined> extends object
         ? ResultFormData<FormData[K]>
         : FormData[K]
     }
+  : never
 
 /**
- * Transforms a `FormData` type into an union of field names.
+ * Transforms a `FormData` object into a union of field names.
  */
 export type FieldNames<FormData> = FormData extends (infer TArray)[]
   ? FieldNames<TArray>
   : {
-      [K in keyof FormData]-?: FormData[K] extends { $value: any } | undefined
+      [K in keyof FormData]-?: Exclude<FormData[K], undefined> extends {
+        $value: any
+      }
         ? K
         : FieldNames<FormData[K]>
     }[keyof FormData]
@@ -275,19 +277,17 @@ export type FieldNames<FormData> = FormData extends (infer TArray)[]
 /**
  * Transforms all `Field` types of an object into `TransformedFields`.
  */
-export type TransformedFormData<FormData> = FormData extends undefined
-  ? undefined
-  : {
-      [K in keyof FormData]: FormData[K] extends
-        | { $value: infer TValue }
-        | undefined
-        ? FormData[K] extends undefined
-          ? undefined
-          : TransformedField<
-              UnwrapRef<Exclude<TValue, Ref>>,
-              Omit<Exclude<FormData[K], undefined>, '$value' | '$rules'>
-            >
-        : FormData[K] extends object | undefined
-        ? TransformedFormData<FormData[K]>
+export type TransformFormData<FormData> = FormData extends any
+  ? {
+      [K in keyof FormData]: Exclude<FormData[K], undefined> extends {
+        $value: infer TValue
+      }
+        ? TransformedField<
+            UnwrapRef<Exclude<TValue, Ref>>,
+            Omit<Exclude<FormData[K], undefined>, '$value' | '$rules'>
+          >
+        : Exclude<FormData[K], undefined> extends object
+        ? TransformFormData<FormData[K]>
         : FormData[K]
     }
+  : never

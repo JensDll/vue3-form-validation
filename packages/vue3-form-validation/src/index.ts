@@ -18,5 +18,5 @@ export type {
   ValidationBehavior,
   ValidationBehaviorInfo,
   ResultFormData,
-  TransformedFormData
+  TransformFormData
 } from './form'

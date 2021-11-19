@@ -1,6 +1,6 @@
-import { FieldNames, Field } from '../packages/vue3-form-validation'
-
 import { expectType } from 'tsd'
+
+import { FieldNames, Field } from 'vue3-form-validation'
 
 expectType<'a' | 'c' | 'e'>(
   {} as FieldNames<{

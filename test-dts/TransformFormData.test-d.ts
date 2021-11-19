@@ -1,7 +1,7 @@
 import { expectType } from 'tsd'
 
 import {
-  TransformedFormData,
+  TransformFormData,
   TransformedField,
   Field
 } from 'vue3-form-validation/src/form'
@@ -9,20 +9,20 @@ import { MaybeRef } from 'vue3-form-validation/src/domain'
 
 // Testing without using the Field type
 
-expectType<TransformedFormData<{ a: { $value: MaybeRef<10> } }>>(
+expectType<TransformFormData<{ a: { $value: MaybeRef<10> } }>>(
   {} as {
     a: TransformedField<10>
   }
 )
 
-expectType<TransformedFormData<{ a?: { $value: MaybeRef<10> } }>>(
+expectType<TransformFormData<{ a?: { $value: MaybeRef<10> } }>>(
   {} as {
     a?: TransformedField<10>
   }
 )
 
 expectType<
-  TransformedFormData<{
+  TransformFormData<{
     a: {
       $value: {
         a: number
@@ -36,7 +36,7 @@ expectType<
 )
 
 expectType<
-  TransformedFormData<{ a: { $value: MaybeRef<10>; extra: MaybeRef<''> } }>
+  TransformFormData<{ a: { $value: MaybeRef<10>; extra: MaybeRef<''> } }>
 >(
   {} as {
     a: TransformedField<10, { extra: '' }>
@@ -44,7 +44,7 @@ expectType<
 )
 
 expectType<
-  TransformedFormData<{
+  TransformFormData<{
     as: {
       b: {
         $value: MaybeRef<10>
@@ -60,7 +60,7 @@ expectType<
 )
 
 expectType<
-  TransformedFormData<{
+  TransformFormData<{
     as?: {
       b?: {
         $value: MaybeRef<10>
@@ -78,7 +78,7 @@ expectType<
 )
 
 expectType<
-  TransformedFormData<{
+  TransformFormData<{
     as: {
       b: {
         $value: MaybeRef<10>
@@ -97,26 +97,26 @@ expectType<
 
 // Testing with using the Field type
 
-expectType<TransformedFormData<{ a: Field<10> }>>(
+expectType<TransformFormData<{ a: Field<10> }>>(
   {} as {
     a: TransformedField<10>
   }
 )
 
-expectType<TransformedFormData<{ a?: Field<10> }>>(
+expectType<TransformFormData<{ a?: Field<10> }>>(
   {} as {
     a?: TransformedField<10>
   }
 )
 
-expectType<TransformedFormData<{ a: Field<10, { extra: '' }> }>>(
+expectType<TransformFormData<{ a: Field<10, { extra: '' }> }>>(
   {} as {
     a: TransformedField<10, { extra: '' }>
   }
 )
 
 expectType<
-  TransformedFormData<{
+  TransformFormData<{
     as: {
       b: Field<10>
     }[]
@@ -130,7 +130,7 @@ expectType<
 )
 
 expectType<
-  TransformedFormData<{
+  TransformFormData<{
     as?: {
       b?: Field<10>
     }[]
@@ -144,7 +144,7 @@ expectType<
 )
 
 expectType<
-  TransformedFormData<{
+  TransformFormData<{
     as: {
       b: Field<10, { extra: ''; stuff: '' }>
     }[]

@@ -108,7 +108,7 @@ export type UseValidation<FormData extends object> = {
   /**
    * A transformed reactive `formData` object.
    */
-  form: nForm.TransformedFormData<FormData>
+  form: nForm.TransformFormData<FormData>
   /**
    * `True` during validation after calling `validateFields` when there were rules returning a `Promise`.
    */

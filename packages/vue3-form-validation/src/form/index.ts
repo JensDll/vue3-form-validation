@@ -28,7 +28,7 @@ export {
 export {
   Field,
   TransformedField,
-  TransformedFormData,
+  TransformFormData,
   FieldNames,
   ResultFormData
 } from './data'
