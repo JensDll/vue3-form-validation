@@ -28,7 +28,7 @@ export type Configuration =
 /**
  * Configure the validation behavior of `useValidation`.
  *
- * @param configuration - The Form validation configuration
+ * @param configuration - The form validation configuration
  */
 export function createValidation(configuration: Configuration): Plugin {
   return {

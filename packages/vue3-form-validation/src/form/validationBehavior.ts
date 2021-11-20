@@ -30,7 +30,7 @@ export type ValidationBehaviorInfo<T = any> = {
    */
   submit: boolean
   /**
-   * The `$value` of the field.
+   * The `$value` property of the field.
    */
   value: T
 }

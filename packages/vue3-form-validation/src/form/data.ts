@@ -223,7 +223,7 @@ export type TransformedField<
    */
   $validating: boolean
   /**
-   * `True` if this field is touched.
+   * `True` if the field is touched.
    *
    * @remarks
    * In most cases, this value should be set together with the `blur` event.
@@ -237,7 +237,7 @@ export type TransformedField<
   /**
    * Validate this field.
    *
-   * @param options - Validation options to use
+   * @param options - Validate options to use
    * @default
    * ```
    * { setTouched: true, force: true }
@@ -262,7 +262,7 @@ export type ResultFormData<FormData> = FormData extends any
   : never
 
 /**
- * Receive every field name in `FormData` as a union of strings.
+ * Receive the name of every field in `FormData` as a union of strings.
  */
 export type FieldNames<FormData> = FormData extends (infer TArray)[]
   ? FieldNames<TArray>
