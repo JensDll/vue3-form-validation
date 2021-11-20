@@ -8,7 +8,7 @@ expectType<'a' | 'c' | 'e'>(
     b?: {
       c: Field<string>
       d?: {
-        e: Field<string>
+        e?: Field<string>
       }
     }[]
   }>

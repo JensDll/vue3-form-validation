@@ -64,7 +64,8 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
   )
 
   add(['cs'], { d: { $value: 10, extra: '' } })
-  expectError(add(['cs'], { d: { $value: '' } }))
+  // @ts-expect-error
+  add(['cs'], { d: { $value: '' } })
 }
 
 // example with generic
@@ -104,7 +105,8 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
   )
 
   add(['cs'], { d: { $value: 10 } })
-  expectError(add(['cs'], { d: { $value: '' } }))
+  // @ts-expect-error
+  add(['cs'], { d: { $value: '' } })
 }
 
 // example with nested field

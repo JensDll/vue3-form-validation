@@ -167,7 +167,7 @@ export function resetFields(form: Form, data: any, transformedFormData: any) {
 
 export type Field<
   TValue,
-  TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
+  TExtra extends Record<string, unknown> = Record<string, never>
 > = {
   /**
    * The field's default value.
@@ -196,7 +196,7 @@ export type ValidateOptions = {
 
 export type TransformedField<
   TValue,
-  TExtra extends Record<nDomain.Key, unknown> = Record<string, never>
+  TExtra extends Record<string, unknown> = Record<string, never>
 > = {
   /**
    * The unique id of this field.
@@ -223,7 +223,7 @@ export type TransformedField<
    */
   $validating: boolean
   /**
-   * `True` if this field is touched.
+   * `True` if the field is touched.
    *
    * @remarks
    * In most cases, this value should be set together with the `blur` event.
@@ -237,7 +237,7 @@ export type TransformedField<
   /**
    * Validate this field.
    *
-   * @param options - Validation options to use
+   * @param options - Validate options to use
    * @default
    * ```
    * { setTouched: true, force: true }
@@ -247,7 +247,7 @@ export type TransformedField<
 } & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
 
 /**
- * Unwrap the `$value` property of all fields in an object.
+ * Unwrap the `$value` property of all fields in `FormData`.
  */
 export type ResultFormData<FormData> = FormData extends any
   ? {
@@ -262,7 +262,7 @@ export type ResultFormData<FormData> = FormData extends any
   : never
 
 /**
- * Transforms a `FormData` object into a union of field names.
+ * Receive the name of every field in `FormData` as a union of strings.
  */
 export type FieldNames<FormData> = FormData extends (infer TArray)[]
   ? FieldNames<TArray>
@@ -275,7 +275,7 @@ export type FieldNames<FormData> = FormData extends (infer TArray)[]
     }[keyof FormData]
 
 /**
- * Transforms all `Field` types of an object into `TransformedFields`.
+ * Transforms every field in `FormData` into transformed fields.
  */
 export type TransformFormData<FormData> = FormData extends any
   ? {

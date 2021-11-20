@@ -8,9 +8,9 @@ import * as nDomain from './domain'
  *
  * @remarks
  * For type inference in `useValidation` make sure to define the structure of your
- * `formData` upfront and pass it as the generic parameter `FormData`.
+ * form data upfront and pass it as the generic parameter `FormData`.
  *
- * @param formData - The structure of your `formData`
+ * @param formData - The structure of your form data
  *
  * @example
  * ```
@@ -19,7 +19,16 @@ import * as nDomain from './domain'
  *   password: Field<string>
  * }
  *
- * const { form } = useValidation<FormData>({})
+ * const { form } = useValidation<FormData>({
+ *   name: {
+ *     $value: '',
+ *     $rules: []
+ *   },
+ *   password: {
+ *     $value: '',
+ *     $rules: []
+ *   }
+ * })
  * ```
  */
 export function useValidation<FormData extends object>(
@@ -174,11 +183,11 @@ export type UseValidation<FormData extends object> = {
    * @param path - A path of `string` and `numbers`
    * @param value - The value to add at the specified path
    */
-  add<Ks extends readonly (string | number)[]>(
-    path: readonly [...Ks],
-    value: nDomain.DeepIndex<FormData, Ks> extends (infer TArray)[]
+  add<Keys extends readonly (string | number)[]>(
+    path: readonly [...Keys],
+    value: nDomain.DeepIndex<FormData, Keys> extends (infer TArray)[]
       ? TArray
-      : nDomain.DeepIndex<FormData, Ks>
+      : nDomain.DeepIndex<FormData, Keys>
   ): void
   /**
    * Removes a property from the form data.

@@ -8,9 +8,9 @@ import * as nDomain from '../domain'
 export type ValidatorParameters = [
   /**
    * Type definition is not accurate here but catches invalid use of validators.
-   * The accurate type would be an array of anything expect `Ref`.
+   * The accurate type would be an array of anything expect Refs.
    */
-  modelValues: (string | number | Record<any, unknown>)[],
+  modelValues: (string | number | Record<string, unknown>)[],
   force: boolean,
   submit: boolean
 ]
@@ -88,8 +88,9 @@ export class Form {
     }
 
     ruleInfos.forEach(({ rule }, ruleNumber) => {
-      const validator = field.validators[ruleNumber]
-      const validatorNotDebounced = field.validatorsNotDebounced[ruleNumber]
+      const validator = field.ruleInfos[ruleNumber].validator
+      const validatorNotDebounced =
+        field.ruleInfos[ruleNumber].validatorNotDebounced
 
       if (isSimpleRule(rule)) {
         simpleValidators.validators.push(validator)

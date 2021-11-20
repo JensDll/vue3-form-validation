@@ -68,10 +68,10 @@ async function build(target: string) {
         fs.copyFile('README.md', 'publish/README.md'),
         fs.copyFile(`${packageFolder}/package.json`, 'publish/package.json'),
         ...buildFormats.map(format => {
-          const bundel = `${target}.${format}.js`
+          const bundle = `${target}.${format}.js`
           return fs.copyFile(
-            `${packageFolder}/dist/${bundel}`,
-            `publish/dist/${bundel}`
+            `${packageFolder}/dist/${bundle}`,
+            `publish/dist/${bundle}`
           )
         }),
         fs.copyFile(globalDtsPath, 'test-dts/global.d.ts')
