@@ -7,15 +7,19 @@ import * as nDomain from '../domain'
 
 class ResetError extends Error {}
 
+type MappedRuleInformation = {
+  promiseCancel: nDomain.PromiseCancel<never>
+  rule?: SimpleRule
+  validator: Validator
+  validatorNotDebounced: ValidatorNotDebounced
+  validationBehavior: ValidationBehaviorFunction
+  cancelDebounce: () => void
+}
+
 export class FormField {
   watchStopHandle: WatchStopHandle
   form: Form
-  promiseCancels: nDomain.PromiseCancel<never>[]
-  rules: (SimpleRule | undefined)[]
-  validators: Validator[]
-  validatorsNotDebounced: ValidatorNotDebounced[]
-  validationBehaviors: ValidationBehaviorFunction[]
-  cancelDebounce: (() => void)[]
+  ruleInfos: MappedRuleInformation[]
   rulesValidating = ref(0)
   initialModelValue: unknown
 
@@ -37,19 +41,13 @@ export class FormField {
     ruleInfos: RuleInformation[]
   ) {
     this.form = form
-    this.promiseCancels = new Array(ruleInfos.length)
-    this.rules = new Array(ruleInfos.length)
-    this.validationBehaviors = new Array(ruleInfos.length)
-    this.validators = new Array(ruleInfos.length)
-    this.validatorsNotDebounced = new Array(ruleInfos.length)
-    this.rawErrors = new Array(ruleInfos.length)
-    this.cancelDebounce = new Array(ruleInfos.length)
     this.uid = uid
     this.name = name
     this.modelValue = ref(modelValue)
+    this.rawErrors = reactive(ruleInfos.map(() => null))
     this.initialModelValue = nDomain.deepCopy(this.modelValue.value)
 
-    ruleInfos.forEach((info, ruleNumber) => {
+    this.ruleInfos = ruleInfos.map((info, ruleNumber) => {
       let invokedTimes = 0
       const validator: Validator = info.debounce
         ? nDomain.debounce(
@@ -87,31 +85,29 @@ export class FormField {
         }
       }
 
-      this.promiseCancels[ruleNumber] = new nDomain.PromiseCancel()
-      this.rules[ruleNumber] = unpackRule(info.rule)
-      this.validationBehaviors[ruleNumber] = info.validationBehavior
-      this.validators[ruleNumber] = validator
-      this.validatorsNotDebounced[ruleNumber] = validatorNotDebounced
-      this.rawErrors[ruleNumber] = null
-      this.cancelDebounce[ruleNumber] = () => {
-        invokedTimes = 0
-        validator.cancel?.()
+      return {
+        promiseCancel: new nDomain.PromiseCancel(),
+        rule: unpackRule(info.rule),
+        validator,
+        validatorNotDebounced,
+        validationBehavior: info.validationBehavior,
+        cancelDebounce: () => {
+          invokedTimes = 0
+          validator.cancel?.()
+        }
       }
     })
-
-    this.rawErrors = reactive(this.rawErrors)
 
     this.watchStopHandle = this.setupWatcher()
   }
 
   async validate(ruleNumber: number, modelValues: unknown[], noThrow: boolean) {
-    const rule = this.rules[ruleNumber]
+    const { rule, promiseCancel } = this.ruleInfos[ruleNumber]
 
     if (!rule) {
       return
     }
 
-    const promiseCancel = this.promiseCancels[ruleNumber]
     let error: unknown
     const ruleResult = rule(...modelValues)
 
@@ -154,10 +150,10 @@ export class FormField {
     this.rulesValidating.value = 0
     this.form.rulesValidating.value = 0
 
-    for (let i = 0; i < this.rules.length; i++) {
+    for (let i = 0; i < this.ruleInfos.length; i++) {
       this.rawErrors[i] = null
-      this.cancelDebounce[i]()
-      this.promiseCancels[i].cancelReject(new ResetError())
+      this.ruleInfos[i].cancelDebounce()
+      this.ruleInfos[i].promiseCancel.cancelReject(new ResetError())
     }
 
     this.watchStopHandle = this.setupWatcher()
@@ -171,7 +167,7 @@ export class FormField {
   }
 
   shouldValidate(ruleNumber: number, force: boolean, submit: boolean) {
-    return this.validationBehaviors[ruleNumber]({
+    return this.ruleInfos[ruleNumber].validationBehavior({
       hasError: this.rawErrors[ruleNumber] !== null,
       touched: this.touched.value,
       dirty: this.dirty.value,
