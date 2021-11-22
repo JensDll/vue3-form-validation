@@ -3,6 +3,8 @@ export type DefaultValidationBehaviorString =
   | 'lazy'
   | 'lazier'
   | 'submit'
+  | 'force'
+  | 'change'
 
 export type ValidationBehaviorString =
   | DefaultValidationBehaviorString
