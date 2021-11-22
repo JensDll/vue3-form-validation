@@ -17,7 +17,7 @@ const { form, validateFields, resetFields, add, remove } =
   useValidation<FormData>({
     a: {
       $value: '',
-      $rules: [rules.required('Please enter some text for this field')]
+      $rules: [rules.required('Please enter some text')]
     },
     b: undefined,
     c: undefined
@@ -26,7 +26,7 @@ const { form, validateFields, resetFields, add, remove } =
 function addField(key: string) {
   add([key], {
     $value: '',
-    $rules: [rules.required('Please enter some text for this field')]
+    $rules: [rules.required('Please enter some text')]
   })
 }
 

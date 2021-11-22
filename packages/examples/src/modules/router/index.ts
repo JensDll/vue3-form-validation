@@ -12,9 +12,9 @@ const routes: RouteRecordRaw[] = [
     component: HomeForm
   },
   {
-    path: '/keyed',
-    name: 'keyed',
-    component: KeyedForm
+    path: '/signup',
+    name: 'signup',
+    component: SignupForm
   },
   {
     path: '/dynamic',
@@ -22,9 +22,9 @@ const routes: RouteRecordRaw[] = [
     component: DynamicForm
   },
   {
-    path: '/signup',
-    name: 'signup',
-    component: SignupForm
+    path: '/keyed',
+    name: 'keyed',
+    component: KeyedForm
   },
   {
     path: '/dynamic-object',
