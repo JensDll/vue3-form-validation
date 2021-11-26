@@ -8,8 +8,8 @@ import FormButtons from '~/components/form/FormButtons.vue'
 import { rules } from '~/utils'
 
 interface FormData {
-  files: Field<File[]>
   text: Field<string>
+  files: Field<File[]>
 }
 
 const { form, submitting, validateFields, resetFields } =

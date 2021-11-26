@@ -16,4 +16,4 @@ npm install vue3-form-validation
 
 ### :point_right: [Check out the Documentation](https://github.com/JensDll/vue3-form-validation/wiki/Documentation)
 
-### :point_right: [Check out the Examples on StackBlitz](https://stackblitz.com/edit/github-ukbo8g?file=src%2Fpages%2FHomeForm.vue&title=Form%20Validation%20Examples)
+### :point_right: [Check out the Examples on StackBlitz](https://stackblitz.com/github/JensDll/vue3-form-validation/tree/main/packages/examples?file=src%2Fpages%2FHomeForm.vue)
