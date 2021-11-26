@@ -3,6 +3,7 @@ import { VALIDATION_CONFIG } from './ValidationConfig'
 import {
   ValidationBehaviorFunction,
   ValidationBehaviorString,
+  CustomValidationBehaviorFunctions,
   DefaultValidationBehaviorString
 } from './form'
 import * as nDomain from './domain'
@@ -15,7 +16,7 @@ export type ConfigurationValidationBehavior = nDomain.Optional<
 >
 
 export type Configuration =
-  keyof UseValidation_CustomValidationBehaviorFunctions extends never
+  keyof CustomValidationBehaviorFunctions extends never
     ? {
         defaultValidationBehavior: ValidationBehaviorString
         validationBehavior?: ConfigurationValidationBehavior

@@ -22,6 +22,7 @@ export {
   ValidationBehavior,
   ValidationBehaviorFunction,
   DefaultValidationBehaviorString,
+  CustomValidationBehaviorFunctions,
   ValidationBehaviorInfo,
   ValidationBehaviorString
 } from './validationBehavior'
