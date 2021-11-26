@@ -14,13 +14,13 @@ interface FormData {
 
 const { form, submitting, validateFields, resetFields } =
   useValidation<FormData>({
-    files: {
-      $value: [],
-      $rules: [rules.min(1)('Please select one or more files')]
-    },
     text: {
       $value: '',
       $rules: [rules.min(6)('Please enter text longer than 5 characters')]
+    },
+    files: {
+      $value: [],
+      $rules: [rules.min(1)('Please select one or more files')]
     }
   })
 
