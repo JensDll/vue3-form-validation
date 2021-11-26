@@ -1,4 +1,7 @@
-import { createValidation } from 'vue3-form-validation'
+import {
+  createValidation,
+  CustomValidationBehaviorFunctions
+} from 'vue3-form-validation'
 
 export const validation = createValidation({
   defaultValidationBehavior: 'lazier'

@@ -2,7 +2,6 @@ import path from 'path'
 import fs from 'fs-extra'
 import { execa } from 'execa'
 import { buildFormats, buildTargets } from './meta'
-import { Extractor, ExtractorConfig } from '@microsoft/api-extractor'
 
 buildTargets.forEach(build)
 
@@ -25,65 +24,41 @@ async function build(target: string) {
       }
     )
 
-    const extractorConfigPath = path.resolve(
-      packageFolder,
-      `api-extractor.json`
+    await execa(
+      'npm',
+      [
+        'exec',
+        '--',
+        'prettier',
+        '--write',
+        `${packageFolder}/dist/${target}.d.ts`
+      ],
+      {
+        stdio: 'inherit'
+      }
     )
-    const extractorConfig =
-      ExtractorConfig.loadFileAndPrepare(extractorConfigPath)
-    const extractorResult = Extractor.invoke(extractorConfig, {
-      localBuild: true,
-      showVerboseMessages: true
-    })
 
-    if (extractorResult.succeeded) {
-      const globalDtsPath = `${packageFolder}/src/global.d.ts`
-      const globalDtsBuffer = await fs.readFile(globalDtsPath)
-
-      await fs.appendFile(
+    await Promise.all([
+      // Copy LICENSE
+      fs.copy('LICENSE', 'publish/LICENSE'),
+      // Copy README
+      fs.copy('README.md', 'publish/README.md'),
+      // Copy JavaScript bundles
+      fs.copy(`${packageFolder}/package.json`, 'publish/package.json'),
+      ...buildFormats.map(format => {
+        const bundle = `${target}.${format}.js`
+        return fs.copy(
+          `${packageFolder}/dist/${bundle}`,
+          `publish/dist/${bundle}`
+        )
+      }),
+      // Copy type definition
+      fs.copy(
         `${packageFolder}/dist/${target}.d.ts`,
-        Buffer.concat([
-          Buffer.from('\ndeclare global {'),
-          globalDtsBuffer,
-          Buffer.from('}')
-        ])
+        `publish/dist/${target}.d.ts`
       )
+    ])
 
-      await execa(
-        'npm',
-        [
-          'exec',
-          '--',
-          'prettier',
-          '--write',
-          `${packageFolder}/dist/${target}.d.ts`
-        ],
-        {
-          stdio: 'inherit'
-        }
-      )
-
-      await Promise.all([
-        fs.copyFile('LICENSE', 'publish/LICENSE'),
-        fs.copyFile('README.md', 'publish/README.md'),
-        fs.copyFile(`${packageFolder}/package.json`, 'publish/package.json'),
-        ...buildFormats.map(format => {
-          const bundle = `${target}.${format}.js`
-          return fs.copyFile(
-            `${packageFolder}/dist/${bundle}`,
-            `publish/dist/${bundle}`
-          )
-        }),
-        fs.copyFile(globalDtsPath, 'test-dts/global.d.ts')
-      ])
-
-      await fs.copy(
-        `${packageFolder}/dist/${target}.d.ts`,
-        `publish/dist/${target}.d.ts`,
-        { overwrite: true }
-      )
-    }
-
-    console.log(`Build finished ! (success = ${extractorResult.succeeded})`)
+    console.log(`Build finished!`)
   }
 }

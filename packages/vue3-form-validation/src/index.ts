@@ -15,6 +15,7 @@ export type {
   FieldNames,
   ValidationBehaviorFunction,
   ValidationBehaviorString,
+  CustomValidationBehaviorFunctions,
   ValidationBehavior,
   ValidationBehaviorInfo,
   ResultFormData,

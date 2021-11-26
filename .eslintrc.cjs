@@ -31,7 +31,9 @@ module.exports = {
         'ts-nocheck': true,
         'ts-check': false
       }
-    ]
+    ],
+    // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/no-empty-interface.md
+    '@typescript-eslint/no-empty-interface': 'off'
   },
   ignorePatterns: ['**/dist']
 }

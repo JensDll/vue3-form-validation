@@ -1,5 +1,5 @@
 import typescript from 'rollup-plugin-typescript2'
-import esbuild from 'rollup-plugin-esbuild'
+import dts from 'rollup-plugin-dts'
 
 const TARGETS = process.env.TARGETS.split(' ')
 const FORMATS = process.env.FORMATS.split(' ')
@@ -13,22 +13,24 @@ const tsconfigOverride = {
 for (const target of TARGETS) {
   const config = {
     input: `packages/${target}/src/index.ts`,
+    output: FORMATS.map(format => ({
+      file: `packages/${target}/dist/${target}.${format}.js`,
+      format
+    })),
     external: ['vue'],
-    plugins: [
-      process.env.BUILD
-        ? typescript({ tsconfigOverride })
-        : esbuild(tsconfigOverride)
-    ]
+    plugins: [typescript({ tsconfigOverride })]
   }
 
-  const output = FORMATS.map(format => ({
-    file: `packages/${target}/dist/${target}.${format}.js`,
-    format
-  }))
+  const dtsConfig = {
+    input: `packages/${target}/dist/index.d.ts`,
+    output: {
+      file: `packages/${target}/dist/${target}.d.ts`,
+      format: 'es'
+    },
+    plugins: [dts()]
+  }
 
-  config['output'] = output
-
-  configs.push(config)
+  configs.push(config, dtsConfig)
 }
 
 export default configs

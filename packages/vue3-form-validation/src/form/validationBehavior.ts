@@ -8,7 +8,9 @@ export type DefaultValidationBehaviorString =
 
 export type ValidationBehaviorString =
   | DefaultValidationBehaviorString
-  | keyof UseValidation_CustomValidationBehaviorFunctions
+  | keyof CustomValidationBehaviorFunctions
+
+export interface CustomValidationBehaviorFunctions {}
 
 export type ValidationBehaviorInfo<T = any> = {
   /**
