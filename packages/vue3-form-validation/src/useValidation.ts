@@ -115,7 +115,7 @@ export function useValidation<FormData extends object>(
 
 export type UseValidation<FormData extends object> = {
   /**
-   * A transformed reactive `formData` object.
+   * A transformed reactive form data object.
    */
   form: nForm.TransformFormData<FormData>
   /**
@@ -171,7 +171,7 @@ export type UseValidation<FormData extends object> = {
    * @remarks
    * It will not create any new fields not present in the form data initially.
    *
-   * @param formData - `FormData` to set specific values. It has the same structure as the object passed to `useValidation`
+   * @param formData - Form data to set specific values. It has the same structure as the object passed to `useValidation`
    */
   resetFields(formData?: Partial<nForm.ResultFormData<FormData>>): void
   /**
