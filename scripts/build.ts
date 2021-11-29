@@ -43,8 +43,9 @@ async function build(target: string) {
       fs.copy('LICENSE', 'publish/LICENSE'),
       // Copy README
       fs.copy('README.md', 'publish/README.md'),
-      // Copy JavaScript bundles
+      // Copy package.json
       fs.copy(`${packageFolder}/package.json`, 'publish/package.json'),
+      // Copy JavaScript bundles
       ...buildFormats.map(format => {
         const bundle = `${target}.${format}.js`
         return fs.copy(
@@ -52,7 +53,7 @@ async function build(target: string) {
           `publish/dist/${bundle}`
         )
       }),
-      // Copy type definition
+      // Copy TypeScript definition files
       fs.copy(
         `${packageFolder}/dist/${target}.d.ts`,
         `publish/dist/${target}.d.ts`
