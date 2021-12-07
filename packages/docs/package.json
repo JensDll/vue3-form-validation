@@ -8,6 +8,6 @@
     "serve": "vitepress serve ."
   },
   "dependencies": {
-    "vitepress": "^0.20.1"
+    "vitepress": "^0.20.2"
   }
 }
