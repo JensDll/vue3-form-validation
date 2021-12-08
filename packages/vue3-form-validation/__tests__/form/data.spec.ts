@@ -6,7 +6,7 @@ import {
   Field,
   Form,
   getResultFormData,
-  TransformedFormData,
+  TransformFormData,
   transformFormData,
   resetFields,
   disposeForm,
@@ -32,7 +32,7 @@ jest.mock('../../src/form/Form')
 
 let form: MockedObject<Form>
 let formData: FormData
-let transformedFormData: TransformedFormData<FormData>
+let transformedFormData: TransformFormData<FormData>
 let mocks: Tuple<jest.Mock, 2>
 
 beforeEach(() => {
@@ -258,6 +258,7 @@ describe('mapFieldRules', () => {
 
   it('should throw error for invalid input', () => {
     expect(() => {
+      // @ts-expect-error
       mapFieldRules([['x', mocks[0]]])
     }).toThrow()
   })
@@ -369,7 +370,7 @@ describe('transformFormData', () => {
 })
 
 describe('getResultFormData', () => {
-  it('should only keep the value proerties', () => {
+  it('should only keep the value properties', () => {
     const resultFormData = getResultFormData(transformedFormData)
     expect(resultFormData).toStrictEqual({
       a: '',
@@ -398,7 +399,7 @@ describe('getResultFormData', () => {
 })
 
 describe('resetFields', () => {
-  it('should reset fields to passed values', done => {
+  it('should reset fields to passed values and not trigger validation', done => {
     resetFields(
       form,
       {
