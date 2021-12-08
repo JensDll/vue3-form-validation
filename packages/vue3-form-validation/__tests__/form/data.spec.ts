@@ -38,12 +38,25 @@ let mocks: Tuple<jest.Mock, 2>
 beforeEach(() => {
   mocks = makeMocks(2)
   formData = {
-    a: { $value: '', extra: 'extra' },
-    b: { $value: '' },
+    a: {
+      $value: '',
+      $rules: [() => {}, { key: 'a', rule: () => {} }],
+      extra: 'extra'
+    },
+    b: { $value: '', $rules: [() => {}, { key: 'b', rule: () => {} }] },
     cs: [
-      { d: { $value: '' }, e: { $value: '' } },
-      { d: { $value: '' }, e: { $value: '' } },
-      { d: { $value: '' }, e: { $value: '' } }
+      {
+        d: { $value: '', $rules: [() => {}, { key: 'd', rule: () => {} }] },
+        e: { $value: '', $rules: [() => {}, { key: 'e', rule: () => {} }] }
+      },
+      {
+        d: { $value: '', $rules: [() => {}, { key: 'd', rule: () => {} }] },
+        e: { $value: '', $rules: [() => {}, { key: 'e', rule: () => {} }] }
+      },
+      {
+        d: { $value: '', $rules: [() => {}, { key: 'd', rule: () => {} }] },
+        e: { $value: '', $rules: [() => {}, { key: 'e', rule: () => {} }] }
+      }
     ],
     some: { extra: '', stuff: [1, 2, 3] }
   }
@@ -271,7 +284,7 @@ describe('transformFormData', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $rawErrors: [],
+        $rawErrors: [null, null],
         $hasError: false,
         $validating: false,
         $dirty: false,
@@ -283,7 +296,7 @@ describe('transformFormData', () => {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $rawErrors: [],
+        $rawErrors: [null, null],
         $hasError: false,
         $validating: false,
         $dirty: false,
@@ -296,7 +309,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -307,7 +320,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -320,7 +333,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -331,7 +344,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -344,7 +357,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -355,7 +368,7 @@ describe('transformFormData', () => {
             $uid: expect.any(Number),
             $value: '',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -420,7 +433,7 @@ describe('resetFields', () => {
         $uid: expect.any(Number),
         $value: 'a',
         $errors: [],
-        $rawErrors: [],
+        $rawErrors: [null, null],
         $hasError: false,
         $validating: false,
         $dirty: false,
@@ -432,7 +445,7 @@ describe('resetFields', () => {
         $uid: expect.any(Number),
         $value: 'b',
         $errors: [],
-        $rawErrors: [],
+        $rawErrors: [null, null],
         $hasError: false,
         $validating: false,
         $dirty: false,
@@ -445,7 +458,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'd1',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -456,7 +469,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'e1',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -469,7 +482,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'd2',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -480,7 +493,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'e2',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -493,7 +506,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'd3',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -504,7 +517,7 @@ describe('resetFields', () => {
             $uid: expect.any(Number),
             $value: 'e3',
             $errors: [],
-            $rawErrors: [],
+            $rawErrors: [null, null],
             $hasError: false,
             $validating: false,
             $dirty: false,
@@ -524,13 +537,27 @@ describe('resetFields', () => {
 })
 
 describe('disposeForm', () => {
-  it('should call dispose on form for every field', () => {
+  it('should clear dictionaries in Form for every removed field', () => {
+    expect(form.dispose).toHaveBeenCalledTimes(0)
+    expect(form.simpleValidators.size).toBe(8)
+    expect(form.keyedValidators.size).toBe(4)
+    expect(form.reactiveFields.size).toBe(8)
     disposeForm(form, formData)
     expect(form.dispose).toHaveBeenCalledTimes(8)
+    expect(form.simpleValidators.size).toBe(0)
+    expect(form.keyedValidators.size).toBe(0)
+    expect(form.reactiveFields.size).toBe(0)
   })
 
-  it('should call dispose on form for a subset of fields', () => {
+  it('should clear dictionaries in Form for every removed field (subset)', () => {
+    expect(form.dispose).toHaveBeenCalledTimes(0)
+    expect(form.simpleValidators.size).toBe(8)
+    expect(form.keyedValidators.size).toBe(4)
+    expect(form.reactiveFields.size).toBe(8)
     disposeForm(form, formData.cs)
     expect(form.dispose).toHaveBeenCalledTimes(6)
+    expect(form.simpleValidators.size).toBe(2)
+    expect(form.keyedValidators.size).toBe(2)
+    expect(form.reactiveFields.size).toBe(2)
   })
 })

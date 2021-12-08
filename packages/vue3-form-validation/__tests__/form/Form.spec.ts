@@ -280,10 +280,10 @@ describe('validation', () => {
     expect(field2.errors.value).toStrictEqual(['rule2'])
   })
 
-  it('`validateAll` should only validate fields with given names', async () => {
+  it('`validateAll` should only validate fields with given names and errors should be collected afterwards', async () => {
     const vbf = jest.fn(() => true)
 
-    const rule1 = jest.fn()
+    const rule1 = jest.fn(() => 'rule1')
     form.registerField(1, 'field1', 'foo', [
       {
         validationBehavior: vbf,
@@ -291,7 +291,7 @@ describe('validation', () => {
       }
     ])
 
-    const rule2 = jest.fn()
+    const rule2 = jest.fn(() => 'rule2')
     form.registerField(2, 'field2', 'bar', [
       {
         validationBehavior: vbf,
@@ -299,7 +299,7 @@ describe('validation', () => {
       }
     ])
 
-    const rule3 = jest.fn()
+    const rule3 = jest.fn(() => 'rule3')
     form.registerField(3, 'field3', 'baz', [
       {
         validationBehavior: vbf,
@@ -307,7 +307,7 @@ describe('validation', () => {
       }
     ])
 
-    await Promise.all([
+    await Promise.allSettled([
       form.validateAll(),
       form.validateAll(['field1']),
       form.validateAll(['field2', 'field3'])
@@ -316,6 +316,7 @@ describe('validation', () => {
     expect(rule1).toBeCalledTimes(2)
     expect(rule2).toBeCalledTimes(2)
     expect(rule3).toBeCalledTimes(2)
+    expect(form.errors.value.sort()).toStrictEqual(['rule1', 'rule2', 'rule3'])
   })
 
   it('should ignore debounce for `validateAll`', async () => {

@@ -1,23 +1,16 @@
-import { ref } from 'vue'
-
-import { FormField } from '../FormField'
-
 export const Form = jest.fn<any, any>().mockImplementation(() => {
-  class MockForm {
-    rulesValidating = ref(0)
-    fields = new Map<number, FormField>()
+  const { Form } = jest.requireActual('../Form')
 
-    dispose = jest.fn()
+  class MockForm extends Form {
+    dispose = jest.fn(uid => super.dispose(uid))
 
-    validate = jest.fn()
+    validate = jest.fn(uid => super.validate(uid))
 
-    registerField = jest.fn((uid, name, modelValue, rules) => {
-      const field = new FormField(this as any, uid, name, modelValue, rules)
-      this.fields.set(uid, field)
-      return field
-    })
+    registerField = jest.fn((uid, name, modelValue, ruleInfos) =>
+      super.registerField(uid, name, modelValue, ruleInfos)
+    )
 
-    getField = jest.fn(uid => this.fields.get(uid))
+    getField = jest.fn(uid => super.getField(uid))
   }
 
   return new MockForm()
