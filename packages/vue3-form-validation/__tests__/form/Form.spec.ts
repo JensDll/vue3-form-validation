@@ -280,7 +280,7 @@ describe('validation', () => {
     expect(field2.errors.value).toStrictEqual(['rule2'])
   })
 
-  it('`validateAll` should only validate fields with given names and errors should be collected afterwards', async () => {
+  it('`validateAll` should only validate fields with given names and collect errors afterwards', async () => {
     const vbf = jest.fn(() => true)
 
     const rule1 = jest.fn(() => 'rule1')

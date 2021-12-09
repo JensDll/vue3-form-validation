@@ -130,12 +130,12 @@ export class FormField {
         error = await promiseCancel.race(ruleResult)
       } catch (err) {
         if (err instanceof ResetError) {
-          return
+          throw undefined
         }
         if (err instanceof nDomain.CancelError) {
           this.rulesValidating.value--
           this.form.rulesValidating.value--
-          return
+          throw undefined
         }
         error = err
       } finally {
