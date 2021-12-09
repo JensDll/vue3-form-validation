@@ -124,7 +124,7 @@ describe('validation behavior', () => {
     })
   })
 
-  it('with debounce', done => {
+  it('with debounce', async () => {
     const vbf = jest.fn()
     const rule = jest.fn()
 
@@ -136,23 +136,20 @@ describe('validation behavior', () => {
       }
     ])
 
-    form.validate(1)
+    await form.validate(1)
 
-    setTimeout(() => {
-      expect(vbf).toBeCalledTimes(1)
-      expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
-        dirty: false,
-        force: false,
-        hasError: false,
-        submit: false,
-        touched: false,
-        value: 'foo'
-      })
-      done()
-    }, 20)
+    expect(vbf).toBeCalledTimes(1)
+    expect(vbf).toBeCalledWith<ValidationBehaviorInfo[]>({
+      dirty: false,
+      force: false,
+      hasError: false,
+      submit: false,
+      touched: false,
+      value: 'foo'
+    })
   })
 
-  it('should execute rule when vbf returns true and work with debounce', done => {
+  it('should execute rule when vbf returns true and work with debounce', async () => {
     const vbf = jest.fn(() => true)
     const rule = jest.fn()
 
@@ -168,31 +165,28 @@ describe('validation behavior', () => {
       }
     ])
 
-    form.validate(1)
+    await form.validate(1)
 
-    setTimeout(() => {
-      expect(vbf).toBeCalledTimes(2)
-      expect(vbf).nthCalledWith<ValidationBehaviorInfo[]>(1, {
-        dirty: false,
-        force: false,
-        hasError: false,
-        submit: false,
-        touched: false,
-        value: 'foo'
-      })
-      expect(vbf).nthCalledWith<ValidationBehaviorInfo[]>(2, {
-        dirty: false,
-        force: false,
-        hasError: false,
-        submit: false,
-        touched: false,
-        value: 'foo'
-      })
-      expect(rule).toBeCalledTimes(2)
-      expect(rule).nthCalledWith(1, 'foo')
-      expect(rule).nthCalledWith(2, 'foo')
-      done()
-    }, 20)
+    expect(vbf).toBeCalledTimes(2)
+    expect(vbf).nthCalledWith<ValidationBehaviorInfo[]>(1, {
+      dirty: false,
+      force: false,
+      hasError: false,
+      submit: false,
+      touched: false,
+      value: 'foo'
+    })
+    expect(vbf).nthCalledWith<ValidationBehaviorInfo[]>(2, {
+      dirty: false,
+      force: false,
+      hasError: false,
+      submit: false,
+      touched: false,
+      value: 'foo'
+    })
+    expect(rule).toBeCalledTimes(2)
+    expect(rule).nthCalledWith(1, 'foo')
+    expect(rule).nthCalledWith(2, 'foo')
   })
 
   it('should not execute rule when vbf returns false', () => {
@@ -221,7 +215,7 @@ describe('validation behavior', () => {
 })
 
 describe('validation', () => {
-  it('async simple rule: should be validating and set error', done => {
+  it('async simple rule: should be validating and set error', async () => {
     const vbf = jest.fn(() => true)
     const rule = jest.fn(() => makePromise(20, 'Error message'))
 
@@ -232,7 +226,7 @@ describe('validation', () => {
       }
     ])
 
-    form.validate(1)
+    const promise = form.validate(1)
 
     expect(field.validating.value).toBe(true)
     expect(field.errors.value).toStrictEqual([])
@@ -240,12 +234,11 @@ describe('validation', () => {
     expect(rule).toBeCalledTimes(1)
     expect(rule).toBeCalledWith('foo')
 
-    setTimeout(() => {
-      expect(field.validating.value).toBe(false)
-      expect(field.errors.value).toStrictEqual(['Error message'])
-      expect(field.rawErrors).toStrictEqual(['Error message'])
-      done()
-    }, 20)
+    await promise
+
+    expect(field.validating.value).toBe(false)
+    expect(field.errors.value).toStrictEqual(['Error message'])
+    expect(field.rawErrors).toStrictEqual(['Error message'])
   })
 
   it('should only call keyed rule when all fields are touched', () => {
@@ -287,10 +280,10 @@ describe('validation', () => {
     expect(field2.errors.value).toStrictEqual(['rule2'])
   })
 
-  it('validateAll: should only validate fields with given names', async () => {
+  it('`validateAll` should only validate fields with given names and errors should be collected afterwards', async () => {
     const vbf = jest.fn(() => true)
 
-    const rule1 = jest.fn()
+    const rule1 = jest.fn(() => 'rule1')
     form.registerField(1, 'field1', 'foo', [
       {
         validationBehavior: vbf,
@@ -298,7 +291,7 @@ describe('validation', () => {
       }
     ])
 
-    const rule2 = jest.fn()
+    const rule2 = jest.fn(() => 'rule2')
     form.registerField(2, 'field2', 'bar', [
       {
         validationBehavior: vbf,
@@ -306,7 +299,7 @@ describe('validation', () => {
       }
     ])
 
-    const rule3 = jest.fn()
+    const rule3 = jest.fn(() => 'rule3')
     form.registerField(3, 'field3', 'baz', [
       {
         validationBehavior: vbf,
@@ -314,7 +307,7 @@ describe('validation', () => {
       }
     ])
 
-    await Promise.all([
+    await Promise.allSettled([
       form.validateAll(),
       form.validateAll(['field1']),
       form.validateAll(['field2', 'field3'])
@@ -323,6 +316,50 @@ describe('validation', () => {
     expect(rule1).toBeCalledTimes(2)
     expect(rule2).toBeCalledTimes(2)
     expect(rule3).toBeCalledTimes(2)
+    expect(form.errors.value.sort()).toStrictEqual(['rule1', 'rule2', 'rule3'])
+  })
+
+  it('should ignore debounce for `validateAll`', async () => {
+    const vbf = jest.fn(() => true)
+    const rule = jest.fn()
+    const field = form.registerField(1, 'field', 'foo', [
+      {
+        validationBehavior: vbf,
+        rule: rule
+      },
+      {
+        validationBehavior: vbf,
+        rule: rule,
+        debounce: 100
+      },
+      {
+        validationBehavior: vbf,
+        rule: {
+          key: 'key',
+          rule
+        },
+        debounce: 200
+      }
+    ])
+    field.touched.value = true
+
+    const promise = form.validate(1)
+
+    // Should be validating because of the debounce duration
+    expect(form.validating.value).toBe(true)
+    expect(field.validating.value).toBe(true)
+
+    await promise
+
+    expect(rule).toBeCalledTimes(3)
+
+    form.validateAll()
+
+    // Should not be validating because debounce was skipped
+    expect(form.validating.value).toBe(false)
+    expect(field.validating.value).toBe(false)
+
+    expect(rule).toBeCalledTimes(6)
   })
 
   it.each([
@@ -352,6 +389,9 @@ describe('validation', () => {
             }
       ])
 
+      form.resetFields()
+      form.resetFields()
+
       form.validate(1)
 
       expect(field.rulesValidating.value).toBe(2)
@@ -362,7 +402,7 @@ describe('validation', () => {
       expect(field.rulesValidating.value).toBe(0)
       expect(form.rulesValidating.value).toBe(0)
 
-      form.validate(1)
+      const promise1 = form.validate(1)
 
       expect(field.rulesValidating.value).toBe(2)
       expect(form.rulesValidating.value).toBe(2)
@@ -372,18 +412,18 @@ describe('validation', () => {
       expect(field.rulesValidating.value).toBe(0)
       expect(form.rulesValidating.value).toBe(0)
 
-      await makePromise(150)
+      await promise1
 
       expect(field.rulesValidating.value).toBe(0)
       expect(form.rulesValidating.value).toBe(0)
       expect(field.rawErrors).toStrictEqual([null, null])
 
-      form.validate(1)
+      const promise2 = form.validate(1)
 
       expect(field.rulesValidating.value).toBe(2)
       expect(form.rulesValidating.value).toBe(2)
 
-      await makePromise(150)
+      await promise2
 
       expect(field.rulesValidating.value).toBe(0)
       expect(form.rulesValidating.value).toBe(0)

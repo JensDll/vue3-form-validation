@@ -33,15 +33,11 @@ describe('isSimpleRule', () => {
   it('rule with key -> false', () => {
     isSimpleRule({
       key: '',
-      rule: () => {
-        // empty
-      }
+      rule: () => {}
     })
   })
 
   it('rule without key -> true', () => {
-    isSimpleRule(() => {
-      // empty
-    })
+    isSimpleRule(() => {})
   })
 })

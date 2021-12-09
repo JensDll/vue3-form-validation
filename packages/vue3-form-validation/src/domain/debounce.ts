@@ -1,4 +1,6 @@
-type ShouldInvokeResult = boolean | void
+type DebounceOptions = {
+  wait: number
+}
 
 export type Debounced<TArgs extends unknown[]> = {
   (...args: [...TArgs]): void
@@ -7,52 +9,27 @@ export type Debounced<TArgs extends unknown[]> = {
 
 export function debounce<TArgs extends unknown[]>(
   target: (...args: [...TArgs]) => void,
-  {
-    wait,
-    shouldInvoke
-  }: {
-    wait: number
-    shouldInvoke?: (...args: [...TArgs]) => ShouldInvokeResult
-  }
+  { wait }: DebounceOptions
 ): Debounced<TArgs>
 
 export function debounce(
   target: (...args: any[]) => void,
-  {
-    wait,
-    shouldInvoke
-  }: {
-    wait: number
-    shouldInvoke?: (...args: any[]) => ShouldInvokeResult
-  }
+  { wait }: DebounceOptions
 ) {
   let timerId: NodeJS.Timeout | null = null
-  let cancelTimerId: NodeJS.Timeout | null = null
-  let shouldInvokeResult: ShouldInvokeResult = true
 
   function cancel() {
-    clearTimeout(cancelTimerId as any)
-    cancelTimerId = null
+    clearTimeout(timerId as any)
   }
 
   function debounced(this: any, ...args: any[]) {
-    if (shouldInvoke) {
-      shouldInvokeResult = shouldInvoke.apply(this, args)
+    const effect = () => {
+      timerId = null
+      target.apply(this, args)
     }
 
-    const effect = (shouldInvoke: ShouldInvokeResult) => () => {
-      timerId = null
-      if (shouldInvoke === true) {
-        target.apply(this, args)
-      }
-    }
-
-    if (shouldInvokeResult === true) {
-      clearTimeout(timerId as any)
-      cancelTimerId = timerId = setTimeout(effect(shouldInvokeResult), wait)
-    } else {
-      timerId = null
-    }
+    clearTimeout(timerId as any)
+    timerId = setTimeout(effect, wait)
   }
 
   debounced.cancel = cancel

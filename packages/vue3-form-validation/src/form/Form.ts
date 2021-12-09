@@ -14,21 +14,12 @@ export type ValidatorParameters = [
   force: boolean,
   submit: boolean
 ]
-
-export type ValidatorReturn = Promise<void | string> | void
-
-export type ValidatorNotDebounced = (
-  ...params: ValidatorParameters
-) => ValidatorReturn
-
-export type Validator = nDomain.Optional<
-  nDomain.Debounced<ValidatorParameters>,
-  'cancel'
->
+export type ValidatorReturn = Promise<void> | void
+export type Validator = (...params: ValidatorParameters) => ValidatorReturn
 
 type SimpleValidators = {
   validators: Validator[]
-  validatorsNotDebounced: ValidatorNotDebounced[]
+  validatorsNotDebounced: Validator[]
   meta: {
     field: FormField
     keys: string[]
@@ -38,7 +29,7 @@ type SimpleValidators = {
 
 type KeyedValidator = {
   validator: Validator
-  validatorNotDebounced: ValidatorNotDebounced
+  validatorNotDebounced: Validator
   meta: {
     field: FormField
   }
@@ -129,18 +120,18 @@ export class Form {
     return field
   }
 
-  validate(uid: number, force = false) {
-    const simpleValidators = this.simpleValidators.get(uid)!
+  validate(uid: number, force = false): Promise<PromiseSettledResult<void>[]> {
+    const { validators, meta } = this.simpleValidators.get(uid)!
 
-    const { validators, meta } = simpleValidators
-
-    for (const validator of validators) {
-      validator([meta.field.modelValue.value], force, false)
-    }
-    this.invokeValidatorsForKeys(meta.keys, force, false)
+    return Promise.allSettled([
+      ...validators.map(validator =>
+        validator([meta.field.modelValue.value], force, false)
+      ),
+      ...this.collectValidatorResultsForKeysDebounced(meta.keys, force)
+    ])
   }
 
-  async validateAll(names?: readonly nDomain.Key[]) {
+  async validateAll(names?: readonly nDomain.Key[]): Promise<void> {
     const settledResults = await Promise.allSettled(
       this.collectValidatorResultsForNames(names)
     )
@@ -177,11 +168,37 @@ export class Form {
     }
   }
 
-  private invokeValidatorsForKeys(
-    keys: string[] | IterableIterator<string>,
-    force: boolean,
-    submit: boolean
-  ): void {
+  /**
+   * Should only be called from `validateAll`
+   * (`force` and `submit` will default to `false` and `true`).
+   *
+   * @param keys The keys of the rules to validate
+   */
+  private *collectValidatorResultsForKeys(
+    keys: string[] | Iterable<string>
+  ): Generator<ValidatorReturn> {
+    for (const key of keys) {
+      const keyedValidators = this.keyedValidators.get(key)!
+      const values = [...keyedValidators.values()]
+      const modelValues = values.map(({ meta }) => meta.field.modelValue.value)
+      for (const { validatorNotDebounced } of values) {
+        yield validatorNotDebounced(modelValues, false, true)
+      }
+    }
+  }
+
+  /**
+   * Should only be called from `validate`
+   * (`submit` will default to `false`).
+   * It will also check if every field of a key is touched before
+   * invoking the validator and not use the debounced version.
+   *
+   * @param keys The keys of the rules to validate
+   */
+  private *collectValidatorResultsForKeysDebounced(
+    keys: string[] | Iterable<string>,
+    force: boolean
+  ): Generator<ValidatorReturn> {
     for (const key of keys) {
       const keyedValidators = this.keyedValidators.get(key)!
       if (this.isEveryFieldTouched(keyedValidators)) {
@@ -190,23 +207,8 @@ export class Form {
           ({ meta }) => meta.field.modelValue.value
         )
         for (const { validator } of values) {
-          validator(modelValues, force, submit)
+          yield validator(modelValues, force, false)
         }
-      }
-    }
-  }
-
-  private *collectValidatorResultsForKeys(
-    keys: string[] | IterableIterator<string>,
-    force: boolean,
-    submit: boolean
-  ): Generator<ValidatorReturn> {
-    for (const key of keys) {
-      const keyedValidators = this.keyedValidators.get(key)!
-      const values = [...keyedValidators.values()]
-      const modelValues = values.map(({ meta }) => meta.field.modelValue.value)
-      for (const { validatorNotDebounced } of values) {
-        yield validatorNotDebounced(modelValues, force, submit)
       }
     }
   }
@@ -224,11 +226,7 @@ export class Form {
           yield validator([meta.field.modelValue.value], false, true)
         }
       }
-      yield* this.collectValidatorResultsForKeys(
-        this.keyedValidators.keys(),
-        false,
-        true
-      )
+      yield* this.collectValidatorResultsForKeys(this.keyedValidators.keys())
     } else if (names.length > 0) {
       const uniqueNames = new Set(names)
 
@@ -242,9 +240,7 @@ export class Form {
             yield validator([meta.field.modelValue.value], false, true)
           }
           yield* this.collectValidatorResultsForKeys(
-            this.keyedValidators.keys(),
-            false,
-            true
+            this.keyedValidators.keys()
           )
         }
       }

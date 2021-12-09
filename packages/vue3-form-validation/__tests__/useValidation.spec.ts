@@ -1,7 +1,8 @@
 import { ref, Ref } from 'vue'
-import { useValidation } from '../src/useValidation'
-import { Field, TransformedFormData } from '../src/form'
-import { makeMocks } from './utils'
+
+import { useValidation, UseValidation } from '../src/useValidation'
+import { Field, TransformFormData, ValidationError } from '../src/form'
+import { makeMocks, makePromise } from './utils'
 
 type FormData = {
   a: Field<string>
@@ -22,42 +23,45 @@ type FormData = {
   }[]
 }
 
+jest.mock('../src/form/Form')
+
 let formData: FormData
+let mockRule: jest.Mock
 
 beforeEach(() => {
-  const [mock] = makeMocks(1, { timeout: 50 })
+  mockRule = makeMocks(1, { timeout: 50 })[0]
 
   formData = {
     a: {
       $value: ref(''),
-      $rules: [mock]
+      $rules: [mockRule]
     },
     b: {
       $value: ref(''),
-      $rules: [mock]
+      $rules: [mockRule]
     },
     c: {
       $value: [1, 2, 3],
-      $rules: [mock]
+      $rules: [mockRule]
     },
     d: {
       $value: {
         a: ''
       },
-      $rules: [mock]
+      $rules: [mockRule]
     },
     es: [
       {
         f: {
           $value: '',
-          $rules: [mock]
+          $rules: [mockRule]
         },
         gs: []
       },
       {
         f: {
           $value: '',
-          $rules: [mock]
+          $rules: [mockRule]
         },
         gs: [
           {
@@ -69,7 +73,7 @@ beforeEach(() => {
                   }
                 }
               },
-              $rules: [mock]
+              $rules: [mockRule]
             }
           }
         ]
@@ -78,7 +82,7 @@ beforeEach(() => {
   }
 })
 
-const changeFormValues = (form: TransformedFormData<FormData>) => {
+const changeFormValues = (form: TransformFormData<FormData>) => {
   form.a.$value = 'x'
   form.b.$value = 'x'
   form.c.$value[0] = -1
@@ -94,31 +98,33 @@ const changeFormValues = (form: TransformedFormData<FormData>) => {
   form.es[1].gs[0].h.$value.a.b.c[4] = -1
 }
 
-test('should not change result data when changing form after submitting', done => {
+test('should not change result data when changing form after submitting', async () => {
   const { form, validateFields } = useValidation<FormData>(formData)
 
-  validateFields().then(formData => {
-    expect(formData).toStrictEqual<typeof formData>({
-      a: '',
-      b: '',
-      c: [1, 2, 3],
-      d: { a: '' },
-      es: [
-        { f: '', gs: [] },
-        {
-          f: '',
-          gs: [
-            {
-              h: { a: { b: { c: [1, 2, 3] } } }
-            }
-          ]
-        }
-      ]
-    })
-    done()
-  })
+  const promise = validateFields()
 
   changeFormValues(form)
+
+  const resultData = await promise
+
+  expect(resultData).toStrictEqual<typeof resultData>({
+    a: '',
+    b: '',
+    c: [1, 2, 3],
+    d: { a: '' },
+    es: [
+      { f: '', gs: [] },
+      {
+        f: '',
+        gs: [
+          {
+            h: { a: { b: { c: [1, 2, 3] } } }
+          }
+        ]
+      }
+    ]
+  })
+  expect(mockRule).toBeCalledTimes(7)
 })
 
 describe('reset fields', () => {
@@ -227,6 +233,8 @@ describe('reset fields', () => {
         ]
       })
     }
+
+    expect(mockRule).toBeCalledTimes(0)
   })
 
   test('multiple times to specific values', () => {
@@ -350,9 +358,11 @@ describe('reset fields', () => {
         ]
       })
     }
+
+    expect(mockRule).toBeCalledTimes(0)
   })
 
-  test('multiple times to specific values and default values', () => {
+  test('multiple times to specific and default values', () => {
     const { form, resetFields } = useValidation<FormData>(formData)
 
     for (let i = 0; i < 20; i++) {
@@ -574,188 +584,316 @@ describe('reset fields', () => {
         })
       }
     }
+
+    expect(mockRule).toBeCalledTimes(0)
   })
 })
 
-describe('add and remove', () => {
-  test('add field', () => {
-    const { form, add } = useValidation(formData)
+describe('validation', () => {
+  describe.each([
+    { debounce: true, note: 'with debounced rule' },
+    { debounce: false, note: 'with async rule' }
+  ])('should change field values correctly ($note)', ({ debounce }) => {
+    let rule: jest.Mock
+    let useVal: UseValidation<{
+      a: Field<string>
+    }>
 
-    add(['es'], {
-      f: {
-        $value: ref('')
-      },
-      gs: []
+    beforeEach(() => {
+      rule = jest.fn(() => makePromise(50, 'Error'))
+      useVal = useValidation({
+        a: {
+          $value: '',
+          $rules: [debounce ? [() => true, rule, 100] : [() => true, rule]]
+        }
+      })
     })
 
-    expect(form).toStrictEqual<typeof form>({
-      a: {
+    test('using `$validate`', async () => {
+      const { form, submitting, validating } = useVal
+
+      const promise = form.a.$validate()
+
+      expect(form.a).toStrictEqual<typeof form.a>({
         $uid: expect.any(Number),
-        $value: '',
+        $dirty: false,
+        $touched: true,
         $errors: [],
-        $rawErrors: [null],
         $hasError: false,
+        $rawErrors: [null],
+        $validate: expect.any(Function),
+        $validating: true,
+        $value: ''
+      })
+      expect(validating.value).toBe(true)
+      expect(submitting.value).toBe(false)
+
+      await promise
+
+      expect(form.a).toStrictEqual<typeof form.a>({
+        $uid: expect.any(Number),
+        $dirty: false,
+        $touched: true,
+        $errors: ['Error'],
+        $hasError: true,
+        $rawErrors: ['Error'],
+        $validate: expect.any(Function),
         $validating: false,
+        $value: ''
+      })
+      expect(validating.value).toBe(false)
+      expect(submitting.value).toBe(false)
+    })
+
+    test('using `validateFields`', async () => {
+      const { form, submitting, validating, validateFields } = useVal
+
+      const promise = validateFields()
+
+      expect(form.a).toStrictEqual<typeof form.a>({
+        $uid: expect.any(Number),
+        $dirty: false,
+        $touched: true,
+        $errors: [],
+        $hasError: false,
+        $rawErrors: [null],
+        $validate: expect.any(Function),
+        $validating: true,
+        $value: ''
+      })
+      expect(validating.value).toBe(true)
+      expect(submitting.value).toBe(true)
+
+      await expect(promise).rejects.toThrow(ValidationError)
+
+      expect(form.a).toStrictEqual<typeof form.a>({
+        $uid: expect.any(Number),
+        $dirty: false,
+        $touched: true,
+        $errors: ['Error'],
+        $hasError: true,
+        $rawErrors: ['Error'],
+        $validate: expect.any(Function),
+        $validating: false,
+        $value: ''
+      })
+      expect(validating.value).toBe(false)
+      expect(submitting.value).toBe(false)
+    })
+
+    test('`resetFields` should cancel validation', async () => {
+      const { form, submitting, validating, validateFields, resetFields } =
+        useVal
+
+      resetFields()
+
+      const validatePromise = form.a.$validate()
+
+      expect(form.a).toStrictEqual<typeof form.a>({
+        $uid: expect.any(Number),
+        $dirty: false,
+        $touched: true,
+        $errors: [],
+        $hasError: false,
+        $rawErrors: [null],
+        $validate: expect.any(Function),
+        $validating: true,
+        $value: ''
+      })
+      expect(submitting.value).toBe(false)
+      expect(validating.value).toBe(true)
+
+      resetFields()
+
+      await expect(validatePromise).resolves.toBeUndefined()
+
+      expect(form.a).toStrictEqual<typeof form.a>({
+        $uid: expect.any(Number),
         $dirty: false,
         $touched: false,
-        $validate: expect.any(Function)
-      },
+        $errors: [],
+        $hasError: false,
+        $rawErrors: [null],
+        $validate: expect.any(Function),
+        $validating: false,
+        $value: ''
+      })
+      expect(submitting.value).toBe(false)
+      expect(validating.value).toBe(false)
+
+      const validateFieldsPromise = validateFields()
+
+      expect(form.a).toStrictEqual<typeof form.a>({
+        $uid: expect.any(Number),
+        $dirty: false,
+        $touched: true,
+        $errors: [],
+        $hasError: false,
+        $rawErrors: [null],
+        $validate: expect.any(Function),
+        $validating: true,
+        $value: ''
+      })
+      expect(submitting.value).toBe(true)
+      expect(validating.value).toBe(true)
+
+      resetFields()
+
+      await expect(validateFieldsPromise).rejects.toThrow(ValidationError)
+
+      expect(form.a).toStrictEqual<typeof form.a>({
+        $uid: expect.any(Number),
+        $dirty: false,
+        $touched: false,
+        $errors: [],
+        $hasError: false,
+        $rawErrors: [null],
+        $validate: expect.any(Function),
+        $validating: false,
+        $value: ''
+      })
+      expect(submitting.value).toBe(false)
+      expect(validating.value).toBe(false)
+    })
+  })
+})
+
+test('add and remove', () => {
+  const { form: data, add, remove } = useValidation({ xs: [] })
+
+  add(['a'], {
+    $value: ''
+  })
+
+  expect(data).toStrictEqual({
+    a: {
+      $uid: expect.any(Number),
+      $value: '',
+      $errors: [],
+      $rawErrors: [],
+      $hasError: false,
+      $validating: false,
+      $dirty: false,
+      $touched: false,
+      $validate: expect.any(Function)
+    },
+    xs: []
+  })
+
+  add(['xs'], {
+    b: {
+      $value: ''
+    }
+  })
+
+  expect(data.xs).toStrictEqual([
+    {
       b: {
         $uid: expect.any(Number),
         $value: '',
         $errors: [],
-        $rawErrors: [null],
+        $rawErrors: [],
         $hasError: false,
         $validating: false,
         $dirty: false,
         $touched: false,
         $validate: expect.any(Function)
-      },
-      c: {
-        $uid: expect.any(Number),
-        $value: [1, 2, 3],
-        $errors: [],
-        $rawErrors: [null],
-        $hasError: false,
-        $validating: false,
-        $dirty: false,
-        $touched: false,
-        $validate: expect.any(Function)
-      },
-      d: {
-        $uid: expect.any(Number),
-        $value: { a: '' },
-        $errors: [],
-        $rawErrors: [null],
-        $hasError: false,
-        $validating: false,
-        $dirty: false,
-        $touched: false,
-        $validate: expect.any(Function)
-      },
-      es: [
-        {
-          f: {
-            $uid: expect.any(Number),
-            $value: '',
-            $errors: [],
-            $rawErrors: [null],
-            $hasError: false,
-            $validating: false,
-            $dirty: false,
-            $touched: false,
-            $validate: expect.any(Function)
-          },
-          gs: []
-        },
-        {
-          f: {
-            $uid: expect.any(Number),
-            $value: '',
-            $errors: [],
-            $rawErrors: [null],
-            $hasError: false,
-            $validating: false,
-            $dirty: false,
-            $touched: false,
-            $validate: expect.any(Function)
-          },
-          gs: [
-            {
-              h: {
-                $uid: expect.any(Number),
-                $value: {
-                  a: {
-                    b: {
-                      c: [1, 2, 3]
-                    }
-                  }
-                },
-                $errors: [],
-                $rawErrors: [null],
-                $hasError: false,
-                $validating: false,
-                $dirty: false,
-                $touched: false,
-                $validate: expect.any(Function)
-              }
-            }
-          ]
-        },
-        {
-          f: {
-            $uid: expect.any(Number),
-            $value: '',
-            $errors: [],
-            $rawErrors: [],
-            $hasError: false,
-            $validating: false,
-            $dirty: false,
-            $touched: false,
-            $validate: expect.any(Function)
-          },
-          gs: []
-        }
-      ]
-    })
+      }
+    }
+  ])
+
+  add(['xs', 0, 'ys', 0], {
+    c: {
+      $value: 1
+    }
   })
 
-  test('remove field', () => {
-    const { form, remove } = useValidation(formData)
-
-    remove(['a'])
-    remove(['es', 1])
-
-    expect(form).toStrictEqual({
-      b: {
-        $uid: expect.any(Number),
-        $value: '',
-        $errors: [],
-        $rawErrors: [null],
-        $hasError: false,
-        $validating: false,
-        $dirty: false,
-        $touched: false,
-        $validate: expect.any(Function)
-      },
+  expect(data.xs[0].ys).toStrictEqual([
+    {
       c: {
         $uid: expect.any(Number),
-        $value: [1, 2, 3],
+        $value: 1,
         $errors: [],
-        $rawErrors: [null],
+        $rawErrors: [],
         $hasError: false,
         $validating: false,
         $dirty: false,
         $touched: false,
         $validate: expect.any(Function)
-      },
-      d: {
-        $uid: expect.any(Number),
-        $value: { a: '' },
-        $errors: [],
-        $rawErrors: [null],
-        $hasError: false,
-        $validating: false,
-        $dirty: false,
-        $touched: false,
-        $validate: expect.any(Function)
-      },
-      es: [
-        {
-          f: {
-            $uid: expect.any(Number),
-            $value: '',
-            $errors: [],
-            $rawErrors: [null],
-            $hasError: false,
-            $validating: false,
-            $dirty: false,
-            $touched: false,
-            $validate: expect.any(Function)
-          },
-          gs: []
-        }
-      ]
-    })
+      }
+    }
+  ])
+
+  remove(['xs', 0, 'ys', 0])
+
+  expect(data).toStrictEqual({
+    a: {
+      $uid: expect.any(Number),
+      $value: '',
+      $errors: [],
+      $rawErrors: [],
+      $hasError: false,
+      $validating: false,
+      $dirty: false,
+      $touched: false,
+      $validate: expect.any(Function)
+    },
+    xs: [
+      {
+        b: {
+          $uid: expect.any(Number),
+          $value: '',
+          $errors: [],
+          $rawErrors: [],
+          $hasError: false,
+          $validating: false,
+          $dirty: false,
+          $touched: false,
+          $validate: expect.any(Function)
+        },
+        ys: []
+      }
+    ]
   })
+
+  remove(['xs', 0, 'b'])
+
+  expect(data).toStrictEqual({
+    a: {
+      $uid: expect.any(Number),
+      $value: '',
+      $errors: [],
+      $rawErrors: [],
+      $hasError: false,
+      $validating: false,
+      $dirty: false,
+      $touched: false,
+      $validate: expect.any(Function)
+    },
+    xs: [
+      {
+        ys: []
+      }
+    ]
+  })
+
+  remove(['xs'])
+
+  expect(data).toStrictEqual({
+    a: {
+      $uid: expect.any(Number),
+      $value: '',
+      $errors: [],
+      $rawErrors: [],
+      $hasError: false,
+      $validating: false,
+      $dirty: false,
+      $touched: false,
+      $validate: expect.any(Function)
+    }
+  })
+
+  remove(['a'])
+
+  expect(data).toStrictEqual({})
 })

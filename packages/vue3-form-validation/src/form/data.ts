@@ -91,7 +91,7 @@ export function registerField(
     $validating: formField.validating,
     $dirty: formField.dirty,
     $touched: formField.touched,
-    $validate({ setTouched, force } = {}) {
+    async $validate({ setTouched, force } = {}) {
       setTouched ??= true
       force ??= true
 
@@ -99,7 +99,7 @@ export function registerField(
         formField.touched.value = true
       }
 
-      form.validate(uid, force)
+      await form.validate(uid, force)
     }
   }
 }
@@ -243,7 +243,7 @@ export type TransformedField<
    * { setTouched: true, force: true }
    * ```
    */
-  $validate(options?: ValidateOptions): void
+  $validate(options?: ValidateOptions): Promise<void>
 } & (TExtra extends Record<string, never> ? unknown : UnwrapRef<TExtra>)
 
 /**
