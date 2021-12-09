@@ -81,6 +81,7 @@ export class FormField {
             this.form.rulesValidating.value++
 
             return new Promise(resolve => {
+              debounceResolve?.()
               debounceResolve = resolve
               debouncedValidator(modelValues, force, submit)
             })
