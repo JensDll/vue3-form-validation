@@ -756,6 +756,28 @@ describe('validation', () => {
       expect(validating.value).toBe(false)
     })
   })
+
+  test('changing form values during validation should throw a ValidationError', async () => {
+    const vbf = jest.fn(() => true)
+    const rule = jest.fn((foo: number) => makePromise(50, foo < 5 && 'Error'))
+
+    const { form, validateFields } = useValidation({
+      foo: {
+        $value: 0,
+        $rules: [[vbf, rule]]
+      }
+    })
+
+    const promise = validateFields()
+
+    form.foo.$value = 10
+
+    await expect(promise).rejects.toThrow(ValidationError)
+
+    await expect(validateFields()).resolves.toStrictEqual({
+      foo: 10
+    })
+  })
 })
 
 test('add and remove', () => {
