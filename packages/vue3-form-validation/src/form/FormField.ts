@@ -51,6 +51,11 @@ export class FormField {
 
     this.ruleInfos = ruleInfos.map((info, ruleNumber) => {
       let validator: Validator
+      const validatorNotDebounced: Validator = (modelValues, force, submit) => {
+        if (this.shouldValidate(ruleNumber, force, submit) === true) {
+          return this.validate(ruleNumber, modelValues)
+        }
+      }
 
       let debouncedValidator: DebouncedValidator
       let debounceInvokedTimes = 0
@@ -82,17 +87,7 @@ export class FormField {
           }
         }
       } else {
-        validator = (modelValues, force, submit) => {
-          if (this.shouldValidate(ruleNumber, force, submit) === true) {
-            return this.validate(ruleNumber, modelValues)
-          }
-        }
-      }
-
-      const validatorNotDebounced: Validator = (modelValues, force, submit) => {
-        if (this.shouldValidate(ruleNumber, force, submit) === true) {
-          return this.validate(ruleNumber, modelValues)
-        }
+        validator = validatorNotDebounced
       }
 
       return {

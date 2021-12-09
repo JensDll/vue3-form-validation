@@ -36,7 +36,7 @@
     "husky": "^7.0.4",
     "jest": "^27.4.3",
     "prettier": "^2.5.1",
-    "rollup": "^2.60.2",
+    "rollup": "^2.61.0",
     "rollup-plugin-dts": "^4.0.1",
     "rollup-plugin-typescript2": "^0.31.1",
     "ts-jest": "^27.1.1",

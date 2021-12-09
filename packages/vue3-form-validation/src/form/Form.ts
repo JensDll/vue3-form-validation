@@ -175,7 +175,7 @@ export class Form {
    * @param keys The keys of the rules to validate
    */
   private *collectValidatorResultsForKeys(
-    keys: string[] | IterableIterator<string>
+    keys: string[] | Iterable<string>
   ): Generator<ValidatorReturn> {
     for (const key of keys) {
       const keyedValidators = this.keyedValidators.get(key)!
@@ -191,12 +191,12 @@ export class Form {
    * Should only be called from `validate`
    * (`submit` will default to `false`).
    * It will also check if every field of a key is touched before
-   * invoking the validator.
+   * invoking the validator and not use the debounced version.
    *
    * @param keys The keys of the rules to validate
    */
   private *collectValidatorResultsForKeysDebounced(
-    keys: string[] | IterableIterator<string>,
+    keys: string[] | Iterable<string>,
     force: boolean
   ): Generator<ValidatorReturn> {
     for (const key of keys) {
