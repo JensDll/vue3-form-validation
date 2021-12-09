@@ -757,7 +757,7 @@ describe('validation', () => {
     })
   })
 
-  test('changing form values during validation should throw a ValidationError', async () => {
+  test('changing form values during validation should throw an ValidationError', async () => {
     const vbf = jest.fn(() => true)
     const rule = jest.fn((foo: number) => makePromise(50, foo < 5 && 'Error'))
 
