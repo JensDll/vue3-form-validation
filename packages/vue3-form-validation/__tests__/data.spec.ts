@@ -1,7 +1,8 @@
 import { reactive } from 'vue'
 import { MockedObject } from 'ts-jest/dist/utils/testing'
 
-import { makeMocks, Tuple } from '@/shared'
+import { Tuple } from '@/shared'
+import { makeMocks } from '@/jest-utils'
 import {
   Field,
   getResultFormData,

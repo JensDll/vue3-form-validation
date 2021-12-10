@@ -1,5 +1,5 @@
+import { makePromise } from '@/jest-utils'
 import { PromiseCancel } from '../src/PromiseCancel'
-import { makePromise } from '../src/jestHelper'
 
 let promiseCancel: PromiseCancel<string>
 

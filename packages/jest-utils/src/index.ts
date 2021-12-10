@@ -1,4 +1,4 @@
-import { Tuple } from './types'
+import { Tuple } from '@/shared'
 
 export const makePromise = <T = undefined>(
   timeout: number,

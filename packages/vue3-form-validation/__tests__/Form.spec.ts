@@ -1,6 +1,6 @@
 import { ref, nextTick } from 'vue'
 
-import { makePromise } from '@/shared'
+import { makePromise } from '@/jest-utils'
 import { Form } from '../src/Form'
 import { FormField } from '../src/FormField'
 import { ValidationBehaviorInfo } from '../src/validationBehavior'

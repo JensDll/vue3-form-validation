@@ -1,5 +1,5 @@
+import { makeMocks, makePromise } from '@/jest-utils'
 import { debounce } from '../src/debounce'
-import { makeMocks, makePromise } from '../src/jestHelper'
 import { Tuple } from '../src/types'
 
 let mocks: Tuple<jest.Mock, 2>
