@@ -143,6 +143,15 @@ export class FormField {
         this.form.rulesValidating.value--
         this.setError(ruleNumber, error)
       } else {
+        /**
+         * This branch is reached in one of two cases:
+         * While this was validating ...
+         * 1. the same async rule is invoked again.
+         * 2. the field is reset.
+         *
+         * In both cases, no error is to be updated but the promise should still reject
+         * if the rule returns a string.
+         */
         if (typeof error === 'string') {
           throw error
         }

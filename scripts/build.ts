@@ -30,8 +30,7 @@ async function build({ name, buildFormats }: Package) {
   }
 
   console.log()
-  console.log('Copying relevant files to publish folder ...')
-
+  console.log('Formatting type definition file ...')
   await execa(
     'npm',
     ['exec', '--', 'prettier', '--write', `${packageFolder}/dist/${name}.d.ts`],
@@ -40,6 +39,7 @@ async function build({ name, buildFormats }: Package) {
     }
   )
 
+  console.log('Copying relevant files to publish folder ...')
   await Promise.all([
     // Copy LICENSE
     fs.copy('LICENSE', 'publish/LICENSE'),
@@ -58,4 +58,6 @@ async function build({ name, buildFormats }: Package) {
     // Copy TypeScript definition files
     fs.copy(`${packageFolder}/dist/${name}.d.ts`, `publish/dist/${name}.d.ts`)
   ])
+
+  console.log('Done!')
 }
