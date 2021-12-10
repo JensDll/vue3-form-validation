@@ -3,10 +3,10 @@ import { reactive, computed, ref, watch, WatchStopHandle, Ref } from 'vue'
 import { Form, Validator, ValidatorParameters } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'
 import { SimpleRule, RuleInformation, unpackRule } from './rules'
-import * as nDomain from '@/shared'
+import * as nShared from '@/shared'
 
 type MappedRuleInformation = {
-  buffer: nDomain.LinkedList<boolean>
+  buffer: nShared.LinkedList<boolean>
   rule?: SimpleRule
   validator: Validator
   validatorNotDebounced: Validator
@@ -14,7 +14,7 @@ type MappedRuleInformation = {
   cancelDebounce: () => void
 }
 
-type DebouncedValidator = nDomain.Debounced<ValidatorParameters>
+type DebouncedValidator = nShared.Debounced<ValidatorParameters>
 
 export class FormField {
   watchStopHandle: WatchStopHandle
@@ -29,7 +29,7 @@ export class FormField {
   dirty = ref(false)
   modelValue: Ref<any>
   rawErrors: (string | null)[]
-  errors = computed(() => this.rawErrors.filter(nDomain.isDefined))
+  errors = computed(() => this.rawErrors.filter(nShared.isDefined))
   validating = computed(() => this.rulesValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
 
@@ -45,7 +45,7 @@ export class FormField {
     this.name = name
     this.modelValue = ref(modelValue)
     this.rawErrors = reactive(ruleInfos.map(() => null))
-    this.initialModelValue = nDomain.deepCopy(this.modelValue.value)
+    this.initialModelValue = nShared.deepCopy(this.modelValue.value)
 
     this.ruleInfos = ruleInfos.map((info, ruleNumber) => {
       let validator: Validator
@@ -60,7 +60,7 @@ export class FormField {
       let debounceResolve: (value: void | PromiseLike<void>) => void
 
       if (info.debounce) {
-        debouncedValidator = nDomain.debounce(
+        debouncedValidator = nShared.debounce(
           modelValues => {
             debounceResolve(this.validate(ruleNumber, modelValues))
             this.rulesValidating.value -= debounceInvokedTimes
@@ -90,7 +90,7 @@ export class FormField {
       }
 
       return {
-        buffer: new nDomain.LinkedList(),
+        buffer: new nShared.LinkedList(),
         rule: unpackRule(info.rule),
         validator,
         validatorNotDebounced,
@@ -165,7 +165,7 @@ export class FormField {
     this.watchStopHandle()
     this.touched.value = false
     this.dirty.value = false
-    this.modelValue.value = nDomain.deepCopy(resetValue)
+    this.modelValue.value = nShared.deepCopy(resetValue)
     this.rulesValidating.value = 0
     this.form.rulesValidating.value = 0
 

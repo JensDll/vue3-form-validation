@@ -1,6 +1,6 @@
 import { reactive, Ref, ComputedRef } from 'vue'
 
-import * as nDomain from '@/shared'
+import * as nShared from '@/shared'
 import { ValidationError } from './ValidationError'
 import { Form } from './Form'
 import {
@@ -45,7 +45,7 @@ export function useValidation<FormData extends object>(
   formData: FormData
 ): UseValidation<FormData> {
   const form = new Form()
-  const promiseCancel = new nDomain.PromiseCancel<ValidationError>()
+  const promiseCancel = new nShared.PromiseCancel<ValidationError>()
 
   transformFormData(form, formData)
 
@@ -91,11 +91,11 @@ export function useValidation<FormData extends object>(
         const box = { [lastKey]: value }
         transformFormData(form, box)
         const transformedValue = box[lastKey]
-        const valueAtPath = nDomain.path(path, transformedFormData)
+        const valueAtPath = nShared.path(path, transformedFormData)
         if (Array.isArray(valueAtPath)) {
           valueAtPath.push(transformedValue)
         } else {
-          nDomain.set(transformedFormData, path, transformedValue)
+          nShared.set(transformedFormData, path, transformedValue)
         }
       }
     },
@@ -108,7 +108,7 @@ export function useValidation<FormData extends object>(
           disposeForm(form, transformedFormData[lastKey])
           delete transformedFormData[lastKey]
         } else {
-          const valueAtPath = nDomain.path(path, transformedFormData)
+          const valueAtPath = nShared.path(path, transformedFormData)
           if (Array.isArray(valueAtPath)) {
             const deletedFormData = valueAtPath.splice(+lastKey, 1)
             disposeForm(form, deletedFormData)
@@ -171,7 +171,7 @@ export type UseValidation<FormData extends object> = {
      * ```
      */
     predicate?: (
-      value: Omit<nDomain.DeepIteratorResult, 'isLeaf' | 'parent'>
+      value: Omit<nShared.DeepIteratorResult, 'isLeaf' | 'parent'>
     ) => unknown
   }): Promise<ResultFormData<FormData>>
   /**
@@ -194,9 +194,9 @@ export type UseValidation<FormData extends object> = {
    */
   add<Keys extends readonly (string | number)[]>(
     path: readonly [...Keys],
-    value: nDomain.DeepIndex<FormData, Keys> extends (infer TArray)[]
+    value: nShared.DeepIndex<FormData, Keys> extends (infer TArray)[]
       ? TArray
-      : nDomain.DeepIndex<FormData, Keys>
+      : nShared.DeepIndex<FormData, Keys>
   ): void
   /**
    * Removes a property from the form data.

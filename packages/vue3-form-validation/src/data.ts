@@ -3,13 +3,13 @@ import { ComputedRef, Ref, UnwrapRef, unref } from 'vue'
 import { Form } from './Form'
 import { FieldRule, RuleInformation } from './rules'
 import { VALIDATION_CONFIG } from './ValidationConfig'
-import * as nDomain from '@/shared'
+import * as nShared from '@/shared'
 
 export const isField = <T>(x: unknown): x is Field<T> =>
-  nDomain.isRecord(x) ? '$value' in x : false
+  nShared.isRecord(x) ? '$value' in x : false
 
 export const isTransformedField = <T>(x: unknown): x is TransformedField<T> =>
-  nDomain.isRecord(x) ? '$uid' in x && '$value' in x : false
+  nShared.isRecord(x) ? '$uid' in x && '$value' in x : false
 
 export function mapFieldRules(
   fieldRules: FieldRule<unknown>[]
@@ -78,7 +78,7 @@ export function registerField(
 } {
   const { $value, $rules, ...fieldExtraProperties } = field
   const rules = $rules ? mapFieldRules($rules) : []
-  const uid = nDomain.uid()
+  const uid = nShared.uid()
   const formField = form.registerField(uid, name, $value, rules)
 
   return {
@@ -105,7 +105,7 @@ export function registerField(
 }
 
 export function transformFormData(form: Form, formData: object) {
-  for (const { key, value, parent } of nDomain.deepIterator(formData)) {
+  for (const { key, value, parent } of nShared.deepIterator(formData)) {
     if (isField(value)) {
       const transformedField = registerField(form, key, value)
       parent[key] = transformedField
@@ -116,12 +116,12 @@ export function transformFormData(form: Form, formData: object) {
 export function getResultFormData(
   transformedFormData: any,
   predicate: (
-    value: Omit<nDomain.DeepIteratorResult, 'isLeaf' | 'parent'>
+    value: Omit<nShared.DeepIteratorResult, 'isLeaf' | 'parent'>
   ) => unknown = () => true
 ): any {
   const result = {}
 
-  for (const { key, value, path, isLeaf } of nDomain.deepIterator(
+  for (const { key, value, path, isLeaf } of nShared.deepIterator(
     transformedFormData,
     isTransformedField
   )) {
@@ -130,7 +130,7 @@ export function getResultFormData(
         ? value.$value
         : unref(value)
       if (predicate({ key, value: unpackedValue, path }) === true) {
-        nDomain.set(result, path, nDomain.deepCopy(unpackedValue))
+        nShared.set(result, path, nShared.deepCopy(unpackedValue))
       }
     }
   }
@@ -139,7 +139,7 @@ export function getResultFormData(
 }
 
 export function disposeForm(form: Form, deletedFormData: any) {
-  for (const { value } of nDomain.deepIterator(
+  for (const { value } of nShared.deepIterator(
     { box: deletedFormData },
     isTransformedField
   )) {
@@ -159,7 +159,7 @@ export function resetFields(form: Form, data: any, transformedFormData: any) {
       return
     }
 
-    if (nDomain.isObject(value)) {
+    if (nShared.isObject(value)) {
       resetFields(form, value, transformedFormData[key])
     }
   })
@@ -172,7 +172,7 @@ export type Field<
   /**
    * The field's default value.
    */
-  $value: nDomain.MaybeRef<TValue>
+  $value: nShared.MaybeRef<TValue>
   /**
    * Rules to use for validation.
    */

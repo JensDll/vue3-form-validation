@@ -3,7 +3,7 @@ import { computed, ref, shallowReactive } from 'vue'
 import { FormField } from './FormField'
 import { ValidationError } from './ValidationError'
 import { isSimpleRule, RuleInformation } from './rules'
-import * as nDomain from '@/shared'
+import * as nShared from '@/shared'
 
 export type ValidatorParameters = [
   /**
@@ -42,9 +42,9 @@ export class Form {
   keyedValidators: Map<string, KeyedValidators> = new Map()
   reactiveFields: Map<number, FormField> = shallowReactive(new Map())
 
-  tryGetSimpleValidators = nDomain.tryGet(this.simpleValidators)
-  trySetKeyedValidators = nDomain.trySet(this.keyedValidators)
-  tryGetKeyedValidators = nDomain.tryGet(this.keyedValidators)
+  tryGetSimpleValidators = nShared.tryGet(this.simpleValidators)
+  trySetKeyedValidators = nShared.trySet(this.keyedValidators)
+  tryGetKeyedValidators = nShared.tryGet(this.keyedValidators)
 
   rulesValidating = ref(0)
   submitting = ref(false)
@@ -131,7 +131,7 @@ export class Form {
     ])
   }
 
-  async validateAll(names?: readonly nDomain.Key[]): Promise<void> {
+  async validateAll(names?: readonly nShared.Key[]): Promise<void> {
     const settledResults = await Promise.allSettled(
       this.collectValidatorResultsForNames(names)
     )
@@ -214,7 +214,7 @@ export class Form {
   }
 
   private *collectValidatorResultsForNames(
-    names?: readonly nDomain.Key[]
+    names?: readonly nShared.Key[]
   ): Generator<ValidatorReturn> {
     if (names === undefined) {
       for (const {

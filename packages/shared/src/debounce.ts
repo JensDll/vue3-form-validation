@@ -20,10 +20,12 @@ export function debounce(
 
   function cancel() {
     clearTimeout(timerId as any)
+    timerId = null
   }
 
   function debounced(this: any, ...args: any[]) {
     const effect = () => {
+      timerId = null
       target.apply(this, args)
     }
 
