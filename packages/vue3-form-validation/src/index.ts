@@ -1,23 +1,25 @@
 export { useValidation } from './useValidation'
-export { createValidation } from './createValidation'
-export { ValidationError } from './form'
-
 export type { UseValidation } from './useValidation'
-export type {
-  Configuration,
-  ConfigurationValidationBehavior
-} from './createValidation'
+
+export { createValidation } from './createValidation'
+
+export { ValidationError } from './ValidationError'
+
 export type {
   Field,
   TransformedField,
-  SimpleRule,
-  KeyedRule,
   FieldNames,
-  ValidationBehaviorFunction,
-  ValidationBehaviorString,
+  ResultFormData,
+  TransformFormData,
+  ValidateOptions
+} from './data'
+
+export type { SimpleRule, KeyedRule } from './rules'
+
+export type {
   CustomValidationBehaviorFunctions,
   ValidationBehavior,
-  ValidationBehaviorInfo,
-  ResultFormData,
-  TransformFormData
-} from './form'
+  ValidationBehaviorFunction,
+  ValidationBehaviorString,
+  ValidationBehaviorInfo
+} from './validationBehavior'

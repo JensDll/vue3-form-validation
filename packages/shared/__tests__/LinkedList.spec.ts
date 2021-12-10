@@ -1,4 +1,4 @@
-import { LinkedList } from '../../src/domain'
+import { LinkedList } from '../src/LinkedList'
 
 let linkedList: LinkedList<number>
 

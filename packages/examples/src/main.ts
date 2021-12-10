@@ -11,6 +11,9 @@ app.mount('#app')
 
 declare module 'vue3-form-validation' {
   interface CustomValidationBehaviorFunctions {
-    example: any
+    lazy: any
+    lazier: any
+    change: any
+    submit: any
   }
 }

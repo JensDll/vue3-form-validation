@@ -1,19 +1,15 @@
 import { Plugin } from 'vue'
+
 import { VALIDATION_CONFIG } from './ValidationConfig'
 import {
   ValidationBehaviorFunction,
   ValidationBehaviorString,
-  CustomValidationBehaviorFunctions,
-  DefaultValidationBehaviorString
-} from './form'
-import * as nDomain from './domain'
+  CustomValidationBehaviorFunctions
+} from './validationBehavior'
 
-export type ConfigurationValidationBehavior = nDomain.Optional<
-  {
-    [K in ValidationBehaviorString]: ValidationBehaviorFunction
-  },
-  DefaultValidationBehaviorString
->
+export type ConfigurationValidationBehavior = {
+  [K in ValidationBehaviorString]: ValidationBehaviorFunction
+}
 
 export type Configuration =
   keyof CustomValidationBehaviorFunctions extends never

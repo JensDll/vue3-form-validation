@@ -1,10 +1,11 @@
-import { debounce, Tuple } from '../../src/domain'
-import { makeMocks, makePromise } from '../utils'
+import { debounce } from '../src/debounce'
+import { makeMocks, makePromise } from '../src/jestHelper'
+import { Tuple } from '../src/types'
 
 let mocks: Tuple<jest.Mock, 2>
 
 beforeEach(() => {
-  mocks = makeMocks(2, { returnCallback: () => true })
+  mocks = makeMocks(2, { mockReturn: () => true })
 })
 
 it('should debounce the function call', async () => {

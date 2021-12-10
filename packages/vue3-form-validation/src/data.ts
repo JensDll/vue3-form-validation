@@ -2,8 +2,8 @@ import { ComputedRef, Ref, UnwrapRef, unref } from 'vue'
 
 import { Form } from './Form'
 import { FieldRule, RuleInformation } from './rules'
-import { VALIDATION_CONFIG } from '../ValidationConfig'
-import * as nDomain from '../domain'
+import { VALIDATION_CONFIG } from './ValidationConfig'
+import * as nDomain from '@/shared'
 
 export const isField = <T>(x: unknown): x is Field<T> =>
   nDomain.isRecord(x) ? '$value' in x : false

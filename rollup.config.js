@@ -1,16 +1,19 @@
 import typescript from 'rollup-plugin-typescript2'
+import alias from '@rollup/plugin-alias'
 import dts from 'rollup-plugin-dts'
+import path from 'path'
 
 const TARGETS = process.env.TARGETS.split(' ')
 const FORMATS = process.env.FORMATS.split(' ')
 
 const configs = []
 
-const tsconfigOverride = {
-  exclude: ['**/__tests__', '**/__mocks__', 'scripts']
-}
-
 for (const target of TARGETS) {
+  const tsconfigOverride = {
+    include: [`packages/${target}/src`],
+    exclude: ['**/__mocks__', '**/__tests__']
+  }
+
   const config = {
     input: `packages/${target}/src/index.ts`,
     output: FORMATS.map(format => ({
@@ -22,12 +25,23 @@ for (const target of TARGETS) {
   }
 
   const dtsConfig = {
-    input: `packages/${target}/dist/index.d.ts`,
+    input: `packages/${target}/dist/packages/${target}/src/index.d.ts`,
     output: {
       file: `packages/${target}/dist/${target}.d.ts`,
       format: 'es'
     },
-    plugins: [dts()]
+    external: ['vue'],
+    plugins: [
+      alias({
+        entries: [
+          {
+            find: '@/shared',
+            replacement: path.resolve(__dirname, 'packages', 'shared')
+          }
+        ]
+      }),
+      dts()
+    ]
   }
 
   configs.push(config, dtsConfig)

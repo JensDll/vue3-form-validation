@@ -6,10 +6,10 @@
   "type": "module",
   "scripts": {
     "build": "node --experimental-loader esbuild-node-loader scripts/build.ts",
-    "dev": "node --experimental-loader esbuild-node-loader scripts/dev.ts --targets vue3-form-validation",
+    "dev": "node --experimental-loader esbuild-node-loader scripts/dev.ts --targets shared vue3-form-validation",
     "examples": "npm run dev --workspace=examples",
     "docs": "npm run dev --workspace=docs",
-    "lint": "npm exec -- eslint --rule=\"no-console: [\"error\", { allow: [\"warn\", \"error\"] }]\" --max-warnings 0 --fix-dry-run ./packages/vue3-form-validation",
+    "lint": "npm exec -- eslint --rule=\"no-console: [\"error\", { allow: [\"warn\", \"error\"] }]\" --max-warnings 0 --fix-dry-run ./packages/*/src/**/*.ts",
     "test": "jest --runInBand",
     "test-dts": "npm run build && npm exec -- tsd",
     "test-dts-only": "npm exec -- tsd",
@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@rollup/plugin-alias": "^3.1.8",
+    "@rollup/plugin-replace": "^3.0.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.12",
@@ -34,14 +35,14 @@
     "execa": "^6.0.0",
     "fs-extra": "^10.0.0",
     "husky": "^7.0.4",
-    "jest": "^27.4.3",
+    "jest": "^27.4.4",
     "prettier": "^2.5.1",
     "rollup": "^2.61.0",
     "rollup-plugin-dts": "^4.0.1",
     "rollup-plugin-typescript2": "^0.31.1",
     "ts-jest": "^27.1.1",
     "tsd": "^0.19.0",
-    "typescript": "4.5.2",
+    "typescript": "4.5.3",
     "vue": "3.2.24",
     "yargs": "^17.3.0"
   }

@@ -1,4 +1,4 @@
-import { tryGet, trySet } from '../../src/domain'
+import { tryGet, trySet } from '../src/map'
 
 describe('tryGet', () => {
   it('should call success when the key value pair exists', () => {

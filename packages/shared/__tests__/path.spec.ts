@@ -1,4 +1,4 @@
-import { path } from '../../src/domain'
+import { path } from '../src/path'
 
 type TestObject = {
   a: number

@@ -1,4 +1,4 @@
-import { set } from '../../src/domain'
+import { set } from '../src/set'
 
 it('should create new properties', () => {
   const obj = {}
