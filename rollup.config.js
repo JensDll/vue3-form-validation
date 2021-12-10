@@ -11,7 +11,7 @@ const configs = []
 for (const target of TARGETS) {
   const tsconfigOverride = {
     include: [`packages/${target}/src`],
-    exclude: ['**/__mocks__', '**/__tests__']
+    exclude: ['**/__mocks__', '**/__tests__', 'test-dts']
   }
 
   const config = {

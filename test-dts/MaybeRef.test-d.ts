@@ -1,7 +1,7 @@
 import { expectType } from 'tsd'
 import { Ref } from 'vue'
 
-import { MaybeRef } from 'vue3-form-validation/src/domain'
+import { MaybeRef } from 'shared'
 
 expectType<number | Ref<number>>({} as MaybeRef<number>)
 

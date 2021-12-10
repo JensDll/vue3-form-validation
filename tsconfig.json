@@ -21,6 +21,6 @@
       "@/*": ["packages/*/src"]
     }
   },
-  "include": ["packages/*/src", "packages/*/__tests__"],
+  "include": ["packages/*/src", "packages/*/__tests__", "test-dts"],
   "exclude": ["**/dist", "**/publish", "packages/examples"]
 }
