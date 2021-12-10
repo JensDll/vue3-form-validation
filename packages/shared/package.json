@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "name": "shared",
+  "type": "module",
+  "sideEffects": false,
+  "types": "dist/shared.d.ts",
+  "exports": {
+    "import": "./dist/shared.esm.js"
+  }
+}

@@ -1,5 +1,5 @@
-import { PromiseCancel } from '../../src/domain'
-import { makePromise } from '../utils'
+import { makePromise } from '@/jest-utils'
+import { PromiseCancel } from '../src/PromiseCancel'
 
 let promiseCancel: PromiseCancel<string>
 

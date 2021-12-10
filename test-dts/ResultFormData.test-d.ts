@@ -1,7 +1,7 @@
 import { expectType } from 'tsd'
 
-import { MaybeRef } from 'vue3-form-validation/src/domain'
-import { ResultFormData } from 'vue3-form-validation/src/form'
+import { MaybeRef } from 'shared'
+import { ResultFormData } from 'vue3-form-validation'
 
 expectType<ResultFormData<{ a: { $value: MaybeRef<string> } }>>(
   {} as { a: string }

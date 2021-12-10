@@ -1,4 +1,15 @@
-import fs from 'fs-extra'
+export type Package = {
+  name: string
+  buildFormats: string[]
+}
 
-export const buildTargets = fs.readdirSync('packages')
-export const buildFormats = ['esm', 'cjs']
+export const packages: Package[] = [
+  {
+    name: 'shared',
+    buildFormats: ['esm']
+  },
+  {
+    name: 'vue3-form-validation',
+    buildFormats: ['esm', 'cjs']
+  }
+]

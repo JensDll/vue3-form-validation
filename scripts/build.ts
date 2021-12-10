@@ -1,65 +1,63 @@
 import path from 'path'
 import fs from 'fs-extra'
 import { execa } from 'execa'
-import { buildFormats, buildTargets } from './meta'
+import { packages, Package } from './meta'
 
-buildTargets.forEach(build)
+packages.forEach(build)
 
-async function build(target: string) {
-  const packageFolder = path.resolve(`packages/${target}`)
+async function build({ name, buildFormats }: Package) {
+  const packageFolder = path.resolve(`packages/${name}`)
   const packageJson = JSON.parse(
     (await fs.readFile(`${packageFolder}/package.json`)).toString()
   )
 
-  if (!packageJson.private) {
-    await execa(
-      'rollup',
-      [
-        '--config',
-        '--environment',
-        `BUILD,TARGETS:${target},FORMATS:${buildFormats.join(' ')}`
-      ],
-      {
-        stdio: 'inherit'
-      }
-    )
+  await execa(
+    'rollup',
+    [
+      '--config',
+      '--environment',
+      `BUILD,TARGETS:${name},FORMATS:${buildFormats.join(' ')}`
+    ],
+    {
+      stdio: 'inherit'
+    }
+  )
 
-    await execa(
-      'npm',
-      [
-        'exec',
-        '--',
-        'prettier',
-        '--write',
-        `${packageFolder}/dist/${target}.d.ts`
-      ],
-      {
-        stdio: 'inherit'
-      }
-    )
+  console.log(`Finished building ${name}!`)
 
-    await Promise.all([
-      // Copy LICENSE
-      fs.copy('LICENSE', 'publish/LICENSE'),
-      // Copy README
-      fs.copy('README.md', 'publish/README.md'),
-      // Copy package.json
-      fs.copy(`${packageFolder}/package.json`, 'publish/package.json'),
-      // Copy JavaScript bundles
-      ...buildFormats.map(format => {
-        const bundle = `${target}.${format}.js`
-        return fs.copy(
-          `${packageFolder}/dist/${bundle}`,
-          `publish/dist/${bundle}`
-        )
-      }),
-      // Copy TypeScript definition files
-      fs.copy(
-        `${packageFolder}/dist/${target}.d.ts`,
-        `publish/dist/${target}.d.ts`
-      )
-    ])
-
-    console.log(`Build finished!`)
+  if (packageJson.private) {
+    return
   }
+
+  console.log()
+  console.log('Formatting type definition file ...')
+  await execa(
+    'npm',
+    ['exec', '--', 'prettier', '--write', `${packageFolder}/dist/${name}.d.ts`],
+    {
+      stdio: 'inherit'
+    }
+  )
+
+  console.log('Copying relevant files to publish folder ...')
+  await Promise.all([
+    // Copy LICENSE
+    fs.copy('LICENSE', 'publish/LICENSE'),
+    // Copy README
+    fs.copy('README.md', 'publish/README.md'),
+    // Copy package.json
+    fs.copy(`${packageFolder}/package.json`, 'publish/package.json'),
+    // Copy JavaScript bundles
+    ...buildFormats.map(format => {
+      const bundle = `${name}.${format}.js`
+      return fs.copy(
+        `${packageFolder}/dist/${bundle}`,
+        `publish/dist/${bundle}`
+      )
+    }),
+    // Copy TypeScript definition files
+    fs.copy(`${packageFolder}/dist/${name}.d.ts`, `publish/dist/${name}.d.ts`)
+  ])
+
+  console.log('Done!')
 }

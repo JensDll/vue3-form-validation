@@ -1,19 +1,19 @@
 import { reactive } from 'vue'
 import { MockedObject } from 'ts-jest/dist/utils/testing'
 
-import { makeMocks } from '../utils'
+import { Tuple } from '@/shared'
+import { makeMocks } from '@/jest-utils'
 import {
   Field,
-  Form,
   getResultFormData,
   TransformFormData,
   transformFormData,
   resetFields,
   disposeForm,
-  RuleInformation,
   mapFieldRules
-} from '../../src/form'
-import { Tuple } from '../../src/domain'
+} from '../src/data'
+import { Form } from '../src/Form'
+import { RuleInformation } from '../src/rules'
 
 type FormData = {
   a: Field<string, { extra: string }>
@@ -28,7 +28,8 @@ type FormData = {
   }
 }
 
-jest.mock('../../src/form/Form')
+jest.mock('../src/Form')
+jest.mock('../src/ValidationConfig')
 
 let form: MockedObject<Form>
 let formData: FormData
@@ -97,7 +98,7 @@ describe('mapFieldRules', () => {
   })
 
   it('simple rule with validation behavior string', () => {
-    const ruleInfo = mapFieldRules([['lazy', mocks[0]]])
+    const ruleInfo = mapFieldRules([['lazy' as never, mocks[0]]])
 
     expect(ruleInfo).toEqual<RuleInformation[]>([
       {
@@ -110,7 +111,7 @@ describe('mapFieldRules', () => {
   it('keyed rule with validation behavior string', () => {
     const ruleInfo = mapFieldRules([
       [
-        'lazy',
+        'lazy' as never,
         {
           key: 'key',
           rule: mocks[0]
@@ -163,7 +164,7 @@ describe('mapFieldRules', () => {
   })
 
   it('simple rule with validation behavior string and debounce', () => {
-    const ruleInfo = mapFieldRules([['lazy', mocks[0], 100]])
+    const ruleInfo = mapFieldRules([['lazy' as never, mocks[0], 100]])
 
     expect(ruleInfo).toEqual<RuleInformation[]>([
       {
@@ -177,7 +178,7 @@ describe('mapFieldRules', () => {
   it('keyed rule with validation behavior string and debounce', () => {
     const ruleInfo = mapFieldRules([
       [
-        'lazy',
+        'lazy' as never,
         {
           key: 'key',
           rule: mocks[0]

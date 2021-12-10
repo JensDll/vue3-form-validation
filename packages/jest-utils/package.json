@@ -1,0 +1,6 @@
+{
+  "private": true,
+  "name": "jest-utils",
+  "type": "module",
+  "sideEffects": false
+}

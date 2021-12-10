@@ -1,4 +1,5 @@
-import { isField, isTransformedField, isSimpleRule } from '../../src/form'
+import { isSimpleRule } from '../src/rules'
+import { isField, isTransformedField } from '../src/data'
 
 describe('isField', () => {
   it('field -> true', () => {

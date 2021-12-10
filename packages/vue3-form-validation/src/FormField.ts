@@ -3,12 +3,10 @@ import { reactive, computed, ref, watch, WatchStopHandle, Ref } from 'vue'
 import { Form, Validator, ValidatorParameters } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'
 import { SimpleRule, RuleInformation, unpackRule } from './rules'
-import * as nDomain from '../domain'
-
-class ResetError extends Error {}
+import * as nDomain from '@/shared'
 
 type MappedRuleInformation = {
-  promiseCancel: nDomain.PromiseCancel<never>
+  buffer: nDomain.LinkedList<boolean>
   rule?: SimpleRule
   validator: Validator
   validatorNotDebounced: Validator
@@ -92,7 +90,7 @@ export class FormField {
       }
 
       return {
-        promiseCancel: new nDomain.PromiseCancel(),
+        buffer: new nDomain.LinkedList(),
         rule: unpackRule(info.rule),
         validator,
         validatorNotDebounced,
@@ -111,7 +109,7 @@ export class FormField {
   }
 
   async validate(ruleNumber: number, modelValues: unknown[]) {
-    const { rule, promiseCancel } = this.ruleInfos[ruleNumber]
+    const { rule, buffer } = this.ruleInfos[ruleNumber]
 
     if (!rule) {
       return
@@ -120,31 +118,43 @@ export class FormField {
     let error: unknown
     const ruleResult = rule(...modelValues)
 
-    promiseCancel.cancelReject(new nDomain.CancelError())
+    if (buffer.last?.value) {
+      buffer.last.value = false
+      this.rulesValidating.value--
+      this.form.rulesValidating.value--
+    }
 
     if (typeof ruleResult?.then === 'function') {
+      const shouldSetError = buffer.addLast(true)
+
       this.rulesValidating.value++
       this.form.rulesValidating.value++
 
       try {
-        error = await promiseCancel.race(ruleResult)
+        error = await ruleResult
       } catch (err) {
-        if (err instanceof ResetError) {
-          throw undefined
-        }
-        if (err instanceof nDomain.CancelError) {
-          this.rulesValidating.value--
-          this.form.rulesValidating.value--
-          throw undefined
-        }
         error = err
-      } finally {
-        promiseCancel.isRacing = false
       }
 
-      this.rulesValidating.value--
-      this.form.rulesValidating.value--
-      this.setError(ruleNumber, error)
+      buffer.remove(shouldSetError)
+
+      if (shouldSetError.value) {
+        this.rulesValidating.value--
+        this.form.rulesValidating.value--
+        this.setError(ruleNumber, error)
+      } else {
+        /**
+         * This branch is reached in one of two cases:
+         * 1. While this rule was validating the same async rule was invoked again.
+         * 2. While this rule was validating the field was reset.
+         *
+         * In both cases, no error is to be set but the promise should still reject
+         * if the rule returns a string.
+         */
+        if (typeof error === 'string') {
+          throw error
+        }
+      }
     } else {
       error = ruleResult
       this.setError(ruleNumber, error)
@@ -162,7 +172,9 @@ export class FormField {
     for (let i = 0; i < this.ruleInfos.length; i++) {
       this.rawErrors[i] = null
       this.ruleInfos[i].cancelDebounce()
-      this.ruleInfos[i].promiseCancel.cancelReject(new ResetError())
+      for (const shouldSetError of this.ruleInfos[i].buffer.nodesForwards()) {
+        shouldSetError.value = false
+      }
     }
 
     this.watchStopHandle = this.setupWatcher()

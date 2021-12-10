@@ -1,5 +1,6 @@
 import { ref } from 'vue'
-import { deepIterator } from '../../src/domain'
+
+import { deepIterator } from '../src/deepIterator'
 
 it('should iterate correctly for basic objects', () => {
   const obj = {

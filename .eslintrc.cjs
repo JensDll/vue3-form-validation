@@ -21,15 +21,7 @@ module.exports = {
       }
     ],
     // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/ban-ts-comment.md
-    '@typescript-eslint/ban-ts-comment': [
-      'error',
-      {
-        'ts-expect-error': false,
-        'ts-ignore': 'allow-with-description',
-        'ts-nocheck': true,
-        'ts-check': false
-      }
-    ],
+    '@typescript-eslint/ban-ts-comment': 'off',
     // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/no-empty-interface.md
     '@typescript-eslint/no-empty-interface': 'off',
     // https://github.com/typescript-eslint/typescript-eslint/blob/main/packages/eslint-plugin/docs/rules/no-empty-function.md

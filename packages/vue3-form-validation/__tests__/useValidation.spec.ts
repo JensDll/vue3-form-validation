@@ -1,8 +1,9 @@
 import { ref, Ref } from 'vue'
 
+import { makeMocks, makePromise } from '@/jest-utils'
 import { useValidation, UseValidation } from '../src/useValidation'
-import { Field, TransformFormData, ValidationError } from '../src/form'
-import { makeMocks, makePromise } from './utils'
+import { Field, TransformFormData } from '../src/data'
+import { ValidationError } from '../src/ValidationError'
 
 type FormData = {
   a: Field<string>
@@ -23,7 +24,7 @@ type FormData = {
   }[]
 }
 
-jest.mock('../src/form/Form')
+jest.mock('../src/Form')
 
 let formData: FormData
 let mockRule: jest.Mock
@@ -124,7 +125,7 @@ test('should not change result data when changing form after submitting', async 
       }
     ]
   })
-  expect(mockRule).toBeCalledTimes(7)
+  expect(mockRule).toBeCalledTimes(14)
 })
 
 describe('reset fields', () => {
@@ -604,6 +605,7 @@ describe('validation', () => {
       useVal = useValidation({
         a: {
           $value: '',
+          // @ts-ignore
           $rules: [debounce ? [() => true, rule, 100] : [() => true, rule]]
         }
       })
@@ -757,7 +759,7 @@ describe('validation', () => {
     })
   })
 
-  test('changing form values during validation should throw an ValidationError', async () => {
+  test('changing form values during validation should throw validation error accordingly', async () => {
     const vbf = jest.fn(() => true)
     const rule = jest.fn((foo: number) => makePromise(50, foo < 5 && 'Error'))
 
@@ -768,26 +770,42 @@ describe('validation', () => {
       }
     })
 
-    const promise = validateFields()
+    // Foo is 0 => promise should throw an error
+    let promise = validateFields()
 
     form.foo.$value = 10
 
     await expect(promise).rejects.toThrow(ValidationError)
 
-    await expect(validateFields()).resolves.toStrictEqual({
+    // Foo is 10 => promise should NOT throw an error
+    promise = validateFields()
+
+    form.foo.$value = 0
+
+    await expect(promise).resolves.toStrictEqual({
       foo: 10
     })
+
+    // Foo is 0 again => promise should throw an error
+    await expect(validateFields()).rejects.toThrow(ValidationError)
   })
 })
 
 test('add and remove', () => {
-  const { form: data, add, remove } = useValidation({ xs: [] })
+  type FormData = {
+    a?: Field<string>
+    xs: {
+      b: Field<string>
+      ys: { c: Field<number> }[]
+    }[]
+  }
+  const { form, add, remove } = useValidation<FormData>({ xs: [] })
 
   add(['a'], {
     $value: ''
   })
 
-  expect(data).toStrictEqual({
+  expect(form).toStrictEqual({
     a: {
       $uid: expect.any(Number),
       $value: '',
@@ -805,10 +823,11 @@ test('add and remove', () => {
   add(['xs'], {
     b: {
       $value: ''
-    }
+    },
+    ys: []
   })
 
-  expect(data.xs).toStrictEqual([
+  expect(form.xs).toStrictEqual([
     {
       b: {
         $uid: expect.any(Number),
@@ -820,7 +839,8 @@ test('add and remove', () => {
         $dirty: false,
         $touched: false,
         $validate: expect.any(Function)
-      }
+      },
+      ys: []
     }
   ])
 
@@ -830,7 +850,7 @@ test('add and remove', () => {
     }
   })
 
-  expect(data.xs[0].ys).toStrictEqual([
+  expect(form.xs[0].ys).toStrictEqual([
     {
       c: {
         $uid: expect.any(Number),
@@ -848,7 +868,7 @@ test('add and remove', () => {
 
   remove(['xs', 0, 'ys', 0])
 
-  expect(data).toStrictEqual({
+  expect(form).toStrictEqual({
     a: {
       $uid: expect.any(Number),
       $value: '',
@@ -880,7 +900,7 @@ test('add and remove', () => {
 
   remove(['xs', 0, 'b'])
 
-  expect(data).toStrictEqual({
+  expect(form).toStrictEqual({
     a: {
       $uid: expect.any(Number),
       $value: '',
@@ -901,7 +921,7 @@ test('add and remove', () => {
 
   remove(['xs'])
 
-  expect(data).toStrictEqual({
+  expect(form).toStrictEqual({
     a: {
       $uid: expect.any(Number),
       $value: '',
@@ -917,5 +937,5 @@ test('add and remove', () => {
 
   remove(['a'])
 
-  expect(data).toStrictEqual({})
+  expect(form).toStrictEqual({})
 })

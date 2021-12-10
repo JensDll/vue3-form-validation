@@ -1,14 +1,4 @@
-export type DefaultValidationBehaviorString =
-  | 'aggressive'
-  | 'lazy'
-  | 'lazier'
-  | 'submit'
-  | 'force'
-  | 'change'
-
-export type ValidationBehaviorString =
-  | DefaultValidationBehaviorString
-  | keyof CustomValidationBehaviorFunctions
+export type ValidationBehaviorString = keyof CustomValidationBehaviorFunctions
 
 export interface CustomValidationBehaviorFunctions {}
 

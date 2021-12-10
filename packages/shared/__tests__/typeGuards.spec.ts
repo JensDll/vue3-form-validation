@@ -1,4 +1,4 @@
-import { isArray, isDefined, isObject, isRecord } from '../../src/domain'
+import { isArray, isDefined, isObject, isRecord } from '../src/typeGuards'
 
 describe('isDefined', () => {
   it('null -> false', () => {

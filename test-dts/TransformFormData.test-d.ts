@@ -1,11 +1,11 @@
 import { expectType } from 'tsd'
 
+import { MaybeRef } from 'shared'
 import {
   TransformFormData,
   TransformedField,
   Field
-} from 'vue3-form-validation/src/form'
-import { MaybeRef } from 'vue3-form-validation/src/domain'
+} from 'vue3-form-validation'
 
 // Testing without using the Field type
 

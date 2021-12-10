@@ -3,7 +3,7 @@ import { computed, ref, shallowReactive } from 'vue'
 import { FormField } from './FormField'
 import { ValidationError } from './ValidationError'
 import { isSimpleRule, RuleInformation } from './rules'
-import * as nDomain from '../domain'
+import * as nDomain from '@/shared'
 
 export type ValidatorParameters = [
   /**
