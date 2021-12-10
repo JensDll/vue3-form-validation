@@ -24,7 +24,6 @@ export function debounce(
 
   function debounced(this: any, ...args: any[]) {
     const effect = () => {
-      timerId = null
       target.apply(this, args)
     }
 

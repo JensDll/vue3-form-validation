@@ -31,3 +31,29 @@ it('should cancel the function call', async () => {
 
   expect(mocks[0]).toBeCalledTimes(0)
 })
+
+it('should work in tight loop', async () => {
+  const debounced = debounce(mocks[0], { wait: 10 })
+
+  for (let i = 1; i <= 10; i++) {
+    if (i % 2 === 0) {
+      debounced()
+      debounced(i)
+      await makePromise(10)
+    } else {
+      debounced()
+      debounced.cancel()
+      debounced()
+      debounced.cancel()
+      debounced.cancel()
+      debounced.cancel()
+      debounced(i)
+      await makePromise(10)
+    }
+  }
+
+  expect(mocks[0]).toBeCalledTimes(10)
+  for (let i = 1; i <= 10; i++) {
+    expect(mocks[0]).nthCalledWith(i, i)
+  }
+})
