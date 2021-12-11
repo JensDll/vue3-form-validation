@@ -1,5 +1,5 @@
-import { expectType, expectError } from 'tsd'
-import { ref } from 'vue'
+import { expectType } from 'tsd'
+import { ref, Ref } from 'vue'
 
 import { Field, TransformedField, useValidation } from 'vue3-form-validation'
 
@@ -9,42 +9,42 @@ useValidation<{ a: Field<string> }>({
   }
 })
 
-useValidation<{ a: Field<string, { extra: '' }> }>({
+useValidation<{ a: Field<string, { extra: string }> }>({
   a: {
     $value: '',
     extra: ''
   }
 })
 
-useValidation<{ a: Field<string> }>({
-  a: {
-    $value: '',
-    // infer type when generic is given
-    $rules: [a => expectType<string>(a)]
-  }
-})
-
-useValidation<{ a: Field<string> }>({
-  a: {
-    $value: ref(''),
-    // unpack refs in rules
-    $rules: [a => expectType<string>(a)]
-  }
-})
-
-useValidation<{ a: Field<{ b: { c: string } }> }>({
+useValidation<{ a: Field<{ b: { c: Ref<string> } }> }>({
   a: {
     $value: {
       b: {
-        c: ''
+        c: ref('')
       }
     },
-    // unpack refs in rules (nested)
     $rules: [a => expectType<{ b: { c: string } }>(a)]
   }
 })
 
-// example without generic
+// Allow maybe ref for $value
+{
+  useValidation<{ a: Field<string> }>({
+    a: {
+      $value: '',
+      $rules: [a => expectType<string>(a)]
+    }
+  })
+
+  useValidation<{ a: Field<string> }>({
+    a: {
+      $value: ref(''),
+      $rules: [a => expectType<string>(a)]
+    }
+  })
+}
+
+// Example without generic
 {
   const { form, validateFields, add } = useValidation({
     a: { $value: '', extra: '' },
@@ -64,15 +64,17 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
 
   add(['cs'], { d: { $value: 10, extra: '' } })
   // @ts-expect-error
-  add(['cs'], { d: { $value: '' } })
+  add(['cs'], { d: { $value: 10 } })
+  // @ts-expect-error
+  add(['cs'], { d: { $value: '', extra: '' } })
 }
 
-// example with generic
+// Example with generic
 {
   const { form, validateFields, add } = useValidation<{
-    a: Field<string, { extra: '' }>
+    a: Field<string, { extra: string }>
     b: Field<string>
-    cs: { d: Field<number> }[]
+    cs: { d: Field<number, { extra: string }> }[]
   }>({
     a: {
       $value: '',
@@ -87,28 +89,69 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
       {
         d: {
           $value: 10,
-          $rules: [d => expectType<number>(d)]
+          $rules: [d => expectType<number>(d)],
+          extra: ''
         }
       }
     ]
   })
 
   expectType<{
-    a: TransformedField<string, { extra: '' }>
+    a: TransformedField<string, { extra: string }>
     b: TransformedField<string>
-    cs: { d: TransformedField<number> }[]
+    cs: { d: TransformedField<number, { extra: string }> }[]
   }>(form)
 
   expectType<Promise<{ a: string; b: string; cs: { d: number }[] }>>(
     validateFields()
   )
 
+  add(['cs'], { d: { $value: 10, extra: '' } })
+  // @ts-expect-error
   add(['cs'], { d: { $value: 10 } })
   // @ts-expect-error
   add(['cs'], { d: { $value: '' } })
 }
 
-// example with nested field
+// Example with optional fields
+{
+  const { form, validateFields } = useValidation<{
+    a?: Field<string, { extra?: string }>
+    b?: Field<string>
+    cs?: { d?: Field<number, { extra?: string }> }[]
+  }>({
+    a: {
+      $value: '',
+      $rules: [a => expectType<string>(a)],
+      extra: ''
+    },
+    b: {
+      $value: '',
+      $rules: [b => expectType<string>(b)]
+    },
+    cs: [
+      {
+        d: {
+          $value: 10,
+          $rules: [d => expectType<number>(d)],
+          extra: ''
+        }
+      }
+    ]
+  })
+
+  expectType<{
+    a?: TransformedField<string, { extra?: string }>
+    b?: TransformedField<string>
+    cs?: { d?: TransformedField<number, { extra?: string }> }[]
+  }>(form)
+
+  expectType<Promise<{ a?: string; b?: string; cs?: { d?: number }[] }>>(
+    validateFields()
+  )
+}
+
+// Example with nested field
 {
   const { form, validateFields } = useValidation<{
     a: Field<
@@ -132,7 +175,7 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
               xs: string[]
               y: number
             }[]
-          >(as) // no ref unwrapping in array
+          >(as)
       ]
     }
   })
@@ -154,49 +197,4 @@ useValidation<{ a: Field<{ b: { c: string } }> }>({
       }[]
     }>
   >(validateFields())
-}
-
-// example with optional fields
-{
-  const { form, validateFields, add } = useValidation<{
-    a: Field<string, { extra: string }>
-    b?: Field<boolean, { stuff: '' }>
-    c?: Field<number>
-  }>({
-    a: {
-      $value: '',
-      $rules: [x => expect<string>(x)],
-      extra: ''
-    },
-    b: {
-      $value: false,
-      $rules: [x => expect<boolean>(x)],
-      stuff: ''
-    },
-    c: {
-      $value: 0,
-      $rules: [x => expect<number>(x)]
-    }
-  })
-
-  expectType<{
-    a: TransformedField<string, { extra: string }>
-    b?: TransformedField<boolean, { stuff: '' }>
-    c?: TransformedField<number>
-  }>(form)
-
-  expectType<
-    Promise<{
-      a: string
-      b?: boolean
-      c?: number
-    }>
-  >(validateFields())
-
-  add(['a'], { $value: '', extra: '' })
-  add(['b'], { $value: false, stuff: '' })
-  add(['c'], { $value: 0 })
-  expectError(add(['a'], { $value: null, extra: '' }))
-  expectError(add(['b'], { $value: null, stuff: '' }))
-  expectError(add(['c'], { $value: null }))
 }

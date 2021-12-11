@@ -55,7 +55,7 @@ async function build({ name, buildFormats }: Package) {
         `publish/dist/${bundle}`
       )
     }),
-    // Copy TypeScript definition files
+    // Copy TypeScript definition file
     fs.copy(`${packageFolder}/dist/${name}.d.ts`, `publish/dist/${name}.d.ts`)
   ])
 

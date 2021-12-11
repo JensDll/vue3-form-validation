@@ -1,4 +1,5 @@
 import { expectType } from 'tsd'
+import { Ref } from 'vue'
 
 import { MaybeRef } from 'shared'
 import {
@@ -9,150 +10,195 @@ import {
 
 // Testing without using the Field type
 
-expectType<TransformFormData<{ a: { $value: MaybeRef<10> } }>>(
+expectType<
+  TransformFormData<{
+    a: { $value: string }
+  }>
+>(
   {} as {
-    a: TransformedField<10>
+    a: TransformedField<string>
   }
 )
 
-expectType<TransformFormData<{ a?: { $value: MaybeRef<10> } }>>(
+expectType<
+  TransformFormData<{
+    a: { $value: MaybeRef<string> }
+  }>
+>(
   {} as {
-    a?: TransformedField<10>
+    a: TransformedField<string>
   }
 )
 
 expectType<
   TransformFormData<{
     a: {
-      $value: {
-        a: number
-      }
+      $value: MaybeRef<string>
+      extra: number
     }
   }>
 >(
   {} as {
-    a: TransformedField<{ a: number }>
-  }
-)
-
-expectType<
-  TransformFormData<{ a: { $value: MaybeRef<10>; extra: MaybeRef<''> } }>
->(
-  {} as {
-    a: TransformedField<10, { extra: '' }>
+    a: TransformedField<string, { extra: number }>
   }
 )
 
 expectType<
   TransformFormData<{
-    as: {
-      b: {
-        $value: MaybeRef<10>
-      }
-    }[]
+    a: {
+      $value: MaybeRef<string>
+      extra: MaybeRef<number>
+    }
   }>
 >(
   {} as {
-    as: {
-      b: TransformedField<10>
-    }[]
+    a: TransformedField<string, { extra: number }>
   }
 )
 
 expectType<
   TransformFormData<{
-    as?: {
-      b?: {
-        $value: MaybeRef<10>
-        extra: ''
-        stuff: ''
-      }
-    }[]
+    a: {
+      bs: {
+        c: {
+          $value: MaybeRef<string>
+        }
+      }[]
+    }
   }>
 >(
   {} as {
-    as?: {
-      b?: TransformedField<10, { extra: ''; stuff: '' }>
-    }[]
+    a: {
+      bs: {
+        c: TransformedField<string>
+      }[]
+    }
   }
 )
 
 expectType<
   TransformFormData<{
-    as: {
-      b: {
-        $value: MaybeRef<10>
-        extra: MaybeRef<''>
-        stuff: MaybeRef<''>
-      }
-    }[]
+    a?: {
+      bs?: {
+        c?: {
+          $value: MaybeRef<string>
+        }
+      }[]
+    }
   }>
 >(
   {} as {
-    as: {
-      b: TransformedField<10, { extra: ''; stuff: '' }>
-    }[]
+    a?: {
+      bs?: {
+        c?: TransformedField<string>
+      }[]
+    }
+  }
+)
+
+expectType<
+  TransformFormData<{
+    a?: {
+      bs?: {
+        c?: {
+          $value: MaybeRef<string>
+          extra?: MaybeRef<number>
+        }
+      }[]
+    }
+  }>
+>(
+  {} as {
+    a?: {
+      bs?: {
+        c?: TransformedField<string, { extra?: number }>
+      }[]
+    }
   }
 )
 
 // Testing with using the Field type
 
-expectType<TransformFormData<{ a: Field<10> }>>(
+expectType<
+  TransformFormData<{
+    a: Field<string>
+  }>
+>(
   {} as {
-    a: TransformedField<10>
-  }
-)
-
-expectType<TransformFormData<{ a?: Field<10> }>>(
-  {} as {
-    a?: TransformedField<10>
-  }
-)
-
-expectType<TransformFormData<{ a: Field<10, { extra: '' }> }>>(
-  {} as {
-    a: TransformedField<10, { extra: '' }>
+    a: TransformedField<string>
   }
 )
 
 expectType<
   TransformFormData<{
-    as: {
-      b: Field<10>
-    }[]
+    a: Field<string, { extra: number }>
   }>
 >(
   {} as {
-    as: {
-      b: TransformedField<10>
-    }[]
+    a: TransformedField<string, { extra: number }>
   }
 )
 
 expectType<
   TransformFormData<{
-    as?: {
-      b?: Field<10>
-    }[]
+    a: Field<string, { extra: Ref<number> }>
   }>
 >(
   {} as {
-    as?: {
-      b?: TransformedField<10>
-    }[]
+    a: TransformedField<string, { extra: number }>
   }
 )
 
 expectType<
   TransformFormData<{
-    as: {
-      b: Field<10, { extra: ''; stuff: '' }>
-    }[]
+    a: {
+      bs: {
+        c: Field<string>
+      }[]
+    }
   }>
 >(
   {} as {
-    as: {
-      b: TransformedField<10, { extra: ''; stuff: '' }>
-    }[]
+    a: {
+      bs: {
+        c: TransformedField<string>
+      }[]
+    }
+  }
+)
+
+expectType<
+  TransformFormData<{
+    a?: {
+      bs?: {
+        c?: Field<string>
+      }[]
+    }
+  }>
+>(
+  {} as {
+    a?: {
+      bs?: {
+        c?: TransformedField<string>
+      }[]
+    }
+  }
+)
+
+expectType<
+  TransformFormData<{
+    a?: {
+      bs?: {
+        c?: Field<string, { extra?: Ref<number> }>
+      }[]
+    }
+  }>
+>(
+  {} as {
+    a?: {
+      bs?: {
+        c?: TransformedField<string, { extra?: number }>
+      }[]
+    }
   }
 )
