@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "jest-utils",
+  "name": "jest-helper",
   "type": "module",
   "sideEffects": false
 }

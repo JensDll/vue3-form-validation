@@ -7,6 +7,8 @@ export default defineComponent({
 </script>
 
 <script setup lang="ts">
+import { PropType } from 'vue'
+
 import PreFormData from '~/components/form/PreFormData.vue'
 
 defineEmits(['submit'])
@@ -15,11 +17,25 @@ defineProps({
     type: String,
     required: true
   },
-  form: {
-    type: Object
+  validating: {
+    type: Boolean,
+    required: true
   },
   submitting: {
-    type: Boolean
+    type: Boolean,
+    required: true
+  },
+  hasError: {
+    type: Boolean,
+    required: true
+  },
+  errors: {
+    type: Object as PropType<string[]>,
+    required: true
+  },
+  form: {
+    type: Object,
+    required: true
   }
 })
 
@@ -36,7 +52,13 @@ const { class: attrsClass, onSubmit, ...attrsRest } = useAttrs()
     >
       <slot></slot>
     </form>
-    <PreFormData v-if="form" :form="form" />
+    <PreFormData
+      :validating="validating"
+      :submitting="submitting"
+      :has-error="hasError"
+      :errors="errors"
+      :form="form"
+    />
   </section>
 </template>
 

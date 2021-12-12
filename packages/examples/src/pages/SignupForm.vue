@@ -13,63 +13,70 @@ interface FormData {
   confirmPassword: Field<string>
 }
 
-const { form, submitting, validateFields, resetFields } =
-  useValidation<FormData>({
-    name: {
-      $value: '',
-      $rules: [
-        [
-          'change',
-          name => {
-            if (name.length === 0) {
-              return 'Please enter your name'
-            }
+const {
+  form,
+  hasError,
+  errors,
+  validating,
+  submitting,
+  validateFields,
+  resetFields
+} = useValidation<FormData>({
+  name: {
+    $value: '',
+    $rules: [
+      [
+        'change',
+        name => {
+          if (name.length === 0) {
+            return 'Please enter your name'
+          }
 
-            return new Promise<void | string>(resolve => {
-              setTimeout(() => {
-                if (['alice', 'bob', 'oscar'].includes(name.toLowerCase())) {
-                  resolve()
-                } else {
-                  resolve(`Name '${name}' is not available`)
-                }
-              }, 2000)
-            })
-          },
-          300
-        ]
+          return new Promise<void | string>(resolve => {
+            setTimeout(() => {
+              if (['alice', 'bob', 'oscar'].includes(name.toLowerCase())) {
+                resolve()
+              } else {
+                resolve(`Name '${name}' is not available`)
+              }
+            }, 400)
+          })
+        },
+        300
       ]
-    },
-    email: {
-      $value: '',
-      $rules: [rules.email('Please enter a valid email address')]
-    },
-    password: {
-      $value: '',
-      $rules: [
-        rules.min(9)('Password has to be longer than 8 characters'),
-        [
-          'lazy',
-          {
-            key: 'pw',
-            rule: rules.equal('Passwords do not match')
-          }
-        ]
+    ]
+  },
+  email: {
+    $value: '',
+    $rules: [rules.email('Please enter a valid email address')]
+  },
+  password: {
+    $value: '',
+    $rules: [
+      rules.min(9)('Password has to be longer than 8 characters'),
+      [
+        'lazy',
+        {
+          key: 'pw',
+          rule: rules.equal('Passwords do not match')
+        }
       ]
-    },
-    confirmPassword: {
-      $value: '',
-      $rules: [
-        rules.min(9)('Password has to be longer than 8 characters'),
-        [
-          'lazy',
-          {
-            key: 'pw',
-            rule: rules.equal('Passwords do not match')
-          }
-        ]
+    ]
+  },
+  confirmPassword: {
+    $value: '',
+    $rules: [
+      rules.min(9)('Password has to be longer than 8 characters'),
+      [
+        'lazy',
+        {
+          key: 'pw',
+          rule: rules.equal('Passwords do not match')
+        }
       ]
-    }
-  })
+    ]
+  }
+})
 
 async function handleSubmit() {
   try {
@@ -85,6 +92,10 @@ async function handleSubmit() {
   <FormProvider
     title="Signup Form"
     class="form"
+    :validating="validating"
+    :submitting="submitting"
+    :has-error="hasError"
+    :errors="errors"
     :form="form"
     @submit="handleSubmit()"
   >

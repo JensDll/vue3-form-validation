@@ -127,7 +127,7 @@ export class Form {
       ...validators.map(validator =>
         validator([meta.field.modelValue.value], force, false)
       ),
-      ...this.collectValidatorResultsForKeysDebounced(meta.keys, force)
+      ...this.collectValidatorResultsForKeysMaybeDebounced(meta.keys, force)
     ])
   }
 
@@ -169,12 +169,12 @@ export class Form {
   }
 
   /**
-   * Should only be called from `validateAll`
-   * (`force` and `submit` will default to `false` and `true`).
+   * Should only be called from `validateAll`. `Force` and `submit`
+   * will default to `false` and `true` plus it will not use debounced validators.
    *
    * @param keys The keys of the rules to validate
    */
-  private *collectValidatorResultsForKeys(
+  private *collectValidatorResultsForKeysNotDebounced(
     keys: string[] | Iterable<string>
   ): Generator<ValidatorReturn> {
     for (const key of keys) {
@@ -188,14 +188,13 @@ export class Form {
   }
 
   /**
-   * Should only be called from `validate`
-   * (`submit` will default to `false`).
+   * Should only be called from `validate`. `Submit` will default to `false`.
    * It will also check if every field of a key is touched before
-   * invoking the validator and not use the debounced version.
+   * invoking the validator and use the debounced version if available.
    *
    * @param keys The keys of the rules to validate
    */
-  private *collectValidatorResultsForKeysDebounced(
+  private *collectValidatorResultsForKeysMaybeDebounced(
     keys: string[] | Iterable<string>,
     force: boolean
   ): Generator<ValidatorReturn> {
@@ -226,7 +225,9 @@ export class Form {
           yield validator([meta.field.modelValue.value], false, true)
         }
       }
-      yield* this.collectValidatorResultsForKeys(this.keyedValidators.keys())
+      yield* this.collectValidatorResultsForKeysNotDebounced(
+        this.keyedValidators.keys()
+      )
     } else if (names.length > 0) {
       const uniqueNames = new Set(names)
 
@@ -239,7 +240,7 @@ export class Form {
           for (const validator of validatorsNotDebounced) {
             yield validator([meta.field.modelValue.value], false, true)
           }
-          yield* this.collectValidatorResultsForKeys(
+          yield* this.collectValidatorResultsForKeysNotDebounced(
             this.keyedValidators.keys()
           )
         }

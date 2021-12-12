@@ -8,7 +8,7 @@
       { 'opacity-40 cursor-wait disabled': loading },
       outline ? `outline-${type}` : type
     ]"
-    :disabled="disabled"
+    :aria-disabled="disabled"
     :type="htmlType"
     ref="button"
     v-on="eventListeners"
@@ -62,7 +62,7 @@ onMounted(() => {
 const handleClick = (e: MouseEvent) => {
   const target = e.target as HTMLButtonElement
 
-  if (!target.disabled) {
+  if (!target.disabled && target.ariaDisabled === 'false') {
     emit('click')
   }
 }
@@ -71,7 +71,7 @@ const handleSubmit = (e: MouseEvent) => {
   e.preventDefault()
   const target = e.target as HTMLButtonElement
 
-  if (!target.disabled && form) {
+  if (!target.disabled && target.ariaDisabled === 'false' && form) {
     form.dispatchEvent(new SubmitEvent('submit', { submitter: button.value }))
   }
 }

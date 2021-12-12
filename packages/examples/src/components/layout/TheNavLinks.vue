@@ -51,11 +51,13 @@ function right() {
   @apply block w-6 h-6 rounded-full bg-indigo-500 ml-4 transition-transform;
 
   &:hover {
-    @apply outline-none scale-125 bg-indigo-400;
+    @apply outline-none bg-indigo-400;
+    transform: scale(1.25);
   }
 
   &:focus {
-    @apply outline-none scale-125;
+    @apply outline-none;
+    transform: scale(1.25);
   }
 
   &:first-of-type {
@@ -64,7 +66,7 @@ function right() {
 }
 
 .router-link-exact-active {
-  @apply scale-125;
+  transform: scale(1.25);
   box-shadow: 0 0 8px theme('colors.indigo.400');
 }
 

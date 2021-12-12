@@ -21,20 +21,29 @@ type FormData = {
 
 const fieldNames = ref<FieldNames<FormData>[]>(['a', 'b', 'c', 'd'])
 
-const { form, submitting, validateFields, resetFields, add, remove } =
-  useValidation<FormData>({
-    a: {
-      $value: '',
-      $rules: [rules.required('Please enter some text'), rules.random()]
-    },
-    xs: []
-  })
+const {
+  form,
+  hasError,
+  errors,
+  validating,
+  submitting,
+  validateFields,
+  resetFields,
+  add,
+  remove
+} = useValidation<FormData>({
+  a: {
+    $value: '',
+    $rules: [rules.random()]
+  },
+  xs: []
+})
 
 function addX() {
   add(['xs'], {
     b: {
       $value: '',
-      $rules: [rules.required('Please enter some text'), rules.random()]
+      $rules: [rules.random()]
     },
     ys: []
   })
@@ -48,11 +57,11 @@ function addY(xi: number) {
   add(['xs', xi, 'ys'], {
     c: {
       $value: '',
-      $rules: [rules.required('Please enter some text'), rules.random()]
+      $rules: [rules.random()]
     },
     d: {
       $value: '',
-      $rules: [rules.required('Please enter some text'), rules.random()]
+      $rules: [rules.random()]
     }
   })
 }
@@ -77,6 +86,10 @@ async function handleSubmit() {
   <FormProvider
     title="Dynamic Form"
     class="form max-w-3xl"
+    :validating="validating"
+    :submitting="submitting"
+    :has-error="hasError"
+    :errors="errors"
     :form="form"
     @submit="handleSubmit"
   >
@@ -187,7 +200,7 @@ async function handleSubmit() {
 .field-container {
   display: grid;
   column-gap: 2rem;
-  grid-template-columns: 1fr 1fr 2rem 2rem;
+  grid-template-columns: 1fr 1fr 1rem 2rem;
   grid-template-rows: repeat(3, auto);
   grid-template-areas:
     'label-1 label-2 . .'

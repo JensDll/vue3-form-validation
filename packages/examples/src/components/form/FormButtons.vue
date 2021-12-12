@@ -21,7 +21,7 @@ defineProps({
     </BaseButton>
     <BaseButton
       class="px-4 py-2 rounded-md font-medium ml-4"
-      type="secondary"
+      type="basic"
       @click="$emit('reset')"
     >
       Reset

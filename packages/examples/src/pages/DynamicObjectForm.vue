@@ -13,15 +13,24 @@ type FormData = {
   c?: Field<string>
 }
 
-const { form, validateFields, resetFields, add, remove } =
-  useValidation<FormData>({
-    a: {
-      $value: '',
-      $rules: [rules.required('Please enter some text')]
-    },
-    b: undefined,
-    c: undefined
-  })
+const {
+  form,
+  hasError,
+  errors,
+  validating,
+  submitting,
+  validateFields,
+  resetFields,
+  add,
+  remove
+} = useValidation<FormData>({
+  a: {
+    $value: '',
+    $rules: [rules.required('Please enter some text')]
+  },
+  b: undefined,
+  c: undefined
+})
 
 function addField(key: string) {
   add([key], {
@@ -51,6 +60,10 @@ async function handleSubmit() {
   <FormProvider
     title="Dynamic Object Form"
     class="form"
+    :validating="validating"
+    :submitting="submitting"
+    :has-error="hasError"
+    :errors="errors"
     :form="form"
     @submit="handleSubmit()"
   >

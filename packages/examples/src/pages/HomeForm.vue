@@ -12,17 +12,24 @@ interface FormData {
   files: Field<File[]>
 }
 
-const { form, submitting, validateFields, resetFields } =
-  useValidation<FormData>({
-    text: {
-      $value: '',
-      $rules: [rules.min(6)('Please enter text longer than 5 characters')]
-    },
-    files: {
-      $value: [],
-      $rules: [rules.min(1)('Please select one or more files')]
-    }
-  })
+const {
+  form,
+  submitting,
+  validating,
+  errors,
+  hasError,
+  validateFields,
+  resetFields
+} = useValidation<FormData>({
+  text: {
+    $value: '',
+    $rules: [rules.min(6)('Please enter text longer than 5 characters')]
+  },
+  files: {
+    $value: [],
+    $rules: [rules.min(1)('Please select one or more files')]
+  }
+})
 
 async function handleSubmit() {
   try {
@@ -38,6 +45,10 @@ async function handleSubmit() {
   <FormProvider
     title="Home Form"
     class="grid gap-y-6 max-w-2xl"
+    :validating="validating"
+    :submitting="submitting"
+    :has-error="hasError"
+    :errors="errors"
     :form="form"
     @submit="handleSubmit()"
   >

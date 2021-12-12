@@ -1,7 +1,23 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, PropType } from 'vue'
 
 const props = defineProps({
+  validating: {
+    type: Boolean,
+    required: true
+  },
+  submitting: {
+    type: Boolean,
+    required: true
+  },
+  hasError: {
+    type: Boolean,
+    required: true
+  },
+  errors: {
+    type: Object as PropType<string[]>,
+    required: true
+  },
   form: {
     type: Object,
     required: true
@@ -32,7 +48,12 @@ const formJson = computed(() =>
 </script>
 
 <template>
-  <pre class="mt-8">{{ formJson }}</pre>
+  <h3 class="mt-16 text-lg">UseValidation State</h3>
+  <pre class="mt-2">Validating: {{ validating }}</pre>
+  <pre class="mt-1">Submitting: {{ submitting }}</pre>
+  <pre class="mt-1">Has Error: {{ hasError }}</pre>
+  <pre class="mt-1">Errors: {{ errors }}</pre>
+  <pre class="mt-1">Form: {{ formJson }}</pre>
 </template>
 
 <style lang="postcss" scoped></style>

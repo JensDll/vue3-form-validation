@@ -14,20 +14,29 @@ type FormData = {
   endTime: Field<string>
 }
 
-const { form, submitting, validateFields, resetFields } =
-  useValidation<FormData>({
-    startDate: {
-      $value: '',
-      $rules: [
-        ['submit', rules.required('Please select a starting date')],
-        rules.inTheFuture('Please select a date in the future'),
-        { key: 'date' }
-      ]
-    },
-    endDate: {
-      $value: '',
-      $rules: [
-        ['submit', rules.required('Please select an ending date')],
+const {
+  form,
+  hasError,
+  errors,
+  validating,
+  submitting,
+  validateFields,
+  resetFields
+} = useValidation<FormData>({
+  startDate: {
+    $value: '',
+    $rules: [
+      ['submit', rules.required('Please select a starting date')],
+      ['change', rules.inTheFuture('Please select a date in the future')],
+      { key: 'date' }
+    ]
+  },
+  endDate: {
+    $value: '',
+    $rules: [
+      ['submit', rules.required('Please select an ending date')],
+      [
+        'change',
         {
           key: 'date',
           rule: (startDate: string, endDate: string) => {
@@ -37,21 +46,30 @@ const { form, submitting, validateFields, resetFields } =
           }
         }
       ]
-    },
-    startTime: {
-      $value: '',
-      $rules: [
-        {
-          key: 'time',
-          rule: rules.allRequired('Please select a time range')
-        }
-      ]
-    },
-    endTime: {
-      $value: '',
-      $rules: [{ key: 'time' }]
-    }
-  })
+    ]
+  },
+  startTime: {
+    $value: '',
+    $rules: [
+      {
+        key: 'time',
+        rule: rules.allRequired('Please select a time range')
+      }
+    ]
+  },
+  endTime: {
+    $value: '',
+    $rules: [{ key: 'time' }]
+  }
+})
+
+function handleReset() {
+  resetFields()
+  form.startDate.$touched = true
+  form.endDate.$touched = true
+}
+
+handleReset()
 
 async function handleSubmit() {
   try {
@@ -67,10 +85,14 @@ async function handleSubmit() {
   <FormProvider
     class="form"
     title="Keyed Rules"
+    :validating="validating"
+    :submitting="submitting"
+    :has-error="hasError"
+    :errors="errors"
     :form="form"
     @submit="handleSubmit()"
   >
-    <div class="date-range-container lg:w-2/3">
+    <div class="date-range-container">
       <FormInput
         type="date"
         :label="{
@@ -129,7 +151,7 @@ async function handleSubmit() {
         :errors="[...form.startTime.$errors, ...form.endTime.$errors]"
       />
     </div>
-    <FormButtons class="mt-4" :submitting="submitting" @reset="resetFields()" />
+    <FormButtons class="mt-4" :submitting="submitting" @reset="handleReset()" />
   </FormProvider>
 </template>
 

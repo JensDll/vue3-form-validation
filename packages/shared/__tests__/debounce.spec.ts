@@ -1,4 +1,4 @@
-import { makeMocks, makePromise } from '@/jest-utils'
+import { makeMocks, makePromise } from '@/jest-helper'
 import { debounce } from '../src/debounce'
 import { Tuple } from '../src/types'
 
