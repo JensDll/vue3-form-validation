@@ -207,15 +207,15 @@ export type TransformedField<
    */
   $value: TValue
   /**
-   * A list of validation error messages local to this field without `null` values.
+   * A list of validation error messages.
    */
   $errors: string[]
   /**
-   * `True` while this field has any error.
+   * The error status of this field.
    */
   $hasError: boolean
   /**
-   * The field's error status rule for rule.
+   * The error status of this field one for each rule.
    */
   $hasErrors: boolean[]
   /**
@@ -223,10 +223,8 @@ export type TransformedField<
    */
   $validating: boolean
   /**
-   * `True` if the field is touched.
-   *
-   * @remarks
-   * In most cases, this value should be set together with the `blur` event.
+   * `True` if the field is touched. In most cases,
+   * this value should be set together with the `blur` event.
    * Either through `$validate` or manually.
    */
   $touched: boolean
