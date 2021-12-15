@@ -430,6 +430,7 @@ describe('validation', () => {
       expect(field.rulesValidating.value).toBe(0)
       expect(form.rulesValidating.value).toBe(0)
       expect(field.hasErrors).toStrictEqual([true, true])
+      expect(field.errors.value.sort()).toStrictEqual(['rule1', 'rule2'])
     }
   )
 
