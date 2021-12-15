@@ -32,6 +32,7 @@ export class FormField {
   errors = computed(() => this.rawErrors.filter(nShared.isDefined))
   validating = computed(() => this.rulesValidating.value > 0)
   hasError = computed(() => this.errors.value.length > 0)
+  hasErrors: boolean[]
 
   constructor(
     form: Form,
@@ -45,6 +46,7 @@ export class FormField {
     this.name = name
     this.modelValue = ref(modelValue)
     this.rawErrors = reactive(ruleInfos.map(() => null))
+    this.hasErrors = reactive(ruleInfos.map(() => false))
     this.initialModelValue = nShared.deepCopy(this.modelValue.value)
 
     this.ruleInfos = ruleInfos.map((info, ruleNumber) => {
@@ -201,9 +203,11 @@ export class FormField {
   private setError(ruleNumber: any, error: unknown) {
     if (typeof error === 'string') {
       this.rawErrors[ruleNumber] = error
+      this.hasErrors[ruleNumber] = true
       throw error
     } else {
       this.rawErrors[ruleNumber] = null
+      this.hasErrors[ruleNumber] = false
     }
   }
 

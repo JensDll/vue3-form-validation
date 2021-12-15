@@ -87,7 +87,7 @@ export function registerField(
     $value: formField.modelValue,
     $errors: formField.errors,
     $hasError: formField.hasError,
-    $rawErrors: formField.rawErrors,
+    $hasErrors: formField.hasErrors,
     $validating: formField.validating,
     $dirty: formField.dirty,
     $touched: formField.touched,
@@ -211,13 +211,13 @@ export type TransformedField<
    */
   $errors: string[]
   /**
-   * The field's raw error messages one for each rule and `null` if there is no error.
-   */
-  $rawErrors: (string | null)[]
-  /**
    * `True` while this field has any error.
    */
   $hasError: boolean
+  /**
+   * The field's error status rule for rule.
+   */
+  $hasErrors: boolean[]
   /**
    * `True` while this field has any pending rules.
    */
