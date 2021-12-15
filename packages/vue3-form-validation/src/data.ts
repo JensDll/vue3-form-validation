@@ -87,7 +87,7 @@ export function registerField(
     $value: formField.modelValue,
     $errors: formField.errors,
     $hasError: formField.hasError,
-    $rawErrors: formField.rawErrors,
+    $hasErrors: formField.hasErrors,
     $validating: formField.validating,
     $dirty: formField.dirty,
     $touched: formField.touched,
@@ -207,26 +207,24 @@ export type TransformedField<
    */
   $value: TValue
   /**
-   * A list of validation error messages local to this field without `null` values.
+   * A list of validation error messages.
    */
   $errors: string[]
   /**
-   * The field's raw error messages one for each rule and `null` if there is no error.
-   */
-  $rawErrors: (string | null)[]
-  /**
-   * `True` while this field has any error.
+   * The error status of this field.
    */
   $hasError: boolean
+  /**
+   * The error status of this field one for each rule.
+   */
+  $hasErrors: boolean[]
   /**
    * `True` while this field has any pending rules.
    */
   $validating: boolean
   /**
-   * `True` if the field is touched.
-   *
-   * @remarks
-   * In most cases, this value should be set together with the `blur` event.
+   * `True` if the field is touched. In most cases,
+   * this value should be set together with the `blur` event.
    * Either through `$validate` or manually.
    */
   $touched: boolean
