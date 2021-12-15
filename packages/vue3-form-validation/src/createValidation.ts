@@ -3,24 +3,17 @@ import { Plugin } from 'vue'
 import { VALIDATION_CONFIG } from './ValidationConfig'
 import {
   ValidationBehaviorFunction,
-  ValidationBehaviorString,
-  CustomValidationBehaviorFunctions
+  ValidationBehaviorString
 } from './validationBehavior'
 
 export type ConfigurationValidationBehavior = {
   [K in ValidationBehaviorString]: ValidationBehaviorFunction
 }
 
-export type Configuration =
-  keyof CustomValidationBehaviorFunctions extends never
-    ? {
-        defaultValidationBehavior: ValidationBehaviorString
-        validationBehavior?: ConfigurationValidationBehavior
-      }
-    : {
-        defaultValidationBehavior: ValidationBehaviorString
-        validationBehavior: ConfigurationValidationBehavior
-      }
+export type Configuration = {
+  defaultValidationBehavior: ValidationBehaviorString
+  validationBehavior: ConfigurationValidationBehavior
+}
 
 /**
  * Configure the validation behavior of `useValidation`.

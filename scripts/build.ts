@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs-extra'
-import { execa } from 'execa'
+
+import { run } from './utils'
 import { packages, Package } from './meta'
 
 packages.forEach(build)
@@ -11,17 +12,11 @@ async function build({ name, buildFormats }: Package) {
     (await fs.readFile(`${packageFolder}/package.json`)).toString()
   )
 
-  await execa(
-    'rollup',
-    [
-      '--config',
-      '--environment',
-      `BUILD,TARGETS:${name},FORMATS:${buildFormats.join(' ')}`
-    ],
-    {
-      stdio: 'inherit'
-    }
-  )
+  await run('rollup', [
+    '--config',
+    '--environment',
+    `BUILD,TARGETS:${name},FORMATS:${buildFormats.join(' ')}`
+  ])
 
   console.log(`Finished building ${name}!`)
 
@@ -31,13 +26,13 @@ async function build({ name, buildFormats }: Package) {
 
   console.log()
   console.log('Formatting type definition file ...')
-  await execa(
-    'npm',
-    ['exec', '--', 'prettier', '--write', `${packageFolder}/dist/${name}.d.ts`],
-    {
-      stdio: 'inherit'
-    }
-  )
+  await run('npm', [
+    'exec',
+    '--',
+    'prettier',
+    '--write',
+    `${packageFolder}/dist/${name}.d.ts`
+  ])
 
   console.log('Copying relevant files to publish folder ...')
   await Promise.all([
