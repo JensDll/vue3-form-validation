@@ -44,7 +44,7 @@ for (const target of TARGETS) {
     ]
   }
 
-  configs.push(config, dtsConfig)
+  configs.push(config)
 }
 
 export default configs

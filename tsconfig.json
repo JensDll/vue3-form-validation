@@ -18,7 +18,7 @@
     "baseUrl": ".",
     "rootDir": ".",
     "paths": {
-      "@/*": ["packages/*/src"]
+      "@compose-validation/*": ["packages/*/src"]
     }
   },
   "include": ["packages/*/src", "packages/*/__tests__", "test-dts"],

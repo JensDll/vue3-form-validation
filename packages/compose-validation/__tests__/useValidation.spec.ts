@@ -1,6 +1,6 @@
-import { ref, Ref } from 'vue'
+import { ref, Ref } from 'vue-demi'
 
-import { makeMocks, makePromise } from '@/jest-helper'
+import { makeMocks, makePromise } from '@compose-validation/jest-helper'
 import { useValidation, UseValidation } from '../src/useValidation'
 import { Field, TransformFormData } from '../src/data'
 import { ValidationError } from '../src/ValidationError'

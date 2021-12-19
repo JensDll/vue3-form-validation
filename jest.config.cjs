@@ -5,6 +5,6 @@ module.exports = {
   testMatch: ['<rootDir>/packages/**/__tests__/**/*spec.[jt]s?(x)'],
   modulePathIgnorePatterns: ['<rootDir>/publish'],
   moduleNameMapper: {
-    '@/(.*)$': '<rootDir>/packages/$1/src'
+    '@compose-validation/(.*)$': '<rootDir>/packages/$1/src'
   }
 }

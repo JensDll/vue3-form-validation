@@ -3,7 +3,7 @@ import { computed, ref, shallowReactive } from 'vue-demi'
 import { FormField } from './FormField'
 import { ValidationError } from './ValidationError'
 import { isSimpleRule, RuleInformation } from './rules'
-import * as nShared from '@/shared'
+import * as nShared from '@compose-validation/shared'
 
 export type ValidatorParameters = [
   /**

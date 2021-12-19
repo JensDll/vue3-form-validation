@@ -1,5 +1,5 @@
 {
-  "name": "vue3-form-validation",
+  "name": "compose-validation",
   "version": "5.1.0",
   "description": "Vue composition function for form validation",
   "author": {
@@ -8,15 +8,15 @@
   },
   "type": "module",
   "sideEffects": false,
-  "main": "dist/vue3-form-validation.cjs.js",
-  "types": "dist/vue3-form-validation.d.ts",
+  "main": "dist/compose-validation.cjs.js",
+  "types": "dist/compose-validation.d.ts",
   "exports": {
-    "import": "./dist/vue3-form-validation.esm.js",
-    "require": "./dist/vue3-form-validation.cjs.js"
+    "import": "./dist/compose-validation.esm.js",
+    "require": "./dist/compose-validation.cjs.js"
   },
   "files": [
     "dist/*.js",
-    "dist/vue3-form-validation.d.ts",
+    "dist/compose-validation.d.ts",
     "LICENSE",
     "README.md"
   ],
@@ -34,10 +34,8 @@
     "vue-use"
   ],
   "dependencies": {
-    "vue-demi": "latest"
-  },
-  "devDependencies": {
-    "vue": "3.2.26"
+    "vue-demi": "latest",
+    "@compose-validation/shared": "workspace:*"
   },
   "peerDependencies": {
     "vue": "2.x || 3.x",

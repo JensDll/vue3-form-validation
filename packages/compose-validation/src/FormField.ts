@@ -1,9 +1,17 @@
-import { reactive, computed, ref, watch, WatchStopHandle, Ref } from 'vue-demi'
+import {
+  reactive,
+  computed,
+  ref,
+  watch,
+  WatchStopHandle,
+  Ref,
+  isVue3
+} from 'vue-demi'
 
 import { Form, Validator, ValidatorParameters } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'
 import { SimpleRule, RuleInformation, unpackRule } from './rules'
-import * as nShared from '@/shared'
+import * as nShared from '@compose-validation/shared'
 
 type MappedRuleInformation = {
   buffer: nShared.LinkedList<boolean>
@@ -183,9 +191,14 @@ export class FormField {
   }
 
   dispose() {
-    this.errors.effect.stop()
-    this.validating.effect.stop()
-    this.hasError.effect.stop()
+    if (isVue3) {
+      // @ts-ignore
+      this.errors.effect.stop()
+      // @ts-ignore
+      this.validating.effect.stop()
+      // @ts-ignore
+      this.hasError.effect.stop()
+    }
     this.watchStopHandle()
   }
 

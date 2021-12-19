@@ -1,6 +1,6 @@
 import { reactive, Ref, ComputedRef } from 'vue-demi'
 
-import * as nShared from '@/shared'
+import * as nShared from '@compose-validation/shared'
 import { ValidationError } from './ValidationError'
 import { Form } from './Form'
 import {

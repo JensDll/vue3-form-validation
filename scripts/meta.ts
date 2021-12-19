@@ -7,9 +7,9 @@ export const packages: Package[] = [
   {
     name: 'shared',
     buildFormats: ['esm']
-  },
-  {
-    name: 'vue3-form-validation',
-    buildFormats: ['esm', 'cjs']
   }
+  // {
+  //   name: 'compose-validation',
+  //   buildFormats: ['esm', 'cjs']
+  // }
 ]
