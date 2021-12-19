@@ -1,4 +1,4 @@
-import { reactive, Ref, ComputedRef } from 'vue'
+import { reactive, Ref, ComputedRef } from 'vue-demi'
 
 import * as nShared from '@/shared'
 import { ValidationError } from './ValidationError'

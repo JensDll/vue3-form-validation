@@ -6,5 +6,8 @@
   "types": "dist/shared.d.ts",
   "exports": {
     "import": "./dist/shared.esm.js"
+  },
+  "dependencies": {
+    "vue-demi": "latest"
   }
 }

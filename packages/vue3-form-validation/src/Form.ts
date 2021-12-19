@@ -1,4 +1,4 @@
-import { computed, ref, shallowReactive } from 'vue'
+import { computed, ref, shallowReactive } from 'vue-demi'
 
 import { FormField } from './FormField'
 import { ValidationError } from './ValidationError'

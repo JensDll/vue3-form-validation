@@ -1,4 +1,4 @@
-import { ComputedRef, Ref, UnwrapRef, unref } from 'vue'
+import { ComputedRef, Ref, UnwrapRef, unref } from 'vue-demi'
 
 import { Form } from './Form'
 import { FieldRule, RuleInformation } from './rules'

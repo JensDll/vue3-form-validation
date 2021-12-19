@@ -1,4 +1,4 @@
-import { isRef } from 'vue'
+import { isRef } from 'vue-demi'
 import { LinkedList } from './LinkedList'
 import { isObject } from './typeGuards'
 

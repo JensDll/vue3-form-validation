@@ -1,4 +1,4 @@
-import { Plugin } from 'vue'
+import { Plugin } from 'vue-demi'
 
 import { VALIDATION_CONFIG } from './ValidationConfig'
 import {

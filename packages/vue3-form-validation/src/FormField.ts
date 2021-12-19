@@ -1,4 +1,4 @@
-import { reactive, computed, ref, watch, WatchStopHandle, Ref } from 'vue'
+import { reactive, computed, ref, watch, WatchStopHandle, Ref } from 'vue-demi'
 
 import { Form, Validator, ValidatorParameters } from './Form'
 import { ValidationBehaviorFunction } from './validationBehavior'

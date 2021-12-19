@@ -33,7 +33,19 @@
     "utils",
     "vue-use"
   ],
+  "dependencies": {
+    "vue-demi": "latest"
+  },
+  "devDependencies": {
+    "vue": "3.2.26"
+  },
   "peerDependencies": {
-    "vue": "3.x"
+    "vue": "2.x || 3.x",
+    "@vue/composition-api": "^1.4.2"
+  },
+  "peerDependenciesMeta": {
+    "@vue/composition-api": {
+      "optional": true
+    }
   }
 }

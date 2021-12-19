@@ -20,7 +20,7 @@ for (const target of TARGETS) {
       file: `packages/${target}/dist/${target}.${format}.js`,
       format
     })),
-    external: ['vue'],
+    external: ['vue-demi'],
     plugins: [typescript({ tsconfigOverride })]
   }
 
@@ -30,7 +30,7 @@ for (const target of TARGETS) {
       file: `packages/${target}/dist/${target}.d.ts`,
       format: 'es'
     },
-    external: ['vue'],
+    external: ['vue-demi'],
     plugins: [
       alias({
         entries: [

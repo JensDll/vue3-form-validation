@@ -1,4 +1,4 @@
-import { UnwrapRef } from 'vue'
+import { UnwrapRef } from 'vue-demi'
 
 import {
   ValidationBehavior,

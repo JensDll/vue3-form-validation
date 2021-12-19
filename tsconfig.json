@@ -22,5 +22,5 @@
     }
   },
   "include": ["packages/*/src", "packages/*/__tests__", "test-dts"],
-  "exclude": ["**/dist", "**/publish", "packages/examples"]
+  "exclude": ["**/dist", "**/publish", "packages/examples", "packages/vue2-examples"]
 }
