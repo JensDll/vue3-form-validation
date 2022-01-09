@@ -2,7 +2,7 @@
 
 **🚨 NOTICE: This project has been moved and will be further maintained at https://github.com/JensDll/validierung**
 
-With mostly the same API, the new version will support Vue 2 and 3 (integration using [vue-demi](https://github.com/vueuse/vue-demi)). Below are the few breaking changes:
+With mostly the same API, the new version will support Vue 2 and 3. Below are the few breaking changes:
 - The interface `CustomValidationBehaviorFunctions` was renamed to `ValidationBehaviorFunctions`.
 - The `$rawErrors` property was removed from transformed fields.
 
