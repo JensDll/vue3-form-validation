@@ -1,6 +1,6 @@
 #  Form Validation for Vue 3
 
-**🚨 NOTICE: This project has been moved and will be further maintained at https://github.com/JensDll/validierung 🚨**
+**🚨 NOTICE: This project has been moved and will be further maintained at https://github.com/JensDll/validierung**
 
 With mostly the same API, the new version will support Vue 2 and 3. Below are the few breaking changes:
 - The interface `CustomValidationBehaviorFunctions` was renamed to `ValidationBehaviorFunctions`.
