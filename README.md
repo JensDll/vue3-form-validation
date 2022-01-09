@@ -1,4 +1,14 @@
-# Form Validation for Vue 3
+#  Form Validation for Vue 3
+
+**🚨 NOTICE: This project has been moved and will be further maintained at https://github.com/JensDll/validierung 🚨**
+
+With mostly the same API, the new version will support Vue 2 and 3. Below are the few breaking changes:
+- The interface `CustomValidationBehaviorFunctions` was renamed to `ValidationBehaviorFunctions`.
+- The `$rawErrors` property was removed from transformed fields.
+
+I believe the new version works well now, and I'll be considerate when adding new features moving forward.
+
+---
 
 [![npm](https://badgen.net/npm/v/vue3-form-validation)](https://www.npmjs.com/package/vue3-form-validation)
 [![LICENSE](https://badgen.net/github/license/micromatch/micromatch?color=green)](https://github.com/JensDll/vue3-form-validation/blob/main/LICENSE)
